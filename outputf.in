@@ -1,0 +1,309 @@
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+======Floyd's algorithm completed======
+
+
+
+
+======BEGIN GRAPH DISPLAY======
+
+Total weight: 1425
+
+Node: bus station
+> Arc: easton, Weight: 20
+> Arc: school, Weight: 11
+> Arc: tesco, Weight: 2
+> Arc: wedmore, Weight: 55
+> Arc: weston, Weight: 500
+
+Node: easton
+> Arc: bus station, Weight: 20
+> Arc: weston, Weight: 445
+
+Node: school
+> Arc: bus station, Weight: 11
+> Arc: tesco, Weight: 7
+> Arc: wedmore, Weight: 50
+
+Node: tesco
+> Arc: bus station, Weight: 2
+> Arc: school, Weight: 7
+> Arc: wedmore, Weight: 5
+
+Node: wedmore
+> Arc: bus station, Weight: 55
+> Arc: school, Weight: 50
+> Arc: tesco, Weight: 5
+> Arc: weston, Weight: 330
+
+Node: weston
+> Arc: bus station, Weight: 500
+> Arc: easton, Weight: 445
+> Arc: wedmore, Weight: 330
+
+ALL NODES:
+tesco
+school
+bus station
+wedmore
+easton
+weston
+
+ALL ARCS:
+tesco --- school: 7
+tesco --- bus station: 2
+bus station --- school: 11
+wedmore --- school: 50
+wedmore --- bus station: 55
+bus station --- easton: 20
+wedmore --- tesco: 5
+weston --- bus station: 500
+weston --- easton: 445
+wedmore --- weston: 330
+
+DISTANCE MATRIX:
+               tesco          school         bus station    wedmore        easton         weston         
+_________________________________________________________________________________________________________
+tesco          |0              7              2              5              22             335            
+school         |7              0              9              12             29             342            
+bus station    |2              9              0              7              20             337            
+wedmore        |5              12             7              0              27             330            
+easton         |22             29             20             27             0              357            
+weston         |335            342            337            330            357            0              
+
+ROUTE MATRIX:
+               tesco          school         bus station    wedmore        easton         weston         
+_________________________________________________________________________________________________________
+tesco          |tesco          school         bus station    wedmore        bus station    wedmore        
+school         |tesco          school         tesco          tesco          tesco          tesco          
+bus station    |tesco          tesco          bus station    tesco          easton         tesco          
+wedmore        |tesco          tesco          tesco          wedmore        tesco          weston         
+easton         |bus station    bus station    bus station    bus station    easton         bus station    
+weston         |wedmore        wedmore        wedmore        wedmore        wedmore        weston         
+
+
+======END GRAPH DISPLAY====
+
+Bound initialised
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+Bound initialised
+Bound initialised
+Bound initialised
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+Bound initialised
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+
+
+Graph initialised
+
+Bound initialised
+No solution found, returning upper bound
+======Floyd's algorithm completed======
+
+
+
+
+======BEGIN GRAPH DISPLAY======
+
+Total weight: 732
+
+Node: bus station
+> Arc: easton, Weight: 20
+> Arc: tesco, Weight: 2
+
+Node: easton
+> Arc: bus station, Weight: 20
+
+Node: school
+> Arc: tesco, Weight: 7
+
+Node: tesco
+> Arc: bus station, Weight: 2
+> Arc: school, Weight: 7
+> Arc: wedmore, Weight: 5
+
+Node: wedmore
+> Arc: tesco, Weight: 5
+> Arc: weston, Weight: 330
+
+Node: weston
+> Arc: wedmore, Weight: 330
+
+ALL NODES:
+tesco
+school
+bus station
+wedmore
+easton
+weston
+
+ALL ARCS:
+tesco --- wedmore: 5
+bus station --- tesco: 2
+tesco --- school: 7
+bus station --- tesco: 2
+bus station --- easton: 20
+tesco --- bus station: 2
+school --- tesco: 7
+wedmore --- weston: 330
+tesco --- wedmore: 5
+bus station --- tesco: 2
+easton --- bus station: 20
+wedmore --- weston: 330
+
+DISTANCE MATRIX:
+               tesco          school         bus station    wedmore        easton         weston         
+_________________________________________________________________________________________________________
+tesco          |0              7              2              5              22             335            
+school         |7              0              9              12             29             342            
+bus station    |2              9              0              7              20             337            
+wedmore        |5              12             7              0              27             330            
+easton         |22             29             20             27             0              357            
+weston         |335            342            337            330            357            0              
+
+ROUTE MATRIX:
+               tesco          school         bus station    wedmore        easton         weston         
+_________________________________________________________________________________________________________
+tesco          |tesco          school         bus station    wedmore        bus station    wedmore        
+school         |tesco          school         tesco          tesco          tesco          tesco          
+bus station    |tesco          tesco          bus station    tesco          easton         tesco          
+wedmore        |tesco          tesco          tesco          wedmore        tesco          weston         
+easton         |bus station    bus station    bus station    bus station    easton         bus station    
+weston         |wedmore        wedmore        wedmore        wedmore        wedmore        weston         
+
+
+======END GRAPH DISPLAY====
+
+tesco
+school
+tesco
+bus station
+easton
+bus station
+tesco
+bus station
+tesco
+wedmore
+weston
+wedmore
+tesco
+Press any key to continue . . . 
