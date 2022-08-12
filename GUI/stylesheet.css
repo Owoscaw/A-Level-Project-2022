@@ -1,0 +1,59 @@
+#map {
+  height: 70%;
+  width: 70%;
+  float: left;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.listOfNodes {
+  height: 70%;
+  width: 30%;
+  float: right;
+  background-color: red;
+}
+
+.Node {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 15px;
+  border: 2px solid black;
+  text-align: center;
+  font-size: 17px;
+  font-family: "Google Sans";
+  pointer-events: auto;
+  width: 100px;
+  height: 50px;
+  cursor: pointer;
+}
+
+.Node:hover {
+  background-color: red;
+}
+
+.ClickedNode {
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.5);
+  border-radius: 15px;
+  border: 2px solid black;
+  text-align: center;
+  font-size: 17px;
+  font-family: "Google Sans";
+  pointer-events: auto;
+  width: 75px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.ClickedNode:hover {
+  width: 100px;
+  height: 65px;
+}
+
+.ClickedNode:hover::after{
+  content: "Click to remove";
+}
