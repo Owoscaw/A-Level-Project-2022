@@ -233,7 +233,7 @@ function initMap() {
 
     let renameDiv = document.createElement("div");
     renameDiv.className = "ButtonTextDiv";
-    renameDiv.innerHTML = "Rename Button";
+    renameDiv.innerHTML = "Rename Node";
 
     renameButtonDiv.appendChild(renameButton);
     renameButtonDiv.appendChild(renameDiv);

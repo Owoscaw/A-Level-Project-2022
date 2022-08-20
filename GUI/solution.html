@@ -10,16 +10,20 @@
 	</head>
 
 	<body>
-		<div id="map"></div>
-		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws&callback=initMap" defer></script>
+		<div id="containment">
+			<div id="map"></div>
+			<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws&callback=initMap" defer></script>
 
-		<div id="headOfNodes">
-			Node Menu
-		</div>
+			<div id="NodeMenu">
+				<div id="headOfNodes">
+					Node Menu
+				</div>
 
-		<div id="divOfNodes">
-			<ul id="listOfNodes">
-			</ul>
+				<div id="divOfNodes">
+					<ul id="listOfNodes">
+					</ul>
+				</div>
+			</div>
 		</div>
 
 		<input type="button" onclick="location.href='index.html';" value="Back">
