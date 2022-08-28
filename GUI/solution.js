@@ -192,6 +192,16 @@ function initMap() {
   //gets lat and lng values to parse to the TSP solver, and adds the node to the page
   function activateNode(name, node, marker){
 
+    let startNodeList = document.getElementById("startNodeList");
+    let startNodeEntry = document.createElement("li");
+    let startNodeDiv = document.createElement("div");
+    startNodeDiv.className = "StartNodeInList";
+    startNodeDiv.innerHTML = name;
+    startNodeDiv.id = name + " startNodeDiv";
+
+    startNodeEntry.appendChild(startNodeDiv);
+    startNodeList.appendChild(startNodeEntry);
+
     //getting the parent list of where all nodes are stored
     let parentList = document.getElementById("listOfNodes");
 
@@ -209,9 +219,10 @@ function initMap() {
 
     let removalButton = document.createElement("button");
     removalButton.addEventListener("click", () => {
-      console.log(node.name);
       deleteNode(node.name, node, marker);
     });
+
+
     removalButton.innerHTML = "Remove Node";
     removalButton.id = name + " removalButton";
     removalButton.disabled = true;
@@ -252,8 +263,10 @@ function initMap() {
         newEntry.id = newName;
         renameButton.id = newName + " renameButton";
         removalButton.id = newName + " removalButton";
+        startNodeDiv.id = newName + " startNodeDiv";
         node.name = newName;
         nameDiv.innerHTML = newName;
+        startNodeDiv.innerHTML = newName;
 
         //replaces oldname with newname within the div used to house text in the node
         node.div.innerHTML = node.div.innerHTML.replace(name, newName);
@@ -305,6 +318,11 @@ function initMap() {
 
     if(node.isNodeActive){
 
+      //removing it from start node menu
+      let startParentList = document.getElementById("startNodeList");
+      let startEntry = document.getElementById(name + " startNodeDiv");
+      startParentList.removeChild(startEntry.parentElement);
+
       //removing it from the list of nodes
       let parentList = document.getElementById("listOfNodes");
       let deletedNode = document.getElementById(name);
@@ -328,7 +346,7 @@ function initMap() {
         });
       });
 
-      delete addedNodes[this.name];
+      delete addedNodes[name];
     }
 
   }

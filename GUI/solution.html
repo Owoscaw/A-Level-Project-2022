@@ -10,11 +10,11 @@
 	</head>
 
 	<body>
-		<div id="containment">
+		<div id="UpperPage">
 			<div id="map"></div>
 			<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws&callback=initMap" defer></script>
 
-			<div id="NodeMenu">
+			<div id="nodeMenu">
 				<div id="headOfNodes">
 					Node Menu
 				</div>
@@ -26,6 +26,16 @@
 			</div>
 		</div>
 
-		<input type="button" onclick="location.href='index.html';" value="Back">
+		<div id="LowerPage">
+			<input id="backButton" type="button" onclick="location.href='index.html';" value="Back">
+
+			<div id="startNodeDiv">
+				<div id="startNodeHead">
+					Select start node
+				</div>
+				<ul id="startNodeList">
+				</ul>
+			</div>
+		</div>
 	</body>
 </html>
