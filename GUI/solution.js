@@ -1,12 +1,16 @@
 
 let map;
+let startNode;
 let currentMarkers = {};
 let addedNodes = {};
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
 
 
+
+
 //initialising map 
 function initMap() {
+
   const map = new google.maps.Map(document.getElementById("map"), {
     center: {lat: 52.4, lng: 0},
     zoom: 15,
@@ -192,17 +196,6 @@ function initMap() {
   //gets lat and lng values to parse to the TSP solver, and adds the node to the page
   function activateNode(name, node, marker){
 
-    let startNodeList = document.getElementById("startNodeList");
-    let startNodeEntry = document.createElement("li");
-    let startNodeDiv = document.createElement("div");
-    startNodeDiv.className = "StartNodeInList";
-    startNodeDiv.innerHTML = name;
-    startNodeDiv.id = name + " startNodeDiv";
-
-    startNodeEntry.appendChild(startNodeDiv);
-    startNodeList.appendChild(startNodeEntry);
-
-    //getting the parent list of where all nodes are stored
     let parentList = document.getElementById("listOfNodes");
 
     //creating a new entry, id of the nodes name
@@ -263,13 +256,19 @@ function initMap() {
         newEntry.id = newName;
         renameButton.id = newName + " renameButton";
         removalButton.id = newName + " removalButton";
-        startNodeDiv.id = newName + " startNodeDiv";
-        node.name = newName;
+        startNodeButton.id = newName + " startNodeButton";
         nameDiv.innerHTML = newName;
-        startNodeDiv.innerHTML = newName;
+
+        //only change this if we are renaming startnode
+        if(typeof startNode != "undefined"){
+          if(startNode.name === name){
+            document.getElementById("startNodeName").innerHTML = newName;
+          }
+        }
 
         //replaces oldname with newname within the div used to house text in the node
         node.div.innerHTML = node.div.innerHTML.replace(name, newName);
+        node.name = newName;
         name = newName;
 
         currentMarkers[newName] = marker;
@@ -291,7 +290,53 @@ function initMap() {
       renameDiv.className = "ButtonTextDiv";
     });
 
+
+    let startNodeDiv = document.createElement("div");
+    startNodeDiv.className = "StartNodeDiv";
+
+    let startNodeButton = document.createElement("input");
+    startNodeButton.className = "StartNodeButton";
+    startNodeButton.id = name + " startNodeButton";
+    startNodeButton.type = "button";
+    startNodeButton.value = "S";
+    startNodeButton.disabled = true;
+    startNodeDiv.appendChild(startNodeButton);
+
+    startNodeButton.addEventListener("click", () => {
+
+      if(typeof startNode != "undefined"){
+        if(startNode.name != name){
+
+          //resetting the css of the old startNode if it exists
+          document.getElementById(startNode.name + " startNodeButton").className = "StartNodeButton";
+          startNode.div.style.backgroundColor = "rgba(251, 188, 5, 0.5)";
+
+        } else{
+
+          //we have clicked the button again, making it not startnode anymore
+          startNode = undefined;
+          document.getElementById("startNodeName").innerHTML = "None";
+          node.div.style.backgroundColor = "rgba(251, 188, 5, 0.5)";
+          startNodeButton.className = "StartNodeButton";
+
+          return;
+        } 
+      }
+
+      //setting the node that was clicked to the new startnode, altering css
+      startNode = node;
+      startNodeButton.className = "ActiveStartNode";
+
+      //setting the startnode at the bottom of the page
+      document.getElementById("startNodeName").innerHTML = name;
+
+      //altering the css of the node on map
+      node.div.style.backgroundColor = "rgba(234, 67, 53, 0.5)";
+    });
+
+
     //appending node to the list
+    newContent.appendChild(startNodeDiv);
     newContent.appendChild(removalButton);
     newContent.appendChild(latLngDiv);
     newContent.appendChild(renameButtonDiv);
@@ -303,6 +348,7 @@ function initMap() {
     newContent.addEventListener("animationend", () => {
       removalButton.disabled = false;
       renameButton.disabled = false;
+      startNodeButton.disabled = false;
     });
   }
 
@@ -318,19 +364,23 @@ function initMap() {
 
     if(node.isNodeActive){
 
-      //removing it from start node menu
-      let startParentList = document.getElementById("startNodeList");
-      let startEntry = document.getElementById(name + " startNodeDiv");
-      startParentList.removeChild(startEntry.parentElement);
-
       //removing it from the list of nodes
       let parentList = document.getElementById("listOfNodes");
       let deletedNode = document.getElementById(name);
       let childDiv = deletedNode.children[0];
 
+      //if it is the start node, do some extra stuff because its in the menu
+      if(typeof startNode != "undefined"){
+        if(startNode.name === name){
+          startNode = undefined;
+          document.getElementById("startNodeName").innerHTML = "None";
+        }
+      }
+
       //disabling buttons
       document.getElementById(name + " removalButton").disabled = true;
       document.getElementById(name + " renameButton").disabled = true;
+      document.getElementById(name + " startNodeButton").disabled = true;
 
       //animating the removal of the div
       childDiv.classList.add("RemoveNode");
@@ -342,13 +392,12 @@ function initMap() {
         deletedNode.addEventListener("animationend", (event) => {
           if(event.animationName === "removeListAnimation"){
             parentList.removeChild(deletedNode);
+            
+            delete addedNodes[name];
           }
         });
       });
-
-      delete addedNodes[name];
     }
-
   }
 
   console.log(currentMarkers);
