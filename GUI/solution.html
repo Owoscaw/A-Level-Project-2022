@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset=""UTF-8>
-		<meta name="description" content="The better version of Google Maps">
+		<meta charset="utf-8"/>
+		<meta name="description" content="The better version of Google Maps"/>
 		<link rel="stylesheet" href="stylesheet.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-		<script src="solution.js"></script>
 		<title>New Solution</title>
 	</head>
 
 	<body>
 		<div id="UpperPage">
 			<div id="map"></div>
-			<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws&callback=initMap" defer></script>
 
 			<div id="nodeMenu">
 				<div id="headOfNodes">
@@ -38,10 +35,20 @@
 			</div>
 
 			<div id="statusDiv">
-				Ok
+				<div id="statusHead">
+					Status:
+				</div>
+				<div id="statusContent">
+					Add more than two nodes
+				</div>
 			</div>
 
 			<input id="calculateButton" type="button" value="Calculate">
 		</div>
+
+		<div id="coverDiv"></div>
+
+		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws&callback=initMap" defer></script>
+		<script src="solution.js"></script>
 	</body>
 </html>
