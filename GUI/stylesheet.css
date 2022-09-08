@@ -606,13 +606,15 @@ html, body {
 }
 
 #networkCanvas {
+  width: 850px;
+  height: 425px;
   position: absolute;
   bottom: 0px;
 }
 
 #networkTitle {
   width: 850px;
-  height: 25px;
+  height: 425px;
   position: absolute;
   text-align: center;
   font-family: "Google Sans";

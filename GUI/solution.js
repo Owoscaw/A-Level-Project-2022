@@ -4,31 +4,39 @@ let startNode;
 let currentMarkers = {};
 let addedNodes = {};
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
+const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"];
 
 
-//used to keep track of arcs 
-class AdjTable {
-  allNodes;
-  allArcs;
-  table;
+//on load, initialise the map
+window.onload = initMap;
+
+
+
+
+//used to keep track of nodes and arcs for a given calculate button press
+class Network {
+  #canvas;
+  #table;
+  #allNodes;
+  #allArcs;
+  weight;
 
   constructor(){
-
+    this.canvas = document.createElement("canvas");
     this.allNodes = [];
     this.allArcs = [];
     this.table = {};
+    this.weight = 0;
   }
 
-  //adds a node to allNodes, and gives it a field in table
   addNode(node){
 
-    this.table[node.name] = {}
+    this.table[node.name] = {};
     this.allNodes.push(node);
 
-    this.populateTable();
+    this.populateTable;
   }
 
-  //defines a non-zero arc between two nodes
   addArc(weight, node1, node2){
 
     if(node1.name === node2.name){
@@ -39,10 +47,143 @@ class AdjTable {
     this.table[node2.name][node1.name] = weight;
 
     this.allArcs.push({node1: node1.name, node2: node2.name, weight: weight});
+
+    this.weight += weight;
   }
 
-  //populates the table with default arcs with weight 0
-  populateTable(){
+  removeNode(node){
+
+    //removing node
+    let nodeIndex = this.allNodes.indexOf(node);
+    if(nodeIndex === -1){
+      return;
+    }
+    this.allNodes.splice(nodeIndex, 1);
+    delete this.table[node.name];
+
+    //removing all reference to node
+    for(let i = 0; i < this.allArcs.length; i++){
+      let currentArc = this.allArcs[i];
+
+      if(currentArc.node1 === node.name){
+        this.removeArc(currentArc);
+      } else if(currentArc.node2 === node.name){
+        this.removeArc(currentArc);
+      }
+    }
+  }
+
+  removeArc(arc){
+    
+    if((typeof this.table[arc.node1.name][arc.node2.name] === "undefined") || (typeof this.table[arc.node2.name][arc.node2.name] === "undefined")){
+      return;
+    }
+
+    let arcIndex = this.allArcs.indexOf(arc);
+    delete this.allArcs[arcIndex]
+
+    delete this.table[arc.node1][arc.node2];
+    delete this.table[arc.node2][arc.node1];
+
+    weight -= arc.weight;
+  }
+
+  //draws a nice graphic to represent the network
+  drawTo(div, title){
+
+    this.canvas.id = "networkCanvas";
+    this.canvas.width = 850 * window.devicePixelRatio;
+    this.canvas.height = 425 * window.devicePixelRatio;
+
+    let networkContext = this.canvas.getContext("2d");
+    networkContext.scale(window.devicePixelRatio, window.devicePixelRatio);
+    
+    div.appendChild(this.canvas);
+
+    //checking if the cancel button has been pressed
+    if(!document.getElementById("calculateButton").disabled){
+      return;
+    }
+
+    let networkTitle = document.createElement("div");
+    networkTitle.id = "networkTitle";
+    networkTitle.innerHTML = title;
+    div.appendChild(networkTitle);
+
+    //clearing the canvas
+    networkContext.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
+
+    var networkStage = new createjs.Stage(this.canvas);
+    let transparentLayer = networkCanvas.cloneNode();
+    let transparentContext = transparentLayer.getContext("2d");
+
+    //generating regular polygon to place each node at, and drawing them
+    let thetaIncrement = Math.PI*2/this.allNodes.length;
+    let radius = (this.canvas.height - 125)/2;
+    let centre = {x: this.canvas.width/2, y: this.canvas.height/2};
+
+    let nodeXY = {};
+    for(var i = 0; i < this.allNodes.length; i++){
+
+      let currentTheta = i*thetaIncrement;
+      let currentX = radius*Math.cos(currentTheta) + centre.x;
+      let currentY = radius*Math.sin(currentTheta) + centre.y;    
+
+      let nodeColour = googleColours[Math.floor(Math.random()*4)];
+      transparentContext.fillStyle = "rgb(" + nodeColour + ")";
+      transparentContext.beginPath();
+      transparentContext.arc(currentX, currentY, 15, 0, 2*Math.PI);
+      transparentContext.fill();
+
+      let nodeText = new createjs.Text(this.allNodes[i].name, "28px Google Sans", "#000000");
+      nodeText.textAlign = "center";
+      nodeText.textBaseline = "top";
+      nodeText.lineWidth = 125;
+      nodeText.maxWidth = 125;
+      let textHeight = nodeText.getMeasuredHeight();
+      nodeText.x = currentX;
+      nodeText.y = currentY - textHeight/2;
+      networkStage.addChild(nodeText);
+
+      nodeXY[this.allNodes[i].name] = {x: currentX, y: currentY, colour: nodeColour};
+    }
+    networkStage.update();
+
+
+    //adding the arcs to the canvas
+    transparentContext.lineWidth = 5;
+    for(var k = 0; k < this.allArcs.length; k++){
+
+      //getting the points to connect
+      let node1X = nodeXY[this.allArcs[k].node1].x;
+      let node1Y = nodeXY[this.allArcs[k].node1].y;
+      let node1Colour = "rgb(" + nodeXY[this.allArcs[k].node1].colour + ")";
+
+      let node2X = nodeXY[this.allArcs[k].node2].x;
+      let node2Y = nodeXY[this.allArcs[k].node2].y;
+      let node2Colour = "rgb(" + nodeXY[this.allArcs[k].node2].colour + ")";
+
+      //drawing line with gradient
+      let gradient = transparentContext.createLinearGradient(node1X, node1Y, node2X, node2Y);
+      gradient.addColorStop(0.3, node1Colour);
+      gradient.addColorStop(0.7, node2Colour);
+
+      transparentContext.strokeStyle = gradient;
+      transparentContext.beginPath();
+      transparentContext.moveTo(node1X, node1Y);
+      transparentContext.lineTo(node2X, node2Y);
+      transparentContext.stroke();
+    }
+
+    networkContext.globalAlpha = 0.4;
+    networkContext.globalCompositeOperation = "destination-over";
+    networkContext.drawImage(transparentLayer, 0 , 0);
+  }
+
+
+  //filling the table with 0 as default value
+  #populateTable(){
+
     for(let i = 0; i < this.allNodes.length; i++){
 
       let iName = this.allNodes[i].name;
@@ -185,8 +326,6 @@ function initMap() {
   }
 
 
-
-
   //adds a new node to the map
   function addNode(location){
 
@@ -247,8 +386,6 @@ function initMap() {
   }
 
 
-
-
   //manipulates page to add a new node
   function activateNode(name, node, marker){
 
@@ -287,7 +424,7 @@ function initMap() {
     renameButton.className = "TextBox";
     renameButton.type = "text";
     renameButton.id = name + " renameButton";
-    renameButton.setAttribute("maxLength", 200);
+    renameButton.setAttribute("maxLength", 30);
     renameButton.disabled = true;
     renameButtonDiv.appendChild(renameButton);
 
@@ -411,8 +548,6 @@ function initMap() {
   }
 
 
-
-
   //removes a node from the map, list of active markers, list of active nodes, and from the list of nodes
   function deleteNode(name, node, marker){
 
@@ -474,7 +609,7 @@ function initMap() {
     calcButton.disabled = true;
 
     //formatting distance matrix service request
-    let mapAdjTable = new AdjTable;
+    let network = new Network;
     let nodeArray = [];
     let toBeArced = [];
 
@@ -490,16 +625,26 @@ function initMap() {
     
       let currentNode = nodeArray[i];
 
-      mapAdjTable.addNode(currentNode);
+      network.addNode(currentNode);
       toBeArced[i] = currentNode.point;
     }
 
 
-    getMatrix(toBeArced, nodeArray, mapAdjTable);
+    //returns a promise that resolves when matrix is fully loaded
+    let matrixPromise = getMatrix(toBeArced, nodeArray, network);
 
     displayLoadingMenu();
 
-    updateLoadingMenu(mapAdjTable, "Initial Network");
+    matrixPromise.then(function(resolve){
+      console.log(resolve);
+
+      //this adjTable will contain the fully loaded information from the getMatrix function
+      network.drawTo(document.getElementById("canvasDiv"), "Initial Network");
+    }, function(reject){
+      console.log(reject);
+    });
+
+
   });
 }
 
@@ -532,47 +677,74 @@ function updateStatus(){
 }
 
 
-//function that gets distances between nodes, needs to be here bc asyncronous work??
-function getMatrix(toBeArced, nodeArray, adjTable){
+//function that gets distances between nodes
+function getMatrix(toBeArced, nodeArray, network){
 
-  //optimal way of getting every node, adding it to the adjTable
-  for(var j = 0; j < toBeArced.length - 1; j++){
+  let matrixStatus = "matrix successfully loaded";
 
-    let currentOrigin = toBeArced[j];
-    let currentDestinations = toBeArced.slice(j + 1);
+  //asynchronos loop so all matricies can be loaded before continuing
+  let matrixLoop = async _ => {
+      
+    //optimal way of getting every node, adding it to the adjTable
+    for(var j = 0; j < toBeArced.length - 1; j++){
 
-    //getting the names of all the destination nodes
-    let fromNode = nodeArray[j];
-    let toNodes = nodeArray.slice(j + 1);
+      //this promise resolves when the matrix for this iteration is loaded into the adjTable
+      let currentMatrixPromise = new Promise(function(resolve, reject){
 
-    // var matrix = new google.maps.DistanceMatrixService();
-    // matrix.getDistanceMatrix({
-    //   origins: [currentOrigin],
-    //   destinations: currentDestinations,
-    //   travelMode: "DRIVING"
-    // }, function(response, status){
+        let currentOrigin = toBeArced[j];
+        let currentDestinations = toBeArced.slice(j + 1);
 
-    //   //allows me to tell if matrix failed outside of this function
-    //   if(status === "OK"){
+        //getting the names of all the destination nodes
+        let fromNode = nodeArray[j];
+        let toNodes = nodeArray.slice(j + 1);
 
-    //     //successful request, inputting response into adjTable class
-    //     for(var sink = 0; sink < response.rows[0].elements.length; sink++){
+        // var matrix = new google.maps.DistanceMatrixService();
+        // matrix.getDistanceMatrix({
+        //   origins: [currentOrigin],
+        //   destinations: currentDestinations,
+        //   travelMode: "DRIVING"
+        // }, function(response, status){
 
-    //       //getting the arc's connection
-    //       let toNode = toNodes[sink];
+        //   //allows me to tell if matrix failed outside of this function
+        //   if(status === "OK"){
 
-    //       //adding the arc to the adjacency table
-    //       adjTable.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNode);
-    //     }
-    //   }
-    // });
+        //     //successful request, inputting response into adjTable class
+        //     for(var sink = 0; sink < response.rows[0].elements.length; sink++){
 
-    adjTable.addArc(1, fromNode, toNodes[0]);
+        //       //getting the arc's connection
+        //       let toNode = toNodes[sink];
+
+        //       //adding the arc to the adjacency table
+        //       network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNode);
+        //     }
+
+        //     resolve("matrix successfully loaded");
+        //   } else {
+        //     reject("matrix failed to load");
+        //   }
+        // });
+
+        network.addArc(1, fromNode, toNodes[0]);
+        resolve("matrix successfully loaded");
+      });
+
+      //waiting for the resolution or rejection of the current matrix promise
+      let matrixResult = await currentMatrixPromise;
+
+      if(matrixResult != "matrix successfully loaded"){
+        matrixStatus = matrixResult;
+      }
+    }
+
+    //returning the status as a resolution to a promise
+    return matrixStatus;
   }
 
-  console.log(adjTable);
-}
+  console.log(network);
 
+  //returning the aformentioned promise
+  return matrixLoop();
+}
 
 
 //dims the page and display the graph as it is being worked on
@@ -586,13 +758,13 @@ function displayLoadingMenu(){
   let cover = document.createElement("div");
   cover.id = "cover";
 
-  let canvasDiv = document.createElement("div");
-  canvasDiv.id = "canvasDiv";
-
   let cancelButton = document.createElement("input");
   cancelButton.id = "cancelButton";
   cancelButton.type = "button";
   cancelButton.value = "×";
+
+  let canvasDiv = document.createElement("div");
+  canvasDiv.id = "canvasDiv";
 
   //cancel functionality
   cancelButton.addEventListener("click", () => {
@@ -602,104 +774,13 @@ function displayLoadingMenu(){
     document.getElementById("calculateButton").disabled = false;
   });
 
-  let networkCanvas = document.createElement("canvas");
-  networkCanvas.id = "networkCanvas";
 
   //adding all elements
   canvasDiv.appendChild(cancelButton);
-  canvasDiv.appendChild(networkCanvas);
   cover.appendChild(canvasDiv);
   document.getElementById("coverDiv").appendChild(cover);
 }
 
 
-
-function updateLoadingMenu(adjTable, title){
-
-  //checking if the cancel button has been pressed
-  if(!document.getElementById("calculateButton").disabled){
-    return;
-  }
-
-  let networkTitle = document.createElement("div");
-  networkTitle.id = "networkTitle";
-  networkTitle.innerHTML = title;
-  document.getElementById("canvasDiv").appendChild(networkTitle);
-
-  let networkCanvas = document.getElementById("networkCanvas");
-  networkCanvas.width = 850;
-  networkCanvas.height = 425;
-
-  //clearing the canvas
-  let networkContext = networkCanvas.getContext("2d");
-  networkContext.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
-
-  //defining font and font size for nodes on canvas
-  networkContext.font = "20px Google Sans";
-  networkContext.fillStyle = "black";
-  networkContext.textAlign = "center";
-  networkContext.direction = "ltr";
-
-  //generating x and y coordinates to place each node at, and drawing them
-  let nodeXY = {};
-  for(var i = 0; i < adjTable.allNodes.length; i++){
-
-    let tooClose = true;
-
-    let currentX = 50 + Math.random()*(networkCanvas.width - 100);
-    let currentY = 25 + Math.random()*(networkCanvas.height - 50);
-
-    //avoiding placing nodes too close to each other
-    while(tooClose){
-
-      //coordinates can be within 50px of the canvas X wise, 25px Y wise
-      currentX = 50 + Math.random()*(networkCanvas.width - 100);
-      currentY = 25 + Math.random()*(networkCanvas.height - 50);
-      tooClose = false;
-
-      //checking if these coordinates are too close to others
-      for(var j in nodeXY){
-        if(nodeXY.hasOwnProperty(j)){
-          let nearX = nodeXY[j].x;
-          let nearY = nodeXY[j].y;
-
-          let xDifference = Math.abs(nearX - currentX);
-          let yDifference = Math.abs(nearY - currentY);
-
-          //using pythagors theorom, who said we'd never use it?
-          let proximity = Math.sqrt(xDifference**2 + yDifference**2);
-
-          //constant fine tuned
-          if(proximity < 75){
-            tooClose = true;
-          }
-        }
-      }
-    }
-
-    networkContext.fillText(adjTable.allNodes[i].name, currentX, currentY);
-    nodeXY[adjTable.allNodes[i].name] = {x: currentX, y: currentY};
-  }
-
-  //adding the arcs to the canvas
-  for(var k = 0; k < adjTable.allArcs.length; k++){
-
-    console.log("test");
-
-    //getting the points to connect
-    let node1X = nodeXY[adjTable.allArcs[k].node1].x;
-    let node1Y = nodeXY[adjTable.allArcs[k].node1].y;
-
-    let node2X = nodeXY[adjTable.allArcs[k].node2].x;
-    let node2Y = nodeXY[adjTable.allArcs[k].node2].y;
-
-    //drawing the line
-    networkContext.beginPath();
-    networkContext.moveTo(node1X, node1Y);
-    networkContext.lineTo(node2X, node2Y);
-    networkContext.stroke();
-  }
-
-}
 
 window.initMap = initMap;
