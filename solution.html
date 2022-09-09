@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="description" content="The better version of Google Maps"/>
+		<link rel="stylesheet" href="stylesheet.css">
+		<title>New Solution</title>
+	</head>
+
+	<body>
+		<div id="UpperPage">
+			<div id="map"></div>
+
+			<div id="nodeMenu">
+				<div id="headOfNodes">
+					Node Menu
+				</div>
+
+				<div id="divOfNodes">
+					<ul id="listOfNodes"></ul>
+				</div>
+			</div>
+		</div>
+
+		<div id="LowerPage">
+			<input id="backButton" type="button" onclick="location.href='index.html';" value="Back">
+
+			<div id="startNodeNameDiv">
+				<div id="startNodeHead">
+					Starting Node:
+				</div>
+				<div id="startNodeName">
+					None
+				</div>
+			</div>
+
+			<div id="statusDiv">
+				<div id="statusHead">
+					Status:
+				</div>
+				<div id="statusContent">
+					Add more than two nodes
+				</div>
+			</div>
+
+			<input id="calculateButton" type="button" value="Calculate">
+		</div>
+
+		<div id="coverDiv"></div>
+
+		<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws" defer></script>
+		<script src="solution.js" type="module"></script>
+		<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+
+	</body>
+</html>

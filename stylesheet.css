@@ -1,0 +1,647 @@
+
+* {
+margin: 0px;
+padding: 0px;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#UpperPage {
+  height: 80%;
+  width: 100%;
+  display: flex;
+}
+
+#map {
+  height: 100%;
+  flex-grow: 1;
+}
+
+#nodeMenu {
+  width: 400px;
+}
+
+#headOfNodes {
+  height: 7%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Google Sans";
+  font-weight: bold;
+  font-size: 24px;
+}
+
+#divOfNodes {
+  height: 93%;
+  width: 100%;
+  background-color: #F1F3F4;
+}
+
+#listOfNodes {
+  height: 100%;
+  width: 100%;
+  list-style: none;
+  overflow: hidden;
+  overflow-y: auto;
+  text-align: center;
+  scrollbar-gutter: stable;
+  color: rgba(125, 125, 125, 0);
+  transition: color 0.4s ease;
+}
+
+#listOfNodes:empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Google Sans";
+  font-size: 20px;
+  color: rgba(125, 125, 125, 1);
+  transition: color 0.4s ease;
+}
+
+#listOfNodes:empty:before {
+  content: "Use map to add nodes";
+}
+
+
+#listOfNodes li {
+  width: 350px;
+  height: 100px;
+  left: 25px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 25px;
+}
+
+.NodeInList {
+  width: 100%;
+  height: 100%;
+  border: 2px solid black;
+  background-color: white;
+  border-radius: 15px;
+  box-sizing: border-box;
+  display: block;
+  padding: 4px;
+  position: relative;
+  color: black;
+  animation: addNodeAnimation;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0.245, 1.250, 0.560, 1.135);
+}
+
+.RemoveListedNode {
+  animation: removeListAnimation;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+.RemoveNode {
+  animation: removeNodeAnimation;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0.755, -0.250, 0.440, -0.135);
+}
+
+@keyframes addNodeAnimation {
+  0% {
+    left: -354px;
+  }
+
+  100% {
+    left: 0px;
+  }
+}
+
+@keyframes removeNodeAnimation {
+  0% {
+    left: 0%;
+  }
+
+  100% {
+    left: 110%;
+  }
+}
+
+@keyframes removeListAnimation {
+  0% {
+    height: 100px;
+    padding: 2px;
+  }
+
+  100% {
+    height: 0px;
+    padding: 0px;
+  }
+}
+
+
+.NodeInList button {
+  width: 150px;
+  height: 40px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 6px;
+  border: 1px outset black;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: "Google Sans";
+  color: black;
+  background-color: white;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.NodeInList button:hover {
+  background-color: #4285f4;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.NameDiv {
+  height: 40%;
+  width: 65%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 4px;
+  margin-left: 8px;
+  text-align: left;
+  font-family: "Roboto";
+  font-size: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.LatLngDiv {
+  width: 30%;
+  height: 40%;
+  font-size: 12px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 6px;
+  margin-right: 14px;
+  text-align: right;
+  font-family: "Google Sans";
+  font-size: 16px;
+}
+
+.RenameButtonDiv {
+  width: 150px;
+  height: 40px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 6px;
+}
+
+
+.ButtonTextDiv {
+  width: fit-content;
+  height: fit-content;
+  position: absolute;
+  bottom: 10px;
+  left: 20.015px;
+  font-family: "Google Sans";
+  font-size: 16px;
+  color: black;
+  pointer-events: none;
+  transition-property: all;
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(0.230, 1.000, 0.320, 1.000);
+}
+
+.TextButtonDiv {
+  width: fit-content;
+  height: fit-content;
+  position: absolute;
+  bottom: 100%;
+  left: 4px;
+  font-family: "Google Sans";
+  font-size: 12px;
+  color: black;
+  pointer-events: none;
+  transition-property: all;
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(0.075, 0.820, 0.165, 1.000);
+}
+
+.TextBox {
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  outline: none;
+  box-sizing: border-box;
+  border: 1px outset black;
+  border-radius: 10px;
+  padding: 4px;
+  font-size: 16px;
+  text-align: left;
+  font-family: "Google Sans";
+  background-color: white;
+  color: black;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+
+.TextBox:hover {
+  background-color: #34a853;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.TextBox:focus {
+  pointer-events: none;
+}
+
+.StartNodeDiv {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 11px;
+}
+
+.StartNodeButton {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  border: 1px outset black;
+  border-radius: 10px;
+  font-family: "Google Sans";
+  font-size: 15px;
+  color: black;
+  background-color: white;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.StartNodeButton:hover {
+  background-color: #ea4335;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.ActiveStartNode {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  border: 1px outset black;
+  border-radius: 10px;
+  font-family: "Google Sans";
+  font-size: 15px;
+  color: black;
+  background-color: #ea4335;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.ActiveStartNode:hover {
+  background-color: #fbbc05;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+
+.Node {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 15px;
+  border: 2px solid black;
+  text-align: center;
+  font-size: 17px;
+  font-family: "Google Sans";
+  pointer-events: auto;
+  width: fit-content;
+  padding-left: 5px;
+  padding-right: 5px;
+  height: fit-content;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.Node:hover {
+  background-color: rgba(251, 188, 5, 0.5);
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.ClickedNode {
+  position: absolute;
+  background-color: rgba(251, 188, 5, 0.5);
+  border-radius: 15px;
+  border: 2px solid black;
+  text-align: center;
+  font-size: 17px;
+  font-family: "Google Sans";
+  pointer-events: auto;
+  width: fit-content;
+  max-width: 200px;
+  min-width: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 2px;
+  height: fit-content;
+  min-height: 10px;
+  cursor: pointer;
+  overflow-x: wrap;
+  overflow-wrap: break-word;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+.ClickedNode:hover {
+  min-width: 100px;
+  width: fit-content;
+  min-height: 40px;
+  height: fit-content;
+  padding-bottom: 2px;
+}
+
+.ClickedNode:hover::after{
+  content: "Click to remove";
+}
+
+#LowerPage {
+  width: 100%;
+  height: 50px;
+  display: flex;
+}
+
+#backButton {
+  width: 200px;
+  height: 100%;
+  border: 1px outset black;
+  border-radius: 10px;
+  font-family: "Google Sans";
+  font-size: 26px;
+  margin: 4px;
+  background-color: white;
+  transition: background-color 0.4s ease;
+}
+
+#backButton:hover {
+  background-color: #4285f4;
+  cursor: pointer;
+}
+
+#startNodeNameDiv {
+  width: 40%;
+  min-width: 210px;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding-left: 4px;
+  border: 1px outset black;
+  border-radius: 10px;
+  margin: 4px;
+}
+
+#startNodeHead {
+  width: 150px;
+  height: 100%;
+  float: left;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+  margin-right: 6px;
+  font-family: "Google Sans";
+  font-size: 22px;
+}
+
+#startNodeName {
+  width: calc(100% - 176px);
+  height: fit-content;
+  min-width: 30px;
+  float: left;
+  margin: 4px;
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-family: "Google Sans";
+  font-size: 18px;
+}
+
+
+#statusDiv {
+  width: calc(60% - 432px);
+  min-width: 200px;
+  height: 100%;
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  bottom: 0;
+  right: 0;
+  border: 1px outset black;
+  border-radius: 10px;
+  margin: 4px;
+}
+
+#statusHead {
+  width: 100px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: left;
+  font-family: "Google Sans";
+  font-size: 26px;
+}
+
+#statusContent {
+  width: calc(100% - 100px);
+  min-width: 98px;
+  height: fit-content;
+  float: right;
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-family: "Google Sans";
+  font-size: 18px;
+}
+
+#calculateButton {
+  width: 200px;
+  height: 100%;
+  position: relative;
+  bottom: 0;
+  right: 0;
+  border: 1px outset black;
+  border-radius: 10px;
+  margin: 4px;
+  font-family: "Google Sans";
+  font-size: 26px;
+  background-color: white;
+  color: black;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+#calculateButton:hover {
+  cursor: pointer;
+  background-color: red;
+  transition-property: background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+
+
+#cover {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  animation: coverOnAnimation;
+  animation-duration: 0.15s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease;
+}
+
+@keyframes coverOnAnimation {
+  0% {
+    background-color: rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    background-color: rgba(210, 210, 210, 0.5);
+  }
+}
+
+
+#canvasDiv {
+  width: 850px;
+  height: 450px;
+  padding: 10px;
+  box-shadow: 0px 0px 30px 15px rgba(0, 0, 0, 0.4);
+  border-radius: 15px;
+  animation: menuOnAnimation;
+  animation-duration: 0.7s;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(.44,1.45,.53,.97);
+  background-color: rgba(241, 241, 241, 1);
+}
+
+@keyframes menuOnAnimation {
+  0% {
+    translate: 0px calc(100% + 200px);
+  }
+
+  100% {
+    translate: 0px 0px;
+  }
+}
+
+
+#cancelButton {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: 6px;
+  border: 0px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0);
+  text-align: center;
+  font-family: "Arial Unicode MS";
+  font-size: 45px;
+  font-weight: bold;
+  color: rgba(45, 45, 45, 0.6);
+  transition: color 0.15s ease;
+}
+
+#cancelButton:hover {
+  cursor: pointer;
+  color: rgba(45, 45, 45, 1);
+  transition: color 0.15s ease;
+}
+
+#networkCanvas {
+  width: 850px;
+  height: 425px;
+  position: absolute;
+  bottom: 0px;
+}
+
+#networkTitle {
+  width: 850px;
+  height: 425px;
+  position: absolute;
+  text-align: center;
+  font-family: "Google Sans";
+  font-size: 24px;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F0F0F0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CECECE;
+} 
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A7A7A7;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #606060;
+}
+
