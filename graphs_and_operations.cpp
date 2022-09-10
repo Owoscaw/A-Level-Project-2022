@@ -419,6 +419,17 @@ void Graph::showGraph(){
 //makes a graph that represents the json string parsed to the function
 Graph generateGraph(std::string networkJSON){
 
+	Json::Reader jsonReader;
+	Json::Value jsonRoot;
+
+	bool loadSuccess = jsonReader.parse(networkJSON, jsonRoot, false);
+
+	if(loadSuccess){
+		Json::Value readJSON = jsonRoot; 
+		std::cout << readJSON <<std::endl;
+	}
+	Graph test;
+	return test;
 }
 
 

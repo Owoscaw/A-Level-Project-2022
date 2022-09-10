@@ -663,6 +663,7 @@ function initMap() {
 
       //exporting network as object
       networkJSON = network.toJSON();
+      console.log(JSON.stringify(networkJSON));
 
     }, function(reject){
 
@@ -770,11 +771,6 @@ function getMatrix(toBeArced, nodeArray, network){
 
   //returning the aformentioned promise
   return matrixLoop();
-}
-
-
-export function exportJSON(json){
-  return json;
 }
 
 

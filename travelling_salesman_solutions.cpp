@@ -286,59 +286,59 @@ Bound solve(Graph tempGraph){
 
 
 int main(){
-	Graph Cheddar;
-	Graph hamiltonianTest;
+	// Graph Cheddar;
+	// Graph hamiltonianTest;
 
-	Cheddar.addNode("tesco");
-	Cheddar.addNode("school");
-	Cheddar.addNode("bus station");
-	Cheddar.addNode("wedmore");
-	Cheddar.addNode("easton");
-	Cheddar.addNode("weston");
+	// Cheddar.addNode("tesco");
+	// Cheddar.addNode("school");
+	// Cheddar.addNode("bus station");
+	// Cheddar.addNode("wedmore");
+	// Cheddar.addNode("easton");
+	// Cheddar.addNode("weston");
 
-	hamiltonianTest.addNode("testNode1");
-	hamiltonianTest.addNode("testNode2");
-	hamiltonianTest.addNode("testNode3");
-	hamiltonianTest.addNode("testNode4");
+	// hamiltonianTest.addNode("testNode1");
+	// hamiltonianTest.addNode("testNode2");
+	// hamiltonianTest.addNode("testNode3");
+	// hamiltonianTest.addNode("testNode4");
 
-	arc arc1 = createArc(7, "tesco", "school");
-	arc arc2 = createArc(2, "tesco", "bus station");
-	arc arc3 = createArc(11, "bus station", "school");
-	arc arc4 = createArc(50, "wedmore", "school");
-	arc arc5 = createArc(55, "wedmore", "bus station");
-	arc arc6 = createArc(20, "bus station", "easton");
-	arc arc7 = createArc(5, "wedmore", "tesco");
-	arc arc8 = createArc(500, "weston", "bus station");
+	// arc arc1 = createArc(7, "tesco", "school");
+	// arc arc2 = createArc(2, "tesco", "bus station");
+	// arc arc3 = createArc(11, "bus station", "school");
+	// arc arc4 = createArc(50, "wedmore", "school");
+	// arc arc5 = createArc(55, "wedmore", "bus station");
+	// arc arc6 = createArc(20, "bus station", "easton");
+	// arc arc7 = createArc(5, "wedmore", "tesco");
+	// arc arc8 = createArc(500, "weston", "bus station");
 
-	arc arc9 = createArc(1, "testNode1", "testNode2");
-	arc arc10 = createArc(1, "testNode2", "testNode3");
-	arc arc11 = createArc(1, "testNode3", "testNode4");
-	arc arc12 = createArc(1, "testNode4", "testNode1");
+	// arc arc9 = createArc(1, "testNode1", "testNode2");
+	// arc arc10 = createArc(1, "testNode2", "testNode3");
+	// arc arc11 = createArc(1, "testNode3", "testNode4");
+	// arc arc12 = createArc(1, "testNode4", "testNode1");
 
-	arc arc13 = createArc(445, "weston", "easton");
-	arc arc14 = createArc(330, "wedmore", "weston");
+	// arc arc13 = createArc(445, "weston", "easton");
+	// arc arc14 = createArc(330, "wedmore", "weston");
 
-	Cheddar.addArc(arc1);
-	Cheddar.addArc(arc2);
-	Cheddar.addArc(arc3);
-	Cheddar.addArc(arc4);
-	Cheddar.addArc(arc5);
-	Cheddar.addArc(arc6);
-	Cheddar.addArc(arc7);
-	Cheddar.addArc(arc8);
-	Cheddar.addArc(arc13);
-	Cheddar.addArc(arc14);
+	// Cheddar.addArc(arc1);
+	// Cheddar.addArc(arc2);
+	// Cheddar.addArc(arc3);
+	// Cheddar.addArc(arc4);
+	// Cheddar.addArc(arc5);
+	// Cheddar.addArc(arc6);
+	// Cheddar.addArc(arc7);
+	// Cheddar.addArc(arc8);
+	// Cheddar.addArc(arc13);
+	// Cheddar.addArc(arc14);
 
-	hamiltonianTest.addArc(arc9);
-	hamiltonianTest.addArc(arc10);
-	hamiltonianTest.addArc(arc11);
-	//hamiltonianTest.addArc(arc12);
+	// hamiltonianTest.addArc(arc9);
+	// hamiltonianTest.addArc(arc10);
+	// hamiltonianTest.addArc(arc11);
+	// //hamiltonianTest.addArc(arc12);
 
-	Cheddar.calculateFloyds();
-	Cheddar.showGraph();
+	// Cheddar.calculateFloyds();
+	// Cheddar.showGraph();
 
-	Bound CheddarLowerBound = Cheddar;
-	CheddarLowerBound.calculateLowerBound();
+	// Bound CheddarLowerBound = Cheddar;
+	// CheddarLowerBound.calculateLowerBound();
 	// std::cout<<"LOWER BOUND"<<std::endl;
 	// CheddarLowerBound.showGraph();
 
@@ -356,12 +356,12 @@ int main(){
 	// 	std::cout<<pathIterator<<std::endl;
 	// }
 
-	Bound CheddarOptimalSolution = solve(Cheddar);
-	CheddarOptimalSolution.showGraph();
-	path optimalPath = CheddarOptimalSolution.findPath("tesco");
-	for(auto const& pathIterator: optimalPath.path){
-		std::cout<<pathIterator<<std::endl;
-	}
+	// Bound CheddarOptimalSolution = solve(Cheddar);
+	// CheddarOptimalSolution.showGraph();
+	// path optimalPath = CheddarOptimalSolution.findPath("tesco");
+	// for(auto const& pathIterator: optimalPath.path){
+	// 	std::cout<<pathIterator<<std::endl;
+	// }
 
 	// std::cout<<CheddarLowerBound.weight<<std::endl<<CheddarUpperBound.weight<<std::endl;
 
@@ -372,6 +372,8 @@ int main(){
 	// }
 	// std::cout<<testPath.size()<<std::endl;
 
-	std::system("pause");
+
+	std::string testJSON = R"({"nodes":[{"name":"Node 1","point":{"lat":52.39988994275899,"lng":0.0011801719665527344}},{"name":"Node 2","point":{"lat":52.40117297220236,"lng":-0.003712177276611328}},{"name":"Node 3","point":{"lat":52.400256526406956,"lng":-0.006115436553955078}}],"arcs":[{"node1":"Node 1","node2":"Node 2","weight":1},{"node1":"Node 2","node2":"Node 3","weight":1}],"adjTable":{"Node 1":{"Node 2":1},"Node 2":{"Node 1":1,"Node 3":1},"Node 3":{"Node 2":1}},"weight":2})";
+	Graph test = generateGraph(testJSON);
 	return 0;
 };

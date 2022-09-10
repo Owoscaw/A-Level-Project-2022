@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <iomanip>
 
+#include "jsoncpp/dist/jsoncpp.cpp"
+
 
 struct arc{
 	std::string node1;
@@ -87,7 +89,7 @@ bool compareArcs(const arc &arc1, const arc &arc2);
 
 bool areAdjacent(Graph tempGraph, std::string node1, std::string node2);
 
-Graph findMST(std::string networkJSON);
+Graph generateGraph(std::string networkJSON);
 
 Graph findMST(Graph tempGraph);
 
