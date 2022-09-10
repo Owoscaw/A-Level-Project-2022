@@ -1,7 +1,5 @@
 #include "travelling_salesman_solutions.h"
 
-std::string flag = "test";
-
 //initialises bound to not optimal
 Bound::Bound(const Graph& parentGraph):Graph(parentGraph){
 	std::cout<<"Bound initialised"<<std::endl;

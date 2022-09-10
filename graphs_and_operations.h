@@ -87,6 +87,8 @@ bool compareArcs(const arc &arc1, const arc &arc2);
 
 bool areAdjacent(Graph tempGraph, std::string node1, std::string node2);
 
+Graph findMST(std::string networkJSON);
+
 Graph findMST(Graph tempGraph);
 
 Graph findRMST(Graph tempGraph, std::string nodeName);

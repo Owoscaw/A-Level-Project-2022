@@ -416,6 +416,12 @@ void Graph::showGraph(){
 }
 
 
+//makes a graph that represents the json string parsed to the function
+Graph generateGraph(std::string networkJSON){
+
+}
+
+
 
 //returns a MST of graph using kruskals algorithm
 Graph findMST(Graph tempGraph){

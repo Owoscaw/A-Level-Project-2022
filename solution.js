@@ -5,12 +5,11 @@ let currentMarkers = {};
 let addedNodes = {};
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
 const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"];
+let networkJSON;
 
 
 //on load, initialise the map
 window.onload = initMap;
-
-
 
 
 //used to keep track of nodes and arcs for a given calculate button press
@@ -125,8 +124,9 @@ class Network {
 
     //generating regular polygon to place each node at, and drawing them
     let thetaIncrement = Math.PI*2/this.allNodes.length;
-    let radius = (this.canvas.height - 125)/2;
+    let radius = (this.canvas.height - 75)/2;
     let centre = {x: this.canvas.width/2, y: this.canvas.height/2};
+    let fontSize = Math.floor(28/window.devicePixelRatio);
 
     let nodeXY = {};
     for(var i = 0; i < this.allNodes.length; i++){
@@ -141,7 +141,7 @@ class Network {
       transparentContext.arc(currentX, currentY, 15, 0, 2*Math.PI);
       transparentContext.fill();
 
-      let nodeText = new createjs.Text(this.allNodes[i].name, "28px Google Sans", "#000000");
+      let nodeText = new createjs.Text(this.allNodes[i].name, fontSize + "px Google Sans", "#000000");
       nodeText.textAlign = "center";
       nodeText.textBaseline = "top";
       nodeText.lineWidth = 125;
@@ -232,7 +232,7 @@ function initMap() {
   //listening for a click, this will add the node
   google.maps.event.addListener(map, "click", (event) => {
     
-    if(Object.keys(addedNodes).length < 10){
+    if(Object.keys(currentMarkers).length < 10){
       //call addMarker to add the node to the map
       addNode(event.latLng);
     } else {
@@ -661,34 +661,8 @@ function initMap() {
       //this adjTable will contain the fully loaded information from the getMatrix function
       network.drawTo(document.getElementById("canvasDiv"), "Initial Network");
 
-      //passing data to a JSON file
-      let networkJSON = network.toJSON();
-
-      getData("data").then(function(jsonLoaded){
-
-        //JSON successfully loaded
-        let currentData = jsonLoaded;
-        currentData.solution = networkJSON;
-
-        //writing to JSON file
-        fs.writeFile("./data.json", currentData, (error) => {
-
-          if(error){
-
-            //error happened
-            console.log("error writing to file");
-          } else {
-
-            //successful write
-            console.log("solving...");
-          }
-        })
-
-      }, function(jsonFailed){
-
-        //JSON failed to load
-        console.log(jsonFailed);
-      });
+      //exporting network as object
+      networkJSON = network.toJSON();
 
     }, function(reject){
 
@@ -699,24 +673,6 @@ function initMap() {
 
   });
 }
-
-
-//returns the promise for the two json files
-async function getData(type){
-
-  if(type === "data"){
-    let response = await fetch("./data.json");
-    return await response.json();
-
-  } else if(type === "prevData"){
-    let response = await fetch("./prevData.json");
-    return await response.json();
-
-  } else {
-    return;
-  }
-}
-
 
 
 //updates the status of the page
@@ -814,6 +770,11 @@ function getMatrix(toBeArced, nodeArray, network){
 
   //returning the aformentioned promise
   return matrixLoop();
+}
+
+
+export function exportJSON(json){
+  return json;
 }
 
 
