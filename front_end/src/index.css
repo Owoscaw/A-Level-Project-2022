@@ -81,7 +81,7 @@ html, body {
 }
 
 #listOfNodes:empty:before {
-  content: "Use map to add nodes";
+  content: "Click map to add nodes";
 }
 
 
@@ -437,7 +437,7 @@ html, body {
 }
 
 #startNodeNameDiv {
-  width: 40%;
+  width: 30%;
   min-width: 210px;
   height: 100%;
   position: relative;
@@ -480,9 +480,10 @@ html, body {
 
 
 #statusDiv {
-  width: calc(60% - 432px);
+  width: 40%;
   min-width: 200px;
   height: 100%;
+  float: right;
   position: relative;
   box-sizing: border-box;
   display: flex;
@@ -522,6 +523,7 @@ html, body {
 #calculateButton {
   width: 200px;
   height: 100%;
+  float: right;
   position: relative;
   bottom: 0;
   right: 0;

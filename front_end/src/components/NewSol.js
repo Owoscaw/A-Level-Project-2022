@@ -1,19 +1,35 @@
 import React from "react";
-import {Wrapper, Status} from "@googlemaps/react-wrapper";
+import {useState, useMemo, useRef} from "react";
+import {useJsApiLoader, GoogleMap, Marker} from "@react-google-maps/api";
 //import NewNode from "./NewNode";
-import InitMap from "./InitMap";
+
+let startNode;
+let currentNodes = {};
+let activeNodes = {};
+const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
+const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"]
 
 function NewSol(){
+
+  const {isLoaded} = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws"
+  });
 
   //function to handle back button presses
   function returnToMainMenu(){
     console.log("returning...");
   }
 
+  const [map, setMap] = useState(/** @type google.maps.Map*/null);
+
+  if(!isLoaded){
+    return <div>Loading...</div>;
+  }
+
   return (
   <div id="newSolution">
     <div id="UpperPage">
-      <InitMap latLng={new google.Maps.LatLng(0, 52.4)} zoom={15}/>
+      <Map />
       <div id="nodeMenu">
         <div id="headOfNodes">
           Node Menu
@@ -56,5 +72,26 @@ function NewSol(){
   </div>
   );
 }
+
+function NewNode(props){
+
+}
+
+function Map(props){
+
+  const mapRef = useRef();
+  const mapCenter = useMemo(() => ({lat: 52.4, lng: 0}), []);
+  const mapOptions = useMemo(() => ({
+    disableDefaultUI: true
+  }), []);
+
+  return (
+    <GoogleMap zoom={15} center={mapCenter} id="map" options={mapOptions}>
+
+    </GoogleMap>
+  );
+}
+
+
 
 export default NewSol;
