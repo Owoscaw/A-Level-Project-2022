@@ -1,5 +1,5 @@
 import React from "react";
-import {useState, useMemo, useRef} from "react";
+import {useState, useMemo, useRef, useCallback, Component} from "react";
 import {useJsApiLoader, GoogleMap, Marker} from "@react-google-maps/api";
 //import NewNode from "./NewNode";
 
@@ -7,7 +7,7 @@ let startNode;
 let currentNodes = {};
 let activeNodes = {};
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
-const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"]
+const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"];
 
 function NewSol(){
 
@@ -20,16 +20,16 @@ function NewSol(){
     console.log("returning...");
   }
 
-  const [map, setMap] = useState(/** @type google.maps.Map*/null);
-
   if(!isLoaded){
     return <div>Loading...</div>;
   }
 
+  let newMap = new BetterGoogleMap();
+
   return (
   <div id="newSolution">
     <div id="UpperPage">
-      <Map />
+      {newMap.render()}
       <div id="nodeMenu">
         <div id="headOfNodes">
           Node Menu
@@ -73,23 +73,46 @@ function NewSol(){
   );
 }
 
-function NewNode(props){
 
-}
+class BetterGoogleMap extends React.Component{
 
-function Map(props){
+  state = {
+    markers: []
+  };
 
-  const mapRef = useRef();
-  const mapCenter = useMemo(() => ({lat: 52.4, lng: 0}), []);
-  const mapOptions = useMemo(() => ({
-    disableDefaultUI: true
-  }), []);
+  constructor(){
+    super();
 
-  return (
-    <GoogleMap zoom={15} center={mapCenter} id="map" options={mapOptions}>
+    this.mapCenter = {lat: 52.4, lng: 0};
+    this.nodeIndex = 0;
+    this.mapOptions = {disableDefaultUI: true};
+  }
 
-    </GoogleMap>
-  );
+  addNode(event){
+    const newMarker = {
+      id: this.nodeIndex,
+      latLng: {lat: event.latLng.lat(), lng: event.latLng.lng()}
+    };
+
+    this.setState({
+      markers: [...this.state.markers, newMarker]
+    });
+    
+    this.nodeIndex ++;
+  }
+
+
+  render(){
+    return(
+      <GoogleMap id="map" onClick={this.addNode.bind(this)} center={this.mapCenter} zoom={15} options={this.mapOptions}>
+        {this.state.markers.map(marker => {
+          return (
+            <Marker key={marker.id} location={marker.latLng}/>
+          );
+        })}
+      </GoogleMap>
+    );
+  }
 }
 
 
