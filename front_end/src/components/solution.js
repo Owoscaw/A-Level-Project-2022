@@ -663,7 +663,6 @@ function initMap() {
 
       //exporting network as object
       networkJSON = network.toJSON();
-      console.log(JSON.stringify(networkJSON));
 
     }, function(reject){
 
