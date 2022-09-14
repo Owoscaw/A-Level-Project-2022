@@ -37,6 +37,14 @@ html, body {
   flex-grow: 1;
 }
 
+#mapLoading {
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #nodeMenu {
   width: 400px;
 }
@@ -359,7 +367,9 @@ html, body {
   font-size: 17px;
   font-family: "Google Sans";
   pointer-events: auto;
+  min-width: 10px;
   width: fit-content;
+  max-width: 200px;
   padding-left: 5px;
   padding-right: 5px;
   height: fit-content;

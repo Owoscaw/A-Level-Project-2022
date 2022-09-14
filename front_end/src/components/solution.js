@@ -249,7 +249,7 @@ function initMap() {
     marker;
     isMouseOver;
     isNodeActive;
-    timeout;
+    #timeout;
 
     constructor(point, name, marker){
       super();
