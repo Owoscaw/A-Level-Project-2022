@@ -52,6 +52,16 @@ function BetterMap(props){
         props.activateNode(node);
     };
 
+    const hoverOnNode = (event) => {
+        event.target.className = "HoveredNode";
+        event.target.innerHTML += "<br/>Click to add";
+    };
+
+    const unhoverOnNode = (event) => {
+        event.target.className = "Node";
+        event.target.innerHTML = event.target.innerHTML.slice(0, -17);
+    };
+
 
     if(!isLoaded){
         return (
@@ -60,15 +70,26 @@ function BetterMap(props){
     }
 
     return (
-        <GoogleMap id="map" zoom={15} center={mapCenter} options={mapOptions} onLoad={onMapLoad} onClick={addNodeHandler}>
+        <GoogleMap 
+        id="map" zoom={15} 
+        center={mapCenter} options={mapOptions} 
+        onLoad={onMapLoad} onClick={addNodeHandler}>
             {
                 nodes.map((node) => {
 
-                    let nodeDiv = <div className="Node"><b>{node.name}</b><br/>Click to add</div>;
+                    let nodeDiv = (
+                        <div className="Node" onClick={() => {console.log("node clicked")}} 
+                        ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
+                        onMouseOver={hoverOnNode} onMouseOut={unhoverOnNode}>
+                            <b>{node.name}</b>
+                        </div>);
                     let nodeColour = "rgba(" + googleColours[Math.floor(Math.random()*4)] + "0.5)";
 
                     return (
-                        <OverlayView key={node.id} position={node.marker.position} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET} onLoad={console.log("load")}>
+                        <OverlayView 
+                        key={node.id} position={node.marker.position} 
+                        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET} 
+                        onLoad={console.log("load")}>
                             {nodeDiv}
                         </OverlayView>
                     );
