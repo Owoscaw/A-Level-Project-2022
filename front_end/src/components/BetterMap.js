@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { GoogleMap, useLoadScript, OverlayView } from "@react-google-maps/api";
 
-import "../styles/newSol.css";
+import "../styles/betterMap.css";
 
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
+const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"];
 let nodeIndex = 1;
 
 function BetterMap(props){
@@ -13,12 +14,14 @@ function BetterMap(props){
     });
 
     const mapRef = useRef();
+    const [ nodes, updateNodes ] = useState([]);
     const onMapLoad = useCallback((map) => (mapRef.current = map), []);
     const mapCenter = useMemo(() => ({lat: 52.4, lng: 0}), []);
     const mapOptions = useMemo(() => ({
         disableDefaultUI: true,
         clickableIcons: false
     }), []);
+
 
 
     const addNodeHandler = (event) => {
@@ -32,10 +35,17 @@ function BetterMap(props){
             }
         });
 
-        let newNode = new NodeView("Node " + nodeIndex.toString(), newMarker, mapRef);
+        let newNode = {
+            marker: newMarker,
+            name: "Node " + nodeIndex.toString(),
+            id: nodeIndex
+        };
 
-        props.addNode(newNode);
+        //define this 
+        // let newNode = new NodeView;
         nodeIndex ++;
+        updateNodes(nodes.concat([newNode]));
+        //props.addNode(newNode);
     };
 
     const activateNodeHandler = (node) => {
@@ -51,39 +61,27 @@ function BetterMap(props){
 
     return (
         <GoogleMap id="map" zoom={15} center={mapCenter} options={mapOptions} onLoad={onMapLoad} onClick={addNodeHandler}>
+            {
+                nodes.map((node) => {
+
+                    let nodeDiv = <div className="Node"><b>{node.name}</b><br/>Click to add</div>;
+                    let nodeColour = "rgba(" + googleColours[Math.floor(Math.random()*4)] + "0.5)";
+
+                    return (
+                        <OverlayView key={node.id} position={node.marker.position} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET} onLoad={console.log("load")}>
+                            {nodeDiv}
+                        </OverlayView>
+                    );
+                })
+            }
         </GoogleMap>
     );
 }
 
-class NodeView extends OverlayView {
+// class NodeView extends OverlayView {
 
-    constructor(name, marker, mapRef){
-        super();
 
-        this.name = name;
-        this.marker = marker;
-        this.map = mapRef.current;
-    }
-
-    onAdd(){
-
-        let nodeJSX = <div className="Node">{this.name}</div>;
-
-        this.timer = setTimeout(() => {
-            console.log("deleted!");
-        }, 2000);
-
-        window.google.maps.OverlayView.preventMapHitsFrom(nodeJSX);
-        this.getPanes().overlayMouseTarget.appendChild(nodeJSX);
-        console.log("added");
-    }
-
-    draw(){
-        const overlayProjection = this.getProjection();
-        const centre = overlayProjection.fromLatLngToDivPixel(this.marker.position);
-    }
-
-}
+// }
 
 
 export default BetterMap;

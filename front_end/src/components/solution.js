@@ -313,7 +313,7 @@ function initMap() {
         this.draw();
       });
 
-      google.maps.OverlayView.preventMapHitsFrom(this.div)
+      google.maps.OverlayView.preventMapHitsFrom(this.div);
 
       this.getPanes().overlayMouseTarget.appendChild(this.div);
     }

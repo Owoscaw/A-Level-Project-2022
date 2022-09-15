@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { render } from "react-dom";
 
 import NewSol from "./components/NewSol";
 import MainMenu from "./components/MainMenu";
 import PrevSol from "./components/PrevSol";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+//const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = document.getElementById("root");
 
 class App extends React.Component{
 
@@ -38,5 +40,6 @@ class App extends React.Component{
     }
 }
 
-root.render(<App state={"menu"}/>);
+//root.render(<App state={"menu"}/>);
+render(<App state={"menu"}/>, root);
 

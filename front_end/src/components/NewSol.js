@@ -9,7 +9,6 @@ import "../styles/newSol.css";
 let startNode;
 let currentNodes = [];
 let activeNodes = [];
-const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
 const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"];
 
 function NewSol(props){

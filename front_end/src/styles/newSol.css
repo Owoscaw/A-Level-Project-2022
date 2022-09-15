@@ -32,10 +32,6 @@ html, body {
   display: flex;
 }
 
-#map {
-  height: 100%;
-  flex-grow: 1;
-}
 
 #mapLoading {
   height: 100%;
@@ -355,72 +351,6 @@ html, body {
   transition-property: background-color;
   transition-duration: 0.4s;
   transition-timing-function: ease;
-}
-
-
-.Node {
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 15px;
-  border: 2px solid black;
-  text-align: center;
-  font-size: 17px;
-  font-family: "Google Sans";
-  pointer-events: auto;
-  min-width: 10px;
-  width: fit-content;
-  max-width: 200px;
-  padding-left: 5px;
-  padding-right: 5px;
-  height: fit-content;
-  cursor: pointer;
-  transition-property: background-color;
-  transition-duration: 0.4s;
-  transition-timing-function: ease;
-}
-
-.Node:hover {
-  background-color: rgba(251, 188, 5, 0.5);
-  transition-property: background-color;
-  transition-duration: 0.4s;
-  transition-timing-function: ease;
-}
-
-.ClickedNode {
-  position: absolute;
-  background-color: rgba(251, 188, 5, 0.5);
-  border-radius: 15px;
-  border: 2px solid black;
-  text-align: center;
-  font-size: 17px;
-  font-family: "Google Sans";
-  pointer-events: auto;
-  width: fit-content;
-  max-width: 200px;
-  min-width: 10px;
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-bottom: 2px;
-  height: fit-content;
-  min-height: 10px;
-  cursor: pointer;
-  overflow-x: wrap;
-  overflow-wrap: break-word;
-  transition-property: background-color;
-  transition-duration: 0.4s;
-  transition-timing-function: ease;
-}
-
-.ClickedNode:hover {
-  min-width: 100px;
-  width: fit-content;
-  min-height: 40px;
-  height: fit-content;
-  padding-bottom: 2px;
-}
-
-.ClickedNode:hover::after{
-  content: "Click to remove";
 }
 
 #LowerPage {
