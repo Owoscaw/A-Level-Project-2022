@@ -1,5 +1,6 @@
 import React from "react";
-import { useState } from "react";
+import { useState, Component } from "react";
+import { useTransition, animated } from "react-spring";
 
 
 import NetworkDisplay from "./NetworkDisplay";
@@ -7,13 +8,40 @@ import BetterMap from "./BetterMap";
 import "../styles/newSol.css";
 
 let startNode;
-let currentNodes = [];
-let activeNodes = [];
+let activeNodes = {};
 const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"];
 
 function NewSol(props){
 
+  //states to show nodeMenu and solution cover
   const [ coverIsOn, setCover ] = useState(false);
+  let [ nodesInMenu, updateMenu ] = useState([]);
+
+  //transitions for node menu
+  const nodeTransition = useTransition(nodesInMenu, {
+    from: {
+      left: "-110%",
+      height: 100,
+      paddingTop: 2,
+      paddingBottom: 2
+    },
+    enter: {
+      left: "0%",
+      height: 100,
+      paddingTop: 2,
+      paddingBottom: 2
+    },
+    leave: node => async (next, cancel) => {
+      await next({
+        left: "110%"
+      })
+      await next({
+        height: 0,
+        paddingTop: 0,
+        paddingBottom: 0
+      })
+    }
+  });
 
   const calculateSol = () => {
     setCover(true);
@@ -23,26 +51,55 @@ function NewSol(props){
     setCover(false);
   };
 
+  //reference to the function used to delete and rename a marker/overlay from the map
+  const deleteChildNode = React.useRef(null);
+  const renameChildNode = React.useRef(null);
+
+  //called from betterMap when a node is included in the solution
   const activateNode = (node) => {
-    activeNodes.push(node);
-    console.log("node activated");
+    activeNodes[node.name] = node;
+    updateMenu(prevState => prevState.concat([node]));
   };
 
-  const addNode = (node) => {
-    currentNodes.push(node);
-    console.log(currentNodes);
+  //opposite of above
+  const deactivateNode = (node) => {
+    deleteChildNode.current(node);
+    delete activeNodes[node.name];
+
+    updateMenu(prevState => prevState.filter(entr => (entr.name !== node.name)));
+  }
+
+  const renameNode = (node, newName) => {
+    let renamedNode = renameChildNode.current(node, newName);
+
+    //this works, but completely re-renders element...
+    updateMenu(prevState => prevState.map(entr => (entr.name === node.name ? renamedNode : entr)));
+    return renamedNode;
   };
 
   return (
     <div id="newSolution">
       <div id="UpperPage">
-        <BetterMap addNode={addNode} activateNode={activateNode} />
+        <BetterMap activateNode={activateNode} deactivateNode={deactivateNode} 
+        deleteChildNode={deleteChildNode} renameChildNode={renameChildNode}/>
         <div id="nodeMenu">
           <div id="headOfNodes">
             Node Menu
           </div>
           <div id="divOfNodes">
-            <ul id="listOfNodes"></ul>
+            <ul id="listOfNodes">
+              {
+                nodeTransition((styles, node) => {
+                 return <NodeInList node={node} divStyle={{
+                  left: styles.left
+                 }} liStyle={{
+                  height: styles.height,
+                  paddingTop: styles.paddingTop,
+                  paddingBottom: styles.paddingBottom
+                 }} deleteHandler={deactivateNode} renameHandler={renameNode}/>;
+                })
+              }
+            </ul>
           </div>
         </div>
       </div>
@@ -50,37 +107,72 @@ function NewSol(props){
       <div id="LowerPage">
         <input id="backButton" type="button" value="Back" onClick={() => props.changeScreen("menu")}/>
 
-        <div id="startNodeNameDiv">
-          <div id="startNodeHead">
-            Starting Node:
-          </div>
-          <div id="startNodeName">
-            None
-          </div>
-        </div>
-
-        <div id="statusDiv">
-          <div id="statusHead">
-            Status:
-          </div>
-          <div id="statusContent">
-            Add more than two nodes
-          </div>
-        </div>
-
         <input id="calculateButton" type="button" value="Calculate" onClick={calculateSol}/>
       </div>
 
       {coverIsOn ? <NetworkDisplay onCancel={cancelSol}/> : null}
 
-      <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws" defer></script>
       <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
     </div>
   );
 }
 
 
+//custom component to represent a node in the node menu
+class NodeInList extends Component {
 
+  constructor(props){
+    super();
+
+    this.state = {
+      name: props.node.name,
+      node: props.node
+    };
+
+    this.divStyle = props.divStyle;
+    this.liStyle = props.liStyle;
+    this.deleteHandler = props.deleteHandler.bind(this);
+    this.renameHandler = props.renameHandler.bind(this);
+    this.keyPress = this.keyPress.bind(this);
+  }
+
+
+  keyPress(event){
+    if(event.key !== "Enter"){
+      return;
+    }
+    event.target.blur();
+
+    let renamedNode = this.renameHandler(this.state.node, this.state.name);
+    this.setState({
+      name: renamedNode.name,
+      node: renamedNode
+    });
+  }
+
+
+  render(){
+
+    return (
+      <animated.li key={this.state.node.name} style={this.liStyle}>
+        <animated.div className="NodeInList" style={this.divStyle}>
+          <div className="NameDiv">{this.state.node.name}</div>
+          <input className="RemovalButton" type="button" value="Remove Node"
+          onClick={() => {this.deleteHandler(this.state.node);}}/>
+          <div className="LatLngDiv">
+            {this.state.node.lat.toFixed(8).toString() + ", " + this.state.node.lng.toFixed(8).toString()}
+          </div>
+          <div className="RenameButtonDiv">
+            <input className="TextBox" type="text" maxLength="30" 
+            onChange={event => this.setState({...this.state, name: event.target.value})}
+            onKeyDown={event => this.keyPress(event)} onBlur={event => {event.target.value = "";}}/>
+            <div className="ButtonTextDiv">Rename Node</div>
+          </div>
+        </animated.div>
+      </animated.li>
+    );
+  }
+}
 
 
 export default NewSol;

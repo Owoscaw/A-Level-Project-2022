@@ -9,90 +9,41 @@
 .Node {
     position: absolute;
     box-sizing: border-box;
-    min-width: 110px;
-    width: fit-content;
-    max-width: 200px;
-    height: fit-content;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 15px;
-    border: 2px solid black;
-    padding-left: 5px;
-    padding-right: 5px;
-    overflow-wrap: break-word;
-    text-align: center;
-    font-size: 17px;
-    font-family: "Google Sans";
-    pointer-events: auto;
-    cursor: pointer;
-    left: 0;
-    bottom: 0;
-    translate: -50% -50px;
-    transition-property: background-color;
-    transition-duration: 0.2s;
-    transition-timing-function: ease;
-}
-  
-.HoveredNode {
-    position: absolute;
-    box-sizing: border-box;
-    min-width: 110px;
-    width: fit-content;
-    max-width: 200px;
-    height: fit-content;
-    border-radius: 15px;
-    border: 2px solid black;
-    padding-left: 5px;
-    padding-right: 5px;
-    overflow-wrap: break-word;
-    text-align: center;
-    font-size: 17px;
-    font-family: "Google Sans";
-    pointer-events: auto;
-    cursor: pointer;
-    left: 0;
-    bottom: 0;
-    translate: -50% -50px;
-    background-color:rgba(255, 255, 255, 0.5);
-    transition-property: background-color;
-    transition-duration: 0.2s;
-    transition-timing-function: ease;
-}
-  
-.ClickedNode {
-    position: absolute;
-    background-color: rgba(251, 188, 5, 0.5);
-    box-sizing: border-box;
-    border-radius: 15px;
-    border: 2px solid black;
-    text-align: center;
-    font-size: 17px;
-    font-family: "Google Sans";
-    pointer-events: auto;
-    width: fit-content;
-    max-width: 200px;
     min-width: 10px;
+    width: fit-content;
+    max-width: 150px;
+    height: fit-content;
+    border-radius: 15px;
+    border: 2px solid black;
     padding-left: 5px;
     padding-right: 5px;
-    padding-bottom: 2px;
-    height: fit-content;
-    min-height: 10px;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 17px;
+    font-family: "Google Sans";
+    pointer-events: auto;
     cursor: pointer;
-    overflow-x: wrap;
-    overflow-wrap: break-word;
+    left: 0;
+    bottom: 0;
+    translate: -50% -50px;
+    background-color: rgba(255, 255, 255, 0.5);
     transition-property: background-color;
-    transition-duration: 0.4s;
+    transition-duration: 0.2s;
     transition-timing-function: ease;
 }
   
-.ClickedNode:hover {
-    min-width: 100px;
-    width: fit-content;
-    min-height: 40px;
-    height: fit-content;
-    padding-bottom: 2px;
+
+/* style the classes below as desired */
+.Hovered {
+    opacity: 0.9;
+}
+  
+.Clicked {
+    opacity: 0.8;
 }
 
-.ClickedNode:hover::after{
-    content: "Click to remove";
+.HoveredClicked {
+    opacity: 0.7;
 }
-
+  
+  
