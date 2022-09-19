@@ -49,12 +49,14 @@ function BetterMap(props){
 
     //renames a node on the map
     const renameNode = (node, newName) => {
-        console.log(node, newName);
-
+        
         let renamedNode = {
             ...node,
             name: newName
         };
+
+        delete usedNames[node.name];
+        usedNames[newName] = true;
 
         updateNodes(prevState => prevState.map(entr => (entr.name === node.name ? renamedNode : entr)));
         return renamedNode;

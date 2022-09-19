@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, Component } from "react";
+import { useState, Component, useRef } from "react";
 import { useTransition, animated } from "react-spring";
 
 
@@ -52,28 +52,33 @@ function NewSol(props){
   };
 
   //reference to the function used to delete and rename a marker/overlay from the map
-  const deleteChildNode = React.useRef(null);
-  const renameChildNode = React.useRef(null);
+  const deleteChildNode = useRef(null);
+  const renameChildNode = useRef(null);
 
   //called from betterMap when a node is included in the solution
   const activateNode = (node) => {
     activeNodes[node.name] = node;
-    updateMenu(prevState => prevState.concat([node]));
+    updateMenu([...nodesInMenu, node]);
   };
 
   //opposite of above
   const deactivateNode = (node) => {
     deleteChildNode.current(node);
     delete activeNodes[node.name];
-
-    updateMenu(prevState => prevState.filter(entr => (entr.name !== node.name)));
-  }
+ 
+    updateMenu(prevState => (prevState.filter(entr => (entr.name !== node.name))));
+  };
 
   const renameNode = (node, newName) => {
-    let renamedNode = renameChildNode.current(node, newName);
+    let renamedNode = renameChildNode.current(node, newName); 
 
-    //this works, but completely re-renders element...
-    updateMenu(prevState => prevState.map(entr => (entr.name === node.name ? renamedNode : entr)));
+    updateMenu(prevState => prevState.map(entr => {
+      if(entr.name === node.name){
+        entr.name = newName;
+      }
+      return entr;
+    }));
+
     return renamedNode;
   };
 
@@ -90,13 +95,15 @@ function NewSol(props){
             <ul id="listOfNodes">
               {
                 nodeTransition((styles, node) => {
-                 return <NodeInList node={node} divStyle={{
-                  left: styles.left
-                 }} liStyle={{
-                  height: styles.height,
-                  paddingTop: styles.paddingTop,
-                  paddingBottom: styles.paddingBottom
-                 }} deleteHandler={deactivateNode} renameHandler={renameNode}/>;
+                  return (
+                    <NodeInList node={node} divStyle={{
+                      left: styles.left
+                      }} liStyle={{
+                      height: styles.height,
+                      paddingTop: styles.paddingTop,
+                      paddingBottom: styles.paddingBottom
+                      }} deleteHandler={deactivateNode} renameHandler={renameNode}/>
+                  );
                 })
               }
             </ul>
@@ -126,7 +133,7 @@ class NodeInList extends Component {
 
     this.state = {
       name: props.node.name,
-      node: props.node
+      node: props.node,
     };
 
     this.divStyle = props.divStyle;
