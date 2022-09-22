@@ -105,6 +105,7 @@ function BetterMap(props){
             url: possibleIcons[Math.floor(Math.random()*3)],
             scaledSize: new window.google.maps.Size(50, 50),
             name: "Node " + nodeIndex.toString(),
+            label: "Node " + nodeIndex.toString(),
             timeout: null,
             colour: "rgba(" + googleColours[Math.floor(Math.random()*4)] + ", 0.5)",
             active: false
@@ -185,6 +186,8 @@ class NodeVerlay extends Component{
         this.clickNode = props.clickNode.bind(this);
     }
 
+
+    //changing style of node based on hover and activeness
     setHover(){
         this.setState(prevState => ({
             ...prevState,

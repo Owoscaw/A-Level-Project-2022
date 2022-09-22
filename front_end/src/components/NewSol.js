@@ -1,6 +1,7 @@
-import React from "react";
-import { useState, Component, useRef } from "react";
+import React, { useState, Component, useRef } from "react";
 import { useTransition, animated } from "react-spring";
+import Select from "react-select";
+
 
 
 import NetworkDisplay from "./NetworkDisplay";
@@ -71,10 +72,13 @@ function NewSol(props){
 
   const renameNode = (node, newName) => {
     let renamedNode = renameChildNode.current(node, newName); 
+    delete activeNodes[node.name];
+    activeNodes[newName] = renamedNode;
 
     updateMenu(prevState => prevState.map(entr => {
       if(entr.name === node.name){
         entr.name = newName;
+        entr.label = newName;
       }
       return entr;
     }));
@@ -112,9 +116,17 @@ function NewSol(props){
       </div>
 
       <div id="LowerPage">
-        <input id="backButton" type="button" value="Back" onClick={() => props.changeScreen("menu")}/>
+        <input id="backButton" className="LowerMenuButton" type="button" value="Back" onClick={() => props.changeScreen("menu")}/>
 
-        <input id="calculateButton" type="button" value="Calculate" onClick={calculateSol}/>
+        <div id="startNodeDiv" className="LowerMenuButton">
+          Starting node: 
+          <div id="startNodeMenu">
+              <Select options={nodesInMenu}
+              className="StartNodeSelect"/>
+          </div>
+        </div>
+
+        <input id="calculateButton" className="LowerMenuButton" type="button" value="Calculate" onClick={calculateSol}/>
       </div>
 
       {coverIsOn ? <NetworkDisplay onCancel={cancelSol}/> : null}
@@ -123,6 +135,7 @@ function NewSol(props){
     </div>
   );
 }
+
 
 
 //custom component to represent a node in the node menu
@@ -134,6 +147,9 @@ class NodeInList extends Component {
     this.state = {
       name: props.node.name,
       node: props.node,
+      divFocused: false,
+      nameUsed: false,
+      isStartNode: false
     };
 
     this.divStyle = props.divStyle;
@@ -141,19 +157,63 @@ class NodeInList extends Component {
     this.deleteHandler = props.deleteHandler.bind(this);
     this.renameHandler = props.renameHandler.bind(this);
     this.keyPress = this.keyPress.bind(this);
+    this.divFocusHandler = this.divFocusHandler.bind(this);
+    this.divBlurHandler = this.divBlurHandler.bind(this);
+    this.inputChecker = this.inputChecker.bind(this);
+  }
+
+  inputChecker(nameInput){
+
+    if((nameInput in activeNodes) || (`\`!@#$%^&*()_+-=[]{};':"\\|<>/?~`.split('').some(char => (nameInput.includes(char))))){
+      return false;
+    }
+
+    return true;
   }
 
 
   keyPress(event){
+
     if(event.key !== "Enter"){
       return;
+    } else if(!this.inputChecker(this.state.name.trim().replace(/\s+/g, " "))){
+      event.target.blur();
+      this.setState({
+        ...this.state,
+        divFocused: false,
+        nameUsed: true
+      });
+
+      return;
     }
+
     event.target.blur();
 
-    let renamedNode = this.renameHandler(this.state.node, this.state.name);
+    let renamedNode = this.renameHandler(this.state.node, this.state.name.trim().replace(/\s+/g, " "));
     this.setState({
+      ...this.state,
       name: renamedNode.name,
-      node: renamedNode
+      node: renamedNode,
+      divFocused: false,
+      nameUsed: false
+    });
+  }
+
+
+  divFocusHandler(){
+    this.setState({
+      ...this.state,
+      divFocused: true,
+      nameUsed: false
+    });
+  }
+
+  divBlurHandler(event){
+    event.target.value = "";
+    this.setState({
+      ...this.state,
+      divFocused: false,
+      nameUsed: false
     });
   }
 
@@ -172,8 +232,9 @@ class NodeInList extends Component {
           <div className="RenameButtonDiv">
             <input className="TextBox" type="text" maxLength="30" 
             onChange={event => this.setState({...this.state, name: event.target.value})}
-            onKeyDown={event => this.keyPress(event)} onBlur={event => {event.target.value = "";}}/>
-            <div className="ButtonTextDiv">Rename Node</div>
+            onKeyDown={event => this.keyPress(event)} 
+            onBlur={event => this.divBlurHandler(event)} onFocus={this.divFocusHandler}/>
+            <div className={this.state.divFocused ? "TextButtonDiv" : "ButtonTextDiv"}>{this.state.nameUsed ? "Invalid Name" : "Rename Node"}</div>
           </div>
         </animated.div>
       </animated.li>

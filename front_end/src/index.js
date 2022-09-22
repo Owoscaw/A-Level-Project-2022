@@ -6,6 +6,7 @@ import NewSol from "./components/NewSol";
 import MainMenu from "./components/MainMenu";
 import PrevSol from "./components/PrevSol";
 
+//doing it the react 17 way because react 18 rendering breaks OverlayView
 //const root = ReactDOM.createRoot(document.getElementById("root"));
 const root = document.getElementById("root");
 
