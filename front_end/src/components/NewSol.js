@@ -16,7 +16,8 @@ function NewSol(props){
 
   //states to show nodeMenu and solution cover
   const [ coverIsOn, setCover ] = useState(false);
-  let [ nodesInMenu, updateMenu ] = useState([]);
+  const [ nodesInMenu, updateMenu ] = useState([]);
+  const selectRef = useRef();
 
   //transitions for node menu
   const nodeTransition = useTransition(nodesInMenu, {
@@ -68,6 +69,10 @@ function NewSol(props){
     delete activeNodes[node.name];
  
     updateMenu(prevState => (prevState.filter(entr => (entr.name !== node.name))));
+
+    if(startNode.name === node.name){
+      selectRef.current.clearValue();
+    }
   };
 
   const renameNode = (node, newName) => {
@@ -84,6 +89,22 @@ function NewSol(props){
     }));
 
     return renamedNode;
+  };
+
+
+  const activateStartNode = (event) => {
+    startNode = event;
+  };
+
+  const selectStyles = {
+    menu: (styles, state) => ({
+      ...styles,
+      border: "2px solid red"
+    }),
+    control: (styles) => ({...styles}),
+    option: (styles) => {
+      return {...styles, backgroundColor: "blue"};
+    }
   };
 
   return (
@@ -121,8 +142,8 @@ function NewSol(props){
         <div id="startNodeDiv" className="LowerMenuButton">
           Starting node: 
           <div id="startNodeMenu">
-              <Select options={nodesInMenu}
-              className="StartNodeSelect"/>
+              <Select options={nodesInMenu} ref={selectRef} onChange={(event) => activateStartNode(event)}
+              className="StartNodeSelect" styles={selectStyles}/>
           </div>
         </div>
 

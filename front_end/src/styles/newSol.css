@@ -294,7 +294,8 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
+  font-size: 18px;
+  color: black;
 }
 
 #calculateButton {
