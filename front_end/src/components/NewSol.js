@@ -99,12 +99,42 @@ function NewSol(props){
   const selectStyles = {
     menu: (styles, state) => ({
       ...styles,
-      border: "2px solid red"
+      minWidth: "150px",
+      width: "calc(100% - 20px)",
+      maxWidth: "400px",
+      border: "1px solid black",
+      boxShadow: "0px 0px 2px 2px rgba(0, 0, 0, 0.2)",
+
+      '&:hover': {
+        cursor: "default"
+      }
     }),
-    control: (styles) => ({...styles}),
-    option: (styles) => {
-      return {...styles, backgroundColor: "blue"};
-    }
+    control: (styles, state) =>({
+      ...styles,
+      minWidth: "150px",
+      width: "100%",
+      maxWidth: "400px",
+      height: "80%",
+      float: "right",
+      margin: "4px",
+      border: "1px solid black",
+      borderRadius: "5px",
+      boxShadow: "none",
+
+      '&:hover': {
+        cursor: state.isFocused ? "default" : "pointer"
+      }
+    }),
+    option: (styles) => ({
+      ...styles,
+      backgroundColor: "white",
+      color: "black",
+
+      '&:hover': {
+        cursor: "pointer",
+        backgroundColor: "rgba(210, 210, 210, 0.5)"
+      }
+    })
   };
 
   return (
@@ -143,7 +173,7 @@ function NewSol(props){
           Starting node: 
           <div id="startNodeMenu">
               <Select options={nodesInMenu} ref={selectRef} onChange={(event) => activateStartNode(event)}
-              className="StartNodeSelect" styles={selectStyles}/>
+              styles={selectStyles} id="selectControl"/>
           </div>
         </div>
 
