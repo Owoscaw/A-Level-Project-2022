@@ -1,5 +1,4 @@
-import React, { useState, Component, useRef } from "react";
-import { useTransition, animated } from "react-spring";
+import React, { useState, Component, useRef, useEffect } from "react";
 import Select from "react-select";
 
 
@@ -19,32 +18,6 @@ function NewSol(props){
   const [ nodesInMenu, updateMenu ] = useState([]);
   const selectRef = useRef();
 
-  //transitions for node menu
-  const nodeTransition = useTransition(nodesInMenu, {
-    from: {
-      left: "-110%",
-      height: 100,
-      paddingTop: 2,
-      paddingBottom: 2
-    },
-    enter: {
-      left: "0%",
-      height: 100,
-      paddingTop: 2,
-      paddingBottom: 2
-    },
-    leave: node => async (next, cancel) => {
-      await next({
-        left: "110%"
-      })
-      await next({
-        height: 0,
-        paddingTop: 0,
-        paddingBottom: 0
-      })
-    }
-  });
-
   const calculateSol = () => {
     setCover(true);
   };
@@ -60,7 +33,7 @@ function NewSol(props){
   //called from betterMap when a node is included in the solution
   const activateNode = (node) => {
     activeNodes[node.name] = node;
-    updateMenu([...nodesInMenu, node]);
+    updateMenu(prevState => ([...prevState, node]));
   };
 
   //opposite of above
@@ -70,8 +43,10 @@ function NewSol(props){
  
     updateMenu(prevState => (prevState.filter(entr => (entr.name !== node.name))));
 
-    if(startNode.name === node.name){
-      selectRef.current.clearValue();
+    if(typeof startNode !== "undefined"){
+      if(startNode.name === node.name){
+        selectRef.current.clearValue();
+      }
     }
   };
 
@@ -103,11 +78,18 @@ function NewSol(props){
       width: "calc(100% - 20px)",
       maxWidth: "400px",
       border: "1px solid black",
-      boxShadow: "0px 0px 2px 2px rgba(0, 0, 0, 0.2)",
+      borderRadius: "5px",
+      overflow: "hidden",
+      marginTop: 0,
 
       '&:hover': {
         cursor: "default"
-      }
+      },
+    }),
+    menuList: (styles, state) => ({
+      ...styles,
+      paddingTop: 0,
+      paddingBottom: 0
     }),
     control: (styles, state) =>({
       ...styles,
@@ -120,15 +102,30 @@ function NewSol(props){
       border: "1px solid black",
       borderRadius: "5px",
       boxShadow: "none",
+      transition: "background-color 0.2s ease",
 
       '&:hover': {
-        cursor: state.isFocused ? "default" : "pointer"
+        border: "1px solid black",
+        cursor: state.selectProps.menuIsOpen ? "default" : "pointer",
+        backgroundColor: state.selectProps.menuIsOpen ? "white" : "rgba(210, 210, 210, 0.2)"
+      }
+    }),
+    dropdownIndicator: (styles, state) => ({
+      ...styles,
+      transform: state.selectProps.menuIsOpen ? "rotate(90deg)" : null,
+      transition: "transform 0.1s ease, color 0.3s ease",
+
+      '&:hover': {
+        color: "rgb(45, 45, 45)",
+        cursor: "pointer"
       }
     }),
     option: (styles) => ({
       ...styles,
       backgroundColor: "white",
       color: "black",
+      height: "fit-content",
+      transition: "background-color 0.2s ease",
 
       '&:hover': {
         cursor: "pointer",
@@ -149,15 +146,9 @@ function NewSol(props){
           <div id="divOfNodes">
             <ul id="listOfNodes">
               {
-                nodeTransition((styles, node) => {
+                nodesInMenu.map((node) => {
                   return (
-                    <NodeInList node={node} divStyle={{
-                      left: styles.left
-                      }} liStyle={{
-                      height: styles.height,
-                      paddingTop: styles.paddingTop,
-                      paddingBottom: styles.paddingBottom
-                      }} deleteHandler={deactivateNode} renameHandler={renameNode}/>
+                    <NodeInList key={node.name} node={node} deleteHandler={deactivateNode} renameHandler={renameNode}/>
                   );
                 })
               }
@@ -173,7 +164,8 @@ function NewSol(props){
           Starting node: 
           <div id="startNodeMenu">
               <Select options={nodesInMenu} ref={selectRef} onChange={(event) => activateStartNode(event)}
-              styles={selectStyles} id="selectControl"/>
+              styles={selectStyles} id="selectControl" menuPlacement="bottom" 
+              noOptionsMessage={() => ("No nodes?")} placeholder="Select node"/>
           </div>
         </div>
 
@@ -203,8 +195,6 @@ class NodeInList extends Component {
       isStartNode: false
     };
 
-    this.divStyle = props.divStyle;
-    this.liStyle = props.liStyle;
     this.deleteHandler = props.deleteHandler.bind(this);
     this.renameHandler = props.renameHandler.bind(this);
     this.keyPress = this.keyPress.bind(this);
@@ -272,8 +262,8 @@ class NodeInList extends Component {
   render(){
 
     return (
-      <animated.li key={this.state.node.name} style={this.liStyle}>
-        <animated.div className="NodeInList" style={this.divStyle}>
+      <li>
+        <div className="NodeInList">
           <div className="NameDiv">{this.state.node.name}</div>
           <input className="RemovalButton" type="button" value="Remove Node"
           onClick={() => {this.deleteHandler(this.state.node);}}/>
@@ -287,8 +277,8 @@ class NodeInList extends Component {
             onBlur={event => this.divBlurHandler(event)} onFocus={this.divFocusHandler}/>
             <div className={this.state.divFocused ? "TextButtonDiv" : "ButtonTextDiv"}>{this.state.nameUsed ? "Invalid Name" : "Rename Node"}</div>
           </div>
-        </animated.div>
-      </animated.li>
+        </div>
+      </li>
     );
   }
 }

@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "algorithm": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/front_end/node_modules/react-spring/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/hermes/instrumentation"
 }

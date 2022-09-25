@@ -32,10 +32,10 @@ function BetterMap(props){
     //so we can access the functions to remove/rename a node from the menu from newSol
     React.useEffect(() => {
         props.deleteChildNode.current = deleteNode;
-    });
+    }, []);
     React.useEffect(() => {
         props.renameChildNode.current = renameNode;
-    });
+    }, []);
 
 
     //re-rendering without the deleted node, auditing usedNames
@@ -113,13 +113,12 @@ function BetterMap(props){
 
         //re-rending with new node included
         usedNames[newNode.name] = true;
-        updateNodes(prevState => prevState.concat([newNode]));
+        updateNodes(prevState => ([...prevState, newNode]));
     };
 
 
     //adds a node to the menu, signifies that it has been included in the solution
     const nodeClickHandler = (node) => {
-
         if(node.active){
             node.active = false;
             props.deactivateNode(node);

@@ -277,22 +277,26 @@ html, body {
   align-items: center;
   padding-left: 8px;
   font-size: 22px;
+  cursor: default;
 }
 
 #startNodeMenu {
   width: fit-content;
+  max-width: 400px;
   height: 100%;
   display: flex;
   align-items: center;
 }
 
 #selectControl {
+  min-width: 190px;
   width: fit-content;
   max-width: 400px;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 10px;
   font-size: 18px;
   color: black;
 }
