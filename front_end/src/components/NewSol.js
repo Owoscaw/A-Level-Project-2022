@@ -17,6 +17,7 @@ function NewSol(props){
   const [ coverIsOn, setCover ] = useState(false);
   const [ nodesInMenu, updateMenu ] = useState([]);
   const selectRef = useRef();
+  const selectDivRef = useRef();
 
   const calculateSol = () => {
     setCover(true);
@@ -71,68 +72,83 @@ function NewSol(props){
     startNode = event;
   };
 
-  const selectStyles = {
-    menu: (styles, state) => ({
-      ...styles,
-      minWidth: "150px",
-      width: "calc(100% - 20px)",
-      maxWidth: "400px",
-      border: "1px solid black",
-      borderRadius: "5px",
-      overflow: "hidden",
-      marginTop: 0,
-
-      '&:hover': {
-        cursor: "default"
-      },
-    }),
-    menuList: (styles, state) => ({
-      ...styles,
-      paddingTop: 0,
-      paddingBottom: 0
-    }),
-    control: (styles, state) =>({
+  const customStyles = {
+    control: (styles, state) => ({
       ...styles,
       minWidth: "150px",
       width: "100%",
-      maxWidth: "400px",
-      height: "80%",
-      float: "right",
+      maxWidth: "inherit",
+      height: "100%",
       margin: "4px",
       border: "1px solid black",
+      borderBottom: state.selectProps.menuIsOpen ? "1px solid rgba(210, 210, 210, 0.5)" : "1px solid black",
       borderRadius: "5px",
+      borderBottomLeftRadius: state.selectProps.menuIsOpen ? "0px" : "5px",
+      borderBottomRightRadius: state.selectProps.menuIsOpen ? "0px" : "5px",
+      backgroundColor: "white",
       boxShadow: "none",
       transition: "background-color 0.2s ease",
 
       '&:hover': {
         border: "1px solid black",
+        backgroundColor: "rgba(210, 210, 210, 0.5)",
         cursor: state.selectProps.menuIsOpen ? "default" : "pointer",
-        backgroundColor: state.selectProps.menuIsOpen ? "white" : "rgba(210, 210, 210, 0.2)"
+        borderBottom: state.selectProps.menuIsOpen ? "1px solid rgba(210, 210, 210, 0.5)" : "1px solid black"
       }
     }),
     dropdownIndicator: (styles, state) => ({
       ...styles,
-      transform: state.selectProps.menuIsOpen ? "rotate(90deg)" : null,
+      color: "rgba(45, 45, 45, 0.5)",
+      transform: state.selectProps.menuIsOpen ? "rotate(90deg)" : "none",
       transition: "transform 0.1s ease, color 0.3s ease",
 
       '&:hover': {
-        color: "rgb(45, 45, 45)",
+        color: "rgba(45, 45, 45, 1)",
         cursor: "pointer"
       }
     }),
-    option: (styles) => ({
+    menu: (styles, state) => ({
+      ...styles,
+      minWidth: "150px",
+      width: "calc(100% - 8px)",
+      maxWidth: "inherit",
+      border: "1px solid black",
+      borderTopLeftRadius: "0px",
+      borderTopRightRadius: "0px",
+      borderTop: "0px solid black",
+      borderRadius: "5px",
+      overflow: "hidden",
+      marginTop: "0px",
+      boxShadow: "none",
+
+      '&:hover': {
+        cursor: "default"
+      }
+    }),
+    menuList: (styles) => ({
+      ...styles,
+      paddingTop: "0px",
+      paddingBottom: "0px"
+    }),
+    option: (styles, state) => ({
       ...styles,
       backgroundColor: "white",
-      color: "black",
+      color: "#969696",
       height: "fit-content",
       transition: "background-color 0.2s ease",
 
       '&:hover': {
         cursor: "pointer",
+        color: "rgba(" + state.data.colour + ", 1)",
+        fontWeight: "bold",
         backgroundColor: "rgba(210, 210, 210, 0.5)"
       }
+    }),
+    valueContainer: (styles) => ({
+      ...styles,
+      
     })
-  };
+  }
 
   return (
     <div id="newSolution">
@@ -162,14 +178,16 @@ function NewSol(props){
 
         <div id="startNodeDiv" className="LowerMenuButton">
           Starting node: 
-          <div id="startNodeMenu">
-              <Select options={nodesInMenu} ref={selectRef} onChange={(event) => activateStartNode(event)}
-              styles={selectStyles} id="selectControl" menuPlacement="bottom" 
-              noOptionsMessage={() => ("No nodes?")} placeholder="Select node"/>
-          </div>
+          <Select options={nodesInMenu} ref={selectRef} onChange={(event) => activateStartNode(event)}
+          className="react-select__container" styles={customStyles} menuPlacement="bottom"
+          noOptionsMessage={() => ("No nodes?")} placeholder="Select node" maxMenuHeight={150}/>
         </div>
 
         <input id="calculateButton" className="LowerMenuButton" type="button" value="Calculate" onClick={calculateSol}/>
+      </div>
+
+      <div id="SolutionOptions">
+        <h1>Options:</h1>
       </div>
 
       {coverIsOn ? <NetworkDisplay onCancel={cancelSol}/> : null}

@@ -26,6 +26,11 @@ html, body {
   padding: 0;
 }
 
+h1 {
+  font-family: "Google Sans";
+  font-size: xx-large;
+}
+
 #UpperPage {
   height: 80%;
   width: 100%;
@@ -280,19 +285,11 @@ html, body {
   cursor: default;
 }
 
-#startNodeMenu {
-  width: fit-content;
-  max-width: 400px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-#selectControl {
+.react-select__container {
   min-width: 190px;
   width: fit-content;
   max-width: 400px;
-  height: 100%;
+  height: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -312,6 +309,15 @@ html, body {
   cursor: pointer;
   background-color: red;
 }
+
+
+#SolutionOptions {
+  width: 100%;
+  height: 300px;
+  float: left;
+  margin-top: 10px;
+}
+
 
 
 #cover {
@@ -405,7 +411,6 @@ html, body {
   font-weight: bold;
   pointer-events: none;
 }
-
 
 
 ::-webkit-scrollbar {

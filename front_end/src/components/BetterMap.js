@@ -32,10 +32,10 @@ function BetterMap(props){
     //so we can access the functions to remove/rename a node from the menu from newSol
     React.useEffect(() => {
         props.deleteChildNode.current = deleteNode;
-    }, []);
+    });
     React.useEffect(() => {
         props.renameChildNode.current = renameNode;
-    }, []);
+    });
 
 
     //re-rendering without the deleted node, auditing usedNames
@@ -52,7 +52,8 @@ function BetterMap(props){
         
         let renamedNode = {
             ...node,
-            name: newName
+            name: newName,
+            label: newName
         };
 
         delete usedNames[node.name];
@@ -107,7 +108,7 @@ function BetterMap(props){
             name: "Node " + nodeIndex.toString(),
             label: "Node " + nodeIndex.toString(),
             timeout: null,
-            colour: "rgba(" + googleColours[Math.floor(Math.random()*4)] + ", 0.5)",
+            colour: googleColours[Math.floor(Math.random()*4)],
             active: false
         };
 
@@ -119,6 +120,7 @@ function BetterMap(props){
 
     //adds a node to the menu, signifies that it has been included in the solution
     const nodeClickHandler = (node) => {
+
         if(node.active){
             node.active = false;
             props.deactivateNode(node);
@@ -218,7 +220,7 @@ class NodeVerlay extends Component{
 
         if(this.state.clicked && this.state.hovered){
             return (
-                <div className="Node HoveredClicked" style={{backgroundColor: this.node.colour}}
+                <div className="Node HoveredClicked" style={{backgroundColor: "rgba(" + this.node.colour + ", 0.5)"}}
                 ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
                 onMouseLeave={this.setUnhover} onClick={this.setClicked}>
                     <b>{this.node.name}</b><br/>Click to remove
@@ -227,7 +229,7 @@ class NodeVerlay extends Component{
 
         } else if(this.state.clicked){
             return (
-                <div className="Node Clicked" style={{backgroundColor: this.node.colour}}
+                <div className="Node Clicked" style={{backgroundColor: "rgba(" + this.node.colour + ", 0.5)"}}
                 ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
                 onMouseOver={this.setHover} onClick={this.setClicked}>
                     <b>{this.node.name}</b>
@@ -236,7 +238,7 @@ class NodeVerlay extends Component{
 
         } else if(this.state.hovered){
             return (
-                <div className="Node Hovered" style={{backgroundColor: this.node.colour}}
+                <div className="Node Hovered" style={{backgroundColor: "rgba(" + this.node.colour + ", 0.5)"}}
                 ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
                 onMouseLeave={this.setUnhover} onClick={this.setClicked}>
                     <b>{this.node.name}</b><br/>Click to add
