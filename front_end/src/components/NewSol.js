@@ -1,8 +1,6 @@
 import React, { useState, Component, useRef, useEffect } from "react";
 import Select from "react-select";
 
-
-
 import NetworkDisplay from "./NetworkDisplay";
 import BetterMap from "./BetterMap";
 import "../styles/newSol.css";
@@ -17,7 +15,6 @@ function NewSol(props){
   const [ coverIsOn, setCover ] = useState(false);
   const [ nodesInMenu, updateMenu ] = useState([]);
   const selectRef = useRef();
-  const selectDivRef = useRef();
 
   const calculateSol = () => {
     setCover(true);
@@ -107,7 +104,7 @@ function NewSol(props){
         cursor: "pointer"
       }
     }),
-    menu: (styles, state) => ({
+    menu: (styles) => ({
       ...styles,
       minWidth: "150px",
       width: "calc(100% - 8px)",
@@ -120,6 +117,7 @@ function NewSol(props){
       overflow: "hidden",
       marginTop: "0px",
       boxShadow: "none",
+      animation: "dropdown 0.5s cubic-bezier(0.25, 1, 1, 1)",
 
       '&:hover': {
         cursor: "default"
@@ -128,7 +126,7 @@ function NewSol(props){
     menuList: (styles) => ({
       ...styles,
       paddingTop: "0px",
-      paddingBottom: "0px"
+      paddingBottom: "0px",
     }),
     option: (styles, state) => ({
       ...styles,
@@ -144,11 +142,13 @@ function NewSol(props){
         backgroundColor: "rgba(210, 210, 210, 0.5)"
       }
     }),
-    valueContainer: (styles) => ({
+    singleValue: (styles, state) => ({
       ...styles,
-      
+      fontWeight: "bold",
+      color: "rgba(" + state.data.colour + ", 1)"
     })
   }
+
 
   return (
     <div id="newSolution">
@@ -179,11 +179,18 @@ function NewSol(props){
         <div id="startNodeDiv" className="LowerMenuButton">
           Starting node: 
           <Select options={nodesInMenu} ref={selectRef} onChange={(event) => activateStartNode(event)}
-          className="react-select__container" styles={customStyles} menuPlacement="bottom"
+          className="react-select__container" styles={customStyles} menuPlacement="bottom" 
+          closeMenuOnSelect={false}
           noOptionsMessage={() => ("No nodes?")} placeholder="Select node" maxMenuHeight={150}/>
         </div>
 
         <input id="calculateButton" className="LowerMenuButton" type="button" value="Calculate" onClick={calculateSol}/>
+   
+        
+        <div id="statusDiv" className="LowerMenuButton">
+          test
+        </div>
+        
       </div>
 
       <div id="SolutionOptions">

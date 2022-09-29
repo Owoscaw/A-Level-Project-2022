@@ -250,7 +250,7 @@ h1 {
 }
 
 .LowerMenuButton {
-  width: 0;
+  width: 200px;
   height: 100%;
   box-sizing: border-box;
   border: 1px outset black;
@@ -262,7 +262,6 @@ h1 {
 }
 
 #backButton {
-  width: 200px;
   float: left;
   font-size: 26px;
   transition: background-color 0.4s ease;
@@ -298,8 +297,37 @@ h1 {
   color: black;
 }
 
+@keyframes dropdown {
+  0% {
+    max-height: 0px;
+  }
+
+  100% {
+    max-height: 150px;
+  }
+}
+
+@keyframes dropup {
+  0% {
+    max-height: 150px;
+  }
+
+  100% {
+    max-height: 0px;
+  }
+}
+
+#statusDiv {
+  min-width: 200px;
+  width: fit-content;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: right;
+}
+
 #calculateButton {
-  width: 200px;
   float: right;
   font-size: 26px;
   transition: background-color 0.4s ease;

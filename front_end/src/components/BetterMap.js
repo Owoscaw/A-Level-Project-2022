@@ -1,14 +1,20 @@
-import React, { useCallback, useMemo, useRef, useState, Component, Fragment} from "react";
+import React, { useCallback, useMemo, useRef, useState, Component, Fragment, useEffect} from "react";
 import { GoogleMap, useLoadScript, OverlayView, Marker } from "@react-google-maps/api";
 
 import "../styles/betterMap.css";
 
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
 const googleColours = ["23, 107, 239", "255, 62, 48", "247, 181, 41", "23, 156, 82"];
-let usedNames = {};
-
+let usedNames;
 
 function BetterMap(props){
+
+    useEffect(() => {
+        usedNames = {};
+        return () => {
+            usedNames = undefined;
+        }
+    }, []);
 
     const { isLoaded } = useLoadScript({
 
