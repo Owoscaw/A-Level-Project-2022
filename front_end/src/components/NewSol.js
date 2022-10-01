@@ -1,23 +1,65 @@
-import React, { useState, Component, useRef, useEffect } from "react";
+import React, { useState, Component, useRef } from "react";
 import Select from "react-select";
+import { useTransition, animated } from "react-spring";
 
 import NetworkDisplay from "./NetworkDisplay";
 import BetterMap from "./BetterMap";
 import "../styles/newSol.css";
 
-let startNode;
 let activeNodes = {};
-const googleColours = ["66, 133, 244", "234, 67, 53", "251, 188, 5", "52, 168, 83"];
 
 function NewSol(props){
 
   //states to show nodeMenu and solution cover
   const [ coverIsOn, setCover ] = useState(false);
   const [ nodesInMenu, updateMenu ] = useState([]);
+  const [ startNode, updateStartNode ] = useState({});
   const selectRef = useRef();
+  const nodeTransitions = useTransition(nodesInMenu, {
+    from: {
+      left: "-110%",
+      paddingTop: "0px",
+      paddingBottom: "0px",
+      height: "100px"
+    },
+    enter: {
+      left: "0%",
+      paddingTop: "2px",
+      paddingBottom: "2px",
+      height: "100px"
+    },
+    leave: node => async (next) => {
+      await next({left: "110%"})
+      await next({paddingTop: "0px", paddingBottom: "0xp", height: "0px"})
+    }
+  });
+
 
   const calculateSol = () => {
-    setCover(true);
+    if((typeof startNode.name === "undefined") || (typeof startNode.name === "null") || (nodesInMenu.length  < 3)){
+      return;
+    }
+
+    let solNetwork = new Network();
+    let toBeArced = [];
+    let nodeArray = [];
+
+    for(let i = 0; i < nodesInMenu.length; i++){
+      let currentNode = nodesInMenu[i];
+      solNetwork.addNode(currentNode);
+      nodeArray[i] = currentNode;
+      toBeArced[i] = {lat: currentNode.lat, lng: currentNode.lng};
+    }
+
+    let matrixPromise = getMatrix(toBeArced, nodeArray, solNetwork);
+    matrixPromise.then(function(resolve){
+      console.log(resolve);
+      setCover(true);
+      console.log(solNetwork);
+      let solJSON = solNetwork.toJSON();
+    }, function(reject){
+      console.log(reject);
+    });
   };
 
   const cancelSol = () => {
@@ -44,6 +86,7 @@ function NewSol(props){
     if(typeof startNode !== "undefined"){
       if(startNode.name === node.name){
         selectRef.current.clearValue();
+        updateStartNode({});
       }
     }
   };
@@ -52,6 +95,10 @@ function NewSol(props){
     let renamedNode = renameChildNode.current(node, newName); 
     delete activeNodes[node.name];
     activeNodes[newName] = renamedNode;
+
+    if(startNode.name === node.name){
+      updateStartNode(renamedNode);
+    }
 
     updateMenu(prevState => prevState.map(entr => {
       if(entr.name === node.name){
@@ -66,7 +113,7 @@ function NewSol(props){
 
 
   const activateStartNode = (event) => {
-    startNode = event;
+    updateStartNode(event);
   };
 
   const customStyles = {
@@ -109,6 +156,7 @@ function NewSol(props){
       minWidth: "150px",
       width: "calc(100% - 8px)",
       maxWidth: "inherit",
+      height: "auto",
       border: "1px solid black",
       borderTopLeftRadius: "0px",
       borderTopRightRadius: "0px",
@@ -117,7 +165,7 @@ function NewSol(props){
       overflow: "hidden",
       marginTop: "0px",
       boxShadow: "none",
-      animation: "dropdown 0.5s cubic-bezier(0.25, 1, 1, 1)",
+      animation: "dropDown 0.5s linear",
 
       '&:hover': {
         cursor: "default"
@@ -147,8 +195,7 @@ function NewSol(props){
       fontWeight: "bold",
       color: "rgba(" + state.data.colour + ", 1)"
     })
-  }
-
+  };
 
   return (
     <div id="newSolution">
@@ -162,11 +209,10 @@ function NewSol(props){
           <div id="divOfNodes">
             <ul id="listOfNodes">
               {
-                nodesInMenu.map((node) => {
-                  return (
-                    <NodeInList key={node.name} node={node} deleteHandler={deactivateNode} renameHandler={renameNode}/>
-                  );
-                })
+                nodeTransitions((nodeStyle, node) => (
+                  <NodeInList key={node.name} node={node} transition={nodeStyle}
+                  deleteHandler={deactivateNode} renameHandler={renameNode}/>
+                ))
               }
             </ul>
           </div>
@@ -180,15 +226,20 @@ function NewSol(props){
           Starting node: 
           <Select options={nodesInMenu} ref={selectRef} onChange={(event) => activateStartNode(event)}
           className="react-select__container" styles={customStyles} menuPlacement="bottom" 
-          closeMenuOnSelect={false}
           noOptionsMessage={() => ("No nodes?")} placeholder="Select node" maxMenuHeight={150}/>
         </div>
 
         <input id="calculateButton" className="LowerMenuButton" type="button" value="Calculate" onClick={calculateSol}/>
-   
-        
+
         <div id="statusDiv" className="LowerMenuButton">
-          test
+          <div id="statusHeader">
+            Status:
+          </div>
+          <div id="statusContent">
+            {
+              (nodesInMenu.length > 2) ? (typeof startNode.name !== "undefined" ? "Ready to solve" : "Select start node") : "Add at least 3 nodes"
+            }
+          </div>
         </div>
         
       </div>
@@ -197,13 +248,67 @@ function NewSol(props){
         <h1>Options:</h1>
       </div>
 
-      {coverIsOn ? <NetworkDisplay onCancel={cancelSol}/> : null}
+      {
+        coverIsOn ? <NetworkDisplay onCancel={cancelSol} title="Initial Network"/> : null
+      }
 
       <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
     </div>
   );
 }
 
+
+//function to query google with lats and lngs, returns a promise with matrix info
+function getMatrix(toBeArced, nodeArray, network){
+
+  let matrixStatus = "matrix fully loaded";
+   
+  let matrixLoop = async _ => {
+
+    for(let i = 0; i < toBeArced.length - 1; i++){
+
+      let currentMatrixPromise = new Promise(function(resolve, reject){
+
+        let currentOrigin = toBeArced[i];
+        let currentDestinations = toBeArced.slice(i + 1);
+
+        let fromNode = nodeArray[i];
+        let toNodes = nodeArray.slice(i + 1);
+
+        // let solMatrix = new window.google.maps.DistanceMatrixService();
+        // solMatrix.getDistanceMatrix({
+        //   origins: [currentOrigin],
+        //   destinations: currentDestinations,
+        //   travelMode: "DRIVING"
+        // }, function(response, status){
+
+        //   if(status === "OK"){
+        //     for(let sink = 0; sink < response.rows[0].elements.length; sink++){
+        //       network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
+        //     }
+
+        //     resolve("matrix fully loaded");
+        //   } else {
+        //     reject("matrix failed to load");
+        //   }
+        // });
+
+        network.addArc(1, fromNode, toNodes[0]);
+        resolve("matrix fully loaded");
+      });
+
+      let matrixResult = await currentMatrixPromise;
+
+      if(matrixResult !== "matrix fully loaded"){
+        matrixStatus = matrixResult;
+      }
+    }
+
+    return matrixStatus;
+  }
+
+  return matrixLoop();
+}
 
 
 //custom component to represent a node in the node menu
@@ -220,6 +325,7 @@ class NodeInList extends Component {
       isStartNode: false
     };
 
+    this.nodeStyle = props.transition;
     this.deleteHandler = props.deleteHandler.bind(this);
     this.renameHandler = props.renameHandler.bind(this);
     this.keyPress = this.keyPress.bind(this);
@@ -287,8 +393,8 @@ class NodeInList extends Component {
   render(){
 
     return (
-      <li>
-        <div className="NodeInList">
+      <animated.li style={{paddingTop: this.nodeStyle.paddingTop, paddingBottom: this.nodeStyle.paddingBottom, height: this.nodeStyle.height}}>
+        <animated.div className="NodeInList" style={{left: this.nodeStyle.left}}>
           <div className="NameDiv">{this.state.node.name}</div>
           <input className="RemovalButton" type="button" value="Remove Node"
           onClick={() => {this.deleteHandler(this.state.node);}}/>
@@ -302,11 +408,61 @@ class NodeInList extends Component {
             onBlur={event => this.divBlurHandler(event)} onFocus={this.divFocusHandler}/>
             <div className={this.state.divFocused ? "TextButtonDiv" : "ButtonTextDiv"}>{this.state.nameUsed ? "Invalid Name" : "Rename Node"}</div>
           </div>
-        </div>
-      </li>
+        </animated.div>
+      </animated.li>
     );
   }
 }
+
+class Network {
+  
+  constructor(){
+    this.allNodes = [];
+    this.allArcs = [];
+    this.table = {};
+  }
+
+  addNode(node){
+    this.table[node.name] = {};
+    this.allNodes.push(node);
+
+    this.populateTable();
+  }
+
+  addArc(weight, node1, node2){
+
+    if((node1.name === node2.name) || (weight === 0)){
+      return;
+    }
+
+    this.table[node1.name][node2.name] = weight;
+    this.table[node2.name][node1.name] = weight;
+    this.allArcs.push({node1: node1, node2: node2, weight: weight});
+  }
+
+  populateTable(){
+
+    for(let i = 0; i < this.allNodes.length; i++){
+      let iName = this.allNodes[i].name;
+
+      for(let j = 0; j < this.allNodes.length; j++){
+        let jName = this.allNodes[j].name;
+        if((typeof this.table[iName][jName] === "undefined") && (iName !== jName)){
+          this.table[iName][jName] = 0;
+        }
+      }
+    }
+  }
+
+  toJSON(){
+    return {
+      nodes: this.allNodes,
+      arcs: this.allArcs,
+      adjTable: this.table
+    };
+  }
+}
+
 
 
 export default NewSol;
