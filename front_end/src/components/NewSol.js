@@ -14,6 +14,8 @@ function NewSol(props){
   const [ coverIsOn, setCover ] = useState(false);
   const [ nodesInMenu, updateMenu ] = useState([]);
   const [ startNode, updateStartNode ] = useState({});
+  const [ activeSol, setSol ] = useState({});
+  const [ apiResponse, updateResponse ] = useState("");
   const selectRef = useRef();
   const nodeTransitions = useTransition(nodesInMenu, {
     from: {
@@ -54,9 +56,19 @@ function NewSol(props){
     let matrixPromise = getMatrix(toBeArced, nodeArray, solNetwork);
     matrixPromise.then(function(resolve){
       console.log(resolve);
+      setSol(solNetwork);
       setCover(true);
-      console.log(solNetwork);
       let solJSON = solNetwork.toJSON();
+      props.saveSol({
+        method: "POST",
+        cache: "no-cache",
+        headers: { 
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(solJSON)
+      }).then(response => response.text()).then(response => {updateResponse(response);});
+
     }, function(reject){
       console.log(reject);
     });
@@ -249,10 +261,9 @@ function NewSol(props){
       </div>
 
       {
-        coverIsOn ? <NetworkDisplay onCancel={cancelSol} title="Initial Network"/> : null
+        coverIsOn ? <NetworkDisplay onCancel={cancelSol} title="Initial Network" 
+        nodes={activeSol.allNodes} arcs={activeSol.allArcs} apiStatus={apiResponse}/> : null
       }
-
-      <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
     </div>
   );
 }

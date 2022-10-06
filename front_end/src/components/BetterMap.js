@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState, Component, Fragment, useEffect} from "react";
-import { GoogleMap, useLoadScript, OverlayView, Marker } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, OverlayView, Marker, useGoogleMap } from "@react-google-maps/api";
 
 import "../styles/betterMap.css";
 
@@ -25,6 +25,7 @@ function BetterMap(props){
     //references and memos to avoid re-rendering map
     const mapRef = useRef();
     const [ nodes, updateNodes ] = useState([]);
+    const [ prevColour, setPrevColour ] = useState("");
     const onMapLoad = useCallback((map) => (mapRef.current = map), []);
     const mapCenter = useMemo(() => ({lat: 52.4, lng: 0}), []);
     const mapOptions = useMemo(() => ({
@@ -105,6 +106,12 @@ function BetterMap(props){
             nodeIndex ++;
         }
 
+        let newNodeColour = googleColours[Math.floor(Math.random()*4)];
+        while(newNodeColour === prevColour){
+            newNodeColour = googleColours[Math.floor(Math.random()*4)];
+        }
+        setPrevColour(newNodeColour);
+
         //creating new node
         let newNode = {
             lat: event.latLng.lat(),
@@ -114,7 +121,7 @@ function BetterMap(props){
             name: "Node " + nodeIndex.toString(),
             label: "Node " + nodeIndex.toString(),
             timeout: null,
-            colour: googleColours[Math.floor(Math.random()*4)],
+            colour: newNodeColour,
             active: false
         };
 

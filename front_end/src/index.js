@@ -19,6 +19,7 @@ class App extends React.Component{
         };
 
         this.changeScreen = this.changeScreen.bind(this);
+        this.saveSolution = this.saveSolution.bind(this);
     }
 
     changeScreen(state){
@@ -27,12 +28,17 @@ class App extends React.Component{
         });
     }
 
+    saveSolution(options){
+        return fetch("http://localhost:9000/", options);
+    }
+
     render(){
+        console.log(this.state);
         switch(this.state.currentScreen){
             case "menu":
-                return <MainMenu changeScreen={this.changeScreen}/>;
+                return <MainMenu changeScreen={this.changeScreen}/>; 
             case "newSol":
-                return <NewSol changeScreen={this.changeScreen}/>;
+                return <NewSol changeScreen={this.changeScreen} saveSol={this.saveSolution}/>;
             case "prevSol":
                 return <PrevSol changeScreen={this.changeScreen}/>;
             default:
@@ -41,6 +47,10 @@ class App extends React.Component{
     }
 }
 
+
+//export default TravellingSalesman;
 //root.render(<App state={"menu"}/>);
 render(<App state={"menu"}/>, root);
+
+export default App;
 
