@@ -4,7 +4,6 @@ import { GoogleMap, useLoadScript, OverlayView, Marker, useGoogleMap } from "@re
 import "../styles/betterMap.css";
 
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
-const googleColours = ["23, 107, 239", "255, 62, 48", "247, 181, 41", "23, 156, 82"];
 let usedNames;
 
 function BetterMap(props){
@@ -25,7 +24,8 @@ function BetterMap(props){
     //references and memos to avoid re-rendering map
     const mapRef = useRef();
     const [ nodes, updateNodes ] = useState([]);
-    const [ prevColour, setPrevColour ] = useState("");
+    const [ googleColours, setColours ] = useState(["23, 107, 239", "255, 62, 48", "247, 181, 41", "23, 156, 82"]);
+    const [ prevColour, setPrevColour ] = useState();
     const onMapLoad = useCallback((map) => (mapRef.current = map), []);
     const mapCenter = useMemo(() => ({lat: 52.4, lng: 0}), []);
     const mapOptions = useMemo(() => ({
@@ -100,16 +100,24 @@ function BetterMap(props){
     //adds a new node with a marker wherever the map was clicked
     const addNodeHandler = (event) => {
 
+        if(Object.keys(usedNames).length > 10){
+            return;
+        }
+
         //resetting node index
         let nodeIndex = 1;
         while(("Node " + nodeIndex.toString()) in usedNames){
             nodeIndex ++;
         }
 
-        let newNodeColour = googleColours[Math.floor(Math.random()*4)];
-        while(newNodeColour === prevColour){
-            newNodeColour = googleColours[Math.floor(Math.random()*4)];
-        }
+        let newNodeColour = googleColours[Math.floor(Math.random()*googleColours.length)];
+        setColours(prevState => {
+            if(typeof prevColour === "undefined"){
+                return prevState.filter(colour => colour !== newNodeColour);
+            } else {
+                return [...prevState.filter(colour => colour !== newNodeColour), prevColour];
+            }
+        });
         setPrevColour(newNodeColour);
 
         //creating new node

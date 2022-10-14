@@ -108,25 +108,25 @@
     font-family: "Google sans";
 }
 
-#apiStatus:after {
+.apiLoading:after {
     content: "";
     animation: ellipsisAnimation 1.5s infinite;
 }
 
 @keyframes ellipsisAnimation {
     0% {
-        content: " ";
+        content: "";
     }
 
     25% {
-        content: " .";
+        content: ".";
     }
 
     50% {
-        content: " ..";
+        content: "..";
     }
 
     75% {
-        content: " ...";
+        content: "...";
     }
 }

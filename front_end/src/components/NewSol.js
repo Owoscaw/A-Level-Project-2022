@@ -12,6 +12,7 @@ function NewSol(props){
 
   //states to show nodeMenu and solution cover
   const [ coverIsOn, setCover ] = useState(false);
+  const [ solAvailible, setAvailibility ] = useState(true);
   const [ nodesInMenu, updateMenu ] = useState([]);
   const [ startNode, updateStartNode ] = useState({});
   const [ activeSol, setSol ] = useState({});
@@ -38,9 +39,12 @@ function NewSol(props){
 
 
   const calculateSol = () => {
-    if((typeof startNode.name === "undefined") || (typeof startNode.name === "null") || (nodesInMenu.length  < 3)){
+    if((typeof startNode.name === "undefined") || (typeof startNode.name === "null") || (nodesInMenu.length  < 3) || !solAvailible){
       return;
     }
+
+    updateResponse("");
+    setAvailibility(false);
 
     let solNetwork = new Network();
     let toBeArced = [];
@@ -58,7 +62,8 @@ function NewSol(props){
       console.log(resolve);
       setSol(solNetwork);
       setCover(true);
-      let solJSON = solNetwork.toJSON();
+      let solJSON = solNetwork.toJSON(startNode.name);
+      console.log(solJSON);
       props.saveSol({
         method: "POST",
         cache: "no-cache",
@@ -66,8 +71,12 @@ function NewSol(props){
           "Accept": "application/json",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(solJSON)
-      }).then(response => response.text()).then(response => {updateResponse(response);});
+        body: JSON.stringify(solJSON, null, 4)
+      }).then(response => response.json()).then(response => {
+        console.log(response);
+        updateResponse(response);
+        setAvailibility(true);
+      });
 
     }, function(reject){
       console.log(reject);
@@ -241,7 +250,8 @@ function NewSol(props){
           noOptionsMessage={() => ("No nodes?")} placeholder="Select node" maxMenuHeight={150}/>
         </div>
 
-        <input id="calculateButton" className="LowerMenuButton" type="button" value="Calculate" onClick={calculateSol}/>
+        <input id="calculateButton" className="LowerMenuButton" type="button" value="Calculate" 
+        onClick={calculateSol}/>
 
         <div id="statusDiv" className="LowerMenuButton">
           <div id="statusHeader">
@@ -304,7 +314,9 @@ function getMatrix(toBeArced, nodeArray, network){
         //   }
         // });
 
-        network.addArc(1, fromNode, toNodes[0]);
+        for(let j = 0; j < toNodes.length; j++){
+          network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
+        }
         resolve("matrix fully loaded");
       });
 
@@ -440,11 +452,17 @@ class Network {
     this.populateTable();
   }
 
+  hasArc(weight, node1, node2){
+    return this.table[node1.name][node2.name] === weight;
+  }
+
   addArc(weight, node1, node2){
 
-    if((node1.name === node2.name) || (weight === 0)){
+    if((node1.name === node2.name) || (weight === 0) || this.hasArc(weight, node1, node2)){
       return;
     }
+
+
 
     this.table[node1.name][node2.name] = weight;
     this.table[node2.name][node1.name] = weight;
@@ -465,11 +483,23 @@ class Network {
     }
   }
 
-  toJSON(){
+  toJSON(nodeName){
+
+    let shortenedNodes = [];
+    for(let i = 0; i < this.allNodes.length; i++){
+      shortenedNodes.push(this.allNodes[i].name);
+    }
+
+    let shortenedArcs = [];
+    for(let j = 0; j < this.allArcs.length; j++){
+      shortenedArcs.push({node1: this.allArcs[j].node1.name, node2: this.allArcs[j].node2.name, weight: this.allArcs[j].weight});
+    }
+
     return {
-      nodes: this.allNodes,
-      arcs: this.allArcs,
-      adjTable: this.table
+      nodes: shortenedNodes,
+      arcs: shortenedArcs,
+      startNode: nodeName,
+      path: []
     };
   }
 }

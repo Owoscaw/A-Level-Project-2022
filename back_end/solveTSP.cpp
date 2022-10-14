@@ -2,111 +2,65 @@
 
 //initialises bound to not optimal
 Bound::Bound(const Graph& parentGraph):Graph(parentGraph){
-	std::cout<<"Bound initialised"<<std::endl;
+	std::cout<<"\nBound initialised"<<std::endl;
 	isOptimal = false;
 }
 Bound::Bound(){
-	std::cout<<"Bound initialised"<<std::endl;
+	std::cout<<"\nBound initialised"<<std::endl;
 	isOptimal = false;
 }
 
 
 //returns a path that is a solution to the travelling salesman problem
 path Bound::findPath(std::string startNode){
-	path tempPath;
-	tempPath.startNode = startNode;
-	tempPath.endNode = startNode;
 
-	std::vector<arc> arcsToBeUsed = allArcs;
-	std::vector<std::string> nodesToBeAdded = allNodes;
+	path newPath;
+
+	if(!isOptimal){
+		return newPath;
+	}
+
+	//keep track of unvisited nodes
+	std::vector<std::string> unvisitedNodes = allNodes;
+	newPath.startNode = startNode;
+	newPath.endNode = startNode;
 	std::string currentNode = startNode;
-	std::string nextNode;
 
-	while(!nodesToBeAdded.empty()){
+	//while there are still nodes to visit
+	while(!unvisitedNodes.empty()){
 
-		tempPath.path.push_back(currentNode);
-
-		//if currentNode hasnt already been marked as visited, mark it
-		if(findNode(nodesToBeAdded, currentNode) != -1){
-			nodesToBeAdded.erase(nodesToBeAdded.begin() + findNode(nodesToBeAdded, currentNode));
-		}
-		tempPath.pathSize ++;
-
-		//finding all nodes that need to be added, and are adjacent
+		//getting all nodes that can be travelled to from current node
 		std::vector<std::string> adjacentNodes;
-		for(auto const& adjIterator: adjTable[currentNode]){
-
-			adjacentNodes.push_back(adjIterator.first);
-			arc tempArc = createArc(adjIterator.second, adjIterator.first, currentNode);
-
-			//if it is only connected to the current node, go to it then straight back
-			//if it is accessible through a viable arc
-			//if it is unvisited
-			if((adjTable[adjIterator.first].size() == 1) && (findArc(arcsToBeUsed, tempArc) != -1) && (findNode(nodesToBeAdded, adjIterator.first) != -1)){
-				tempPath.path.push_back(adjIterator.first);
-				tempPath.path.push_back(currentNode);
-
-				//arc used twice, there and back
-				arcsToBeUsed.erase(arcsToBeUsed.begin() + findArc(arcsToBeUsed, tempArc));
-				arcsToBeUsed.erase(arcsToBeUsed.begin() + findArc(arcsToBeUsed, tempArc));
-				tempPath.pathWeight += 2*tempArc.weight;
-				tempPath.pathSize += 2;
-
-				//it is visited, and can be removed from adjacent nodes
-				nodesToBeAdded.erase(nodesToBeAdded.begin() + findNode(nodesToBeAdded, adjIterator.first));
-				adjacentNodes.erase(adjacentNodes.begin() + findNode(adjacentNodes, adjIterator.first));
+		std::vector<std::string> availibleNodes;
+		for(auto const& pair : adjTable[currentNode]){
+			adjacentNodes.push_back(pair.first);
+		}
+		
+		//only considering nodes that have not yet been added
+		for(auto const& adjNode: adjacentNodes){
+			if(std::find(unvisitedNodes.begin(), unvisitedNodes.end(), adjNode) != unvisitedNodes.end()){
+				availibleNodes.push_back(adjNode);
 			}
 		}
 
-		//making the next node the next accessable node
-		for(auto const& nextNodeIterator: adjacentNodes){
-			arc testArc = createArc(adjTable[currentNode][nextNodeIterator], currentNode, nextNodeIterator);
+		std::vector<std::string>::iterator nodeIterator = unvisitedNodes.begin();
+		nodeIterator += findNode(unvisitedNodes, currentNode);
+		unvisitedNodes.erase(nodeIterator);
+		newPath.path.push_back(currentNode);
+		newPath.pathSize ++;
 
-			//checking if the potential node has viable arcs to traverse
-			bool hasViableArcs;
-			int viableCount = 0;
-			for(auto const& viableIterator: arcsToBeUsed){
-				if((viableIterator.node1 == nextNodeIterator) || (viableIterator.node2 == nextNodeIterator)){
-					viableCount ++;
-				}
-			}
-			hasViableArcs = viableCount > 1;
-
-			//only consider the arc if we can safely return (or it is the end of a "branch"), and it doesnt cause us to get stuck
-			if(((arcCount(arcsToBeUsed, testArc) > 1) ||  hasViableArcs) && (adjTable[nextNodeIterator].size() > 1)){
-				//the arc is availible, traverse to next node
-				nextNode = testArc.node2;
-				tempPath.pathWeight += testArc.weight;
-				arcsToBeUsed.erase(arcsToBeUsed.begin() + findArc(arcsToBeUsed, testArc));
-				break;
-			}
-		}
-
-		//we have gotten stuck
-		if((currentNode == nextNode) && (!nodesToBeAdded.empty())){
-			tempPath.path.push_back("PATH TERMINATED");
-			return tempPath;
-		}
-
-		//loopin back
-		currentNode = nextNode;
-	}
-
-	//returning to the starting node
-	path returnPath = pathBetweenNodes(currentNode, startNode);
-	for(auto const& returnIterator: returnPath.path){
-		if((returnIterator != tempPath.path.back() && (returnIterator != startNode))){
-			tempPath.path.push_back(returnIterator);
+		if(availibleNodes.size() == 0){
+			//we have reached the end of the path
+			newPath.path.push_back(startNode);
+			newPath.pathWeight += adjTable[currentNode][startNode];
+		} else {
+			std::string nextNode = availibleNodes[0];
+			newPath.pathWeight += adjTable[currentNode][nextNode];
+			currentNode = nextNode;
 		}
 	}
-	tempPath.path.push_back(startNode);
-
-	tempPath.pathWeight += returnPath.pathWeight;
-	tempPath.pathSize += returnPath.pathSize + 1;
-
-	return tempPath;
+	return newPath;
 }
-
 
 
 //used to compare the weights of bounds
@@ -133,28 +87,42 @@ void Bound::calculateLowerBound(){
 		if(adjTable[nodeIterator].size() > 1){
 
 			//add the two arcs that reconnect the removed node, shortest weight
-			std::vector<arc> possibleArcs;
-			for(auto const& adjIterator: adjTable[nodeIterator]){
-				arc tempArc = createArc(adjIterator.second, adjIterator.first, nodeIterator);
-				possibleArcs.push_back(tempArc);
+			if(isComplete()){
+
+				//it is much easier to do this on a complete graph
+				std::vector<std::string> endNodes;
+
+				for(auto const& endIterator: tempGraph.allNodes){
+					if(tempGraph.adjTable[endIterator].size() == 1){
+						endNodes.push_back(endIterator);
+					}
+				}
+
+				arc endArc1 = createArc(adjTable[nodeIterator][endNodes[0]], nodeIterator, endNodes[0]);
+				arc endArc2 = createArc(adjTable[nodeIterator][endNodes[1]], nodeIterator, endNodes[1]);
+				tempGraph.addArc(endArc1);
+				tempGraph.addArc(endArc2);
+			} else {
+
+				std::vector<arc> possibleArcs;
+				for(auto const& adjIterator: adjTable[nodeIterator]){
+					arc tempArc = createArc(adjIterator.second, adjIterator.first, nodeIterator);
+					possibleArcs.push_back(tempArc);
+				}
+
+				sort(possibleArcs.begin(), possibleArcs.end(), compareArcs);
+
+
+				tempGraph.addArc(possibleArcs[0]);
+				tempGraph.addArc(possibleArcs[1]);
 			}
-
-			sort(possibleArcs.begin(), possibleArcs.end(), compareArcs);
-
-
-			tempGraph.addArc(possibleArcs[0]);
-			tempGraph.addArc(possibleArcs[1]);
 
 		} else{
 
-			std::vector<arc> possibleArcs;
 			for(auto const& adjIterator: adjTable[nodeIterator]){
 				arc tempArc = createArc(adjIterator.second, adjIterator.first, nodeIterator);
-				possibleArcs.push_back(tempArc);
+				tempGraph.addArc(tempArc);
 			}
-
-			tempGraph.addArc(possibleArcs[0]);
-			tempGraph.addArc(possibleArcs[0]);
 		}
 
 		//adding this to possible solutions
@@ -269,16 +237,14 @@ Bound solve(Graph tempGraph){
 	upperBound.calculateUpperBound();
 	lowerBound.calculateLowerBound();
 
-	//if a lower bound is equal in weight to an upper bound then the lower bound is optimal
-	if((upperBound.weight == lowerBound.weight) || (lowerBound.containsHamiltonianCycle())){
+	if(lowerBound.containsHamiltonianCycle()){
 		lowerBound.isOptimal = true;
-		std::cout<<"Optimal solution found"<<std::endl;
-		//a lower bound only contains a viable path if it is hamiltonian
+		std::cout<<"solution found"<<std::endl;
 		lowerBound.calculateFloyds();
 		return lowerBound;
 	}
 
-	std::cout<<"No solution found, returning upper bound"<<std::endl;
+	std::cout<<"solution not found"<<std::endl;
 	//an upper bound will always have a viable solution, though it may not be optimal
 	upperBound.calculateFloyds();
 	return upperBound;
@@ -286,82 +252,131 @@ Bound solve(Graph tempGraph){
 
 
 int main(){
-	Graph Cheddar;
+	//Graph Cheddar;
+
+	// Cheddar.addNode("tesco");
+	// Cheddar.addNode("school");
+	// Cheddar.addNode("bus station");
+	// Cheddar.addNode("wedmore");
+	// Cheddar.addNode("easton");
+	// Cheddar.addNode("weston");
+
+	// arc arc1 = createArc(7, "tesco", "school");
+	// arc arc2 = createArc(2, "tesco", "bus station");
+	// arc arc3 = createArc(11, "bus station", "school");
+	// arc arc4 = createArc(50, "wedmore", "school");
+	// arc arc5 = createArc(55, "wedmore", "bus station");
+	// arc arc6 = createArc(20, "bus station", "easton");
+	// arc arc7 = createArc(5, "wedmore", "tesco");
+	// arc arc8 = createArc(500, "weston", "bus station");
+
+	// arc arc13 = createArc(445, "weston", "easton");
+	// arc arc14 = createArc(330, "wedmore", "weston");
+
+	// Cheddar.addArc(arc1);
+	// Cheddar.addArc(arc2);
+	// Cheddar.addArc(arc3);
+	// Cheddar.addArc(arc4);
+	// Cheddar.addArc(arc5);
+	// Cheddar.addArc(arc6);
+	// Cheddar.addArc(arc7);
+	// Cheddar.addArc(arc8);
+	// Cheddar.addArc(arc13);
+	// Cheddar.addArc(arc14);
+
+	// Cheddar.calculateFloyds();
+	// Cheddar.showGraph();
+
+	// Bound CheddarLowerBound = Cheddar;
+	// CheddarLowerBound.calculateLowerBound();
+	// std::cout<<"LOWER BOUND"<<std::endl;
+	// CheddarLowerBound.showGraph();
+
+	// std::cout<<CheddarLowerBound.containsHamiltonianCycle()<<std::endl;
+
+	// Bound CheddarUpperBound = Cheddar;
+	// CheddarUpperBound.calculateUpperBound();
+	// std::cout<<"UPPER BOUND"<<std::endl;
+	// CheddarUpperBound.showGraph();
+
+	// path UpperPath = CheddarUpperBound.findPath("weston");
+	// for(auto const& pathIterator: UpperPath.path){
+	// 	std::cout<<pathIterator<<std::endl;
+	// }
+
+	// Bound CheddarOptimalSolution = solve(Cheddar);
+	// CheddarOptimalSolution.showGraph();
+	// path optimalPath = CheddarOptimalSolution.findPath("tesco");
+	// for(auto const& pathIterator: optimalPath.path){
+	// 	std::cout<<pathIterator<<std::endl;
+	// }
+
 	// Graph hamiltonianTest;
 
-	Cheddar.addNode("tesco");
-	Cheddar.addNode("school");
-	Cheddar.addNode("bus station");
-	Cheddar.addNode("wedmore");
-	Cheddar.addNode("easton");
-	Cheddar.addNode("weston");
+	// hamiltonianTest.addNode("n1");
+	// hamiltonianTest.addNode("n2");
+	// hamiltonianTest.addNode("n3");
+	// hamiltonianTest.addNode("n4");
 
-	// hamiltonianTest.addNode("testNode1");
-	// hamiltonianTest.addNode("testNode2");
-	// hamiltonianTest.addNode("testNode3");
-	// hamiltonianTest.addNode("testNode4");
+	// hamiltonianTest.addArc(createArc(2, "n1", "n2"));
+	// hamiltonianTest.addArc(createArc(4, "n1", "n3"));
+	// hamiltonianTest.addArc(createArc(1, "n1", "n4"));
+	// hamiltonianTest.addArc(createArc(6, "n2", "n3"));
+	// hamiltonianTest.addArc(createArc(9, "n2", "n4"));
+	// hamiltonianTest.addArc(createArc(18, "n3", "n4"));
 
-	arc arc1 = createArc(7, "tesco", "school");
-	arc arc2 = createArc(2, "tesco", "bus station");
-	arc arc3 = createArc(11, "bus station", "school");
-	arc arc4 = createArc(50, "wedmore", "school");
-	arc arc5 = createArc(55, "wedmore", "bus station");
-	arc arc6 = createArc(20, "bus station", "easton");
-	arc arc7 = createArc(5, "wedmore", "tesco");
-	arc arc8 = createArc(500, "weston", "bus station");
+	//std::cout<<hamiltonianTest.containsHamiltonianCycle()<<std::endl;
 
-	// arc arc9 = createArc(1, "testNode1", "testNode2");
-	// arc arc10 = createArc(1, "testNode2", "testNode3");
-	// arc arc11 = createArc(1, "testNode3", "testNode4");
-	// arc arc12 = createArc(1, "testNode4", "testNode1");
+	//Bound hamiltonianBound = solve(hamiltonianTest);
+	// Bound hamiltonianLowerBound = hamiltonianTest;
+	// hamiltonianLowerBound.calculateLowerBound();
 
-	arc arc13 = createArc(445, "weston", "easton");
-	arc arc14 = createArc(330, "wedmore", "weston");
+	// hamiltonianLowerBound.showGraph();
 
-	Cheddar.addArc(arc1);
-	Cheddar.addArc(arc2);
-	Cheddar.addArc(arc3);
-	Cheddar.addArc(arc4);
-	Cheddar.addArc(arc5);
-	Cheddar.addArc(arc6);
-	Cheddar.addArc(arc7);
-	Cheddar.addArc(arc8);
-	Cheddar.addArc(arc13);
-	Cheddar.addArc(arc14);
+	// std::cout<<hamiltonianLowerBound.containsHamiltonianCycle()<<std::endl;
 
-	// hamiltonianTest.addArc(arc9);
-	// hamiltonianTest.addArc(arc10);
-	// hamiltonianTest.addArc(arc11);
-	// //hamiltonianTest.addArc(arc12);
+	Graph solGraph;
 
-	Cheddar.calculateFloyds();
-	Cheddar.showGraph();
+	std::ifstream jsonFile("data.json");
+	Json::Value solJson;
+	Json::Reader jsonReader;
 
-	Bound CheddarLowerBound = Cheddar;
-	CheddarLowerBound.calculateLowerBound();
-	std::cout<<"LOWER BOUND"<<std::endl;
-	CheddarLowerBound.showGraph();
+	jsonReader.parse(jsonFile, solJson);
+	Json::Value solNodes = solJson["nodes"];
+	Json::Value solArcs = solJson["arcs"];
+	std::string startNode = solJson["startNode"].asString();
 
-	std::cout<<CheddarLowerBound.containsHamiltonianCycle()<<std::endl;
-
-	Bound CheddarUpperBound = Cheddar;
-	CheddarUpperBound.calculateUpperBound();
-	std::cout<<"UPPER BOUND"<<std::endl;
-	CheddarUpperBound.showGraph();
-
-	path UpperPath = CheddarUpperBound.findPath("weston");
-	for(auto const& pathIterator: UpperPath.path){
-		std::cout<<pathIterator<<std::endl;
+	for(int i = 0; i < solNodes.size(); i++){
+		std::string currentNode = solNodes[i].asString();
+		solGraph.addNode(currentNode);
 	}
 
-	Bound CheddarOptimalSolution = solve(Cheddar);
-	CheddarOptimalSolution.showGraph();
-	path optimalPath = CheddarOptimalSolution.findPath("tesco");
-	for(auto const& pathIterator: optimalPath.path){
-		std::cout<<pathIterator<<std::endl;
+	for(int j = 0; j < solArcs.size(); j++){
+		Json::Value currentArc = solArcs[j];
+		int currentArcWeight = currentArc["weight"].asInt();
+		std::string solNode1 = currentArc["node1"].asString();
+		std::string solNode2 = currentArc["node2"].asString();
+
+		arc newSolArc = createArc(currentArcWeight, solNode1, solNode2);
+		solGraph.addArc(newSolArc);
 	}
 
-	system("pause");
+	Bound solBound = solve(solGraph);
+
+	path solPath = solBound.findPath(startNode);
+	Json::Value path;
+	for(int k = 0; k < solPath.pathSize + 1; k++){
+		path[k] = solPath.path[k];
+	}
+	solJson["path"] = path;
+
+	Json::StreamWriterBuilder builder;
+	builder["commentStyle"] = "None";
+	builder["indentation"] = "	";
+
+	std::unique_ptr<Json::StreamWriter> writer(builder.newStreamWriter());
+	std::ofstream outputFileStream("data.json");
+	writer -> write(solJson, &outputFileStream);
 
 	return 0;
 };

@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <iomanip>
 
+#include "jsoncpp/dist/json/json.h"
+#include "jsoncpp/dist/json/json-forwards.h"
+#include "jsoncpp/dist/jsoncpp.cpp"
 #include "graphsTSP.h"
 #include "graphsTSP.cpp"
 

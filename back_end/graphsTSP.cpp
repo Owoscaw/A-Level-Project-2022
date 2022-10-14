@@ -1,12 +1,35 @@
 #include "graphsTSP.h"
 
+struct arc{
+	std::string node1;
+	std::string node2;
+	int weight;
+
+	//used in implimentation to search for arcs
+	bool operator==(const arc& rhs) const{
+		bool node1Match = (node1 == rhs.node1);
+		bool node2Match = (node2 == rhs.node2);
+		bool weightMatch = (weight == rhs.weight);
+
+		return (node1Match && node2Match && weightMatch);
+	}
+};
+
+
+struct path{
+	std::vector<std::string> path;
+	std::string startNode;
+	std::string endNode;
+	int pathWeight = 0;
+	int pathSize = 0;
+};
+
 
 Graph::Graph(){
 	weight = 0;
 	floydsComplete = false;
-	std::cout<<"\n\nGraph initialised\n\n";
+	std::cout<<"\nGraph initialised";
 }
-
 
 
 //add a new node, called nodeName, to the graph
@@ -24,7 +47,6 @@ void Graph::addNode(std::string nodeName){
 }
 
 
-
 //remove an existing node, called nodeName, from the graph
 void Graph::removeNode(std::string nodeName){
 
@@ -38,16 +60,17 @@ void Graph::removeNode(std::string nodeName){
 }
 
 
-
 //add a new connection from arcName.node1 to arcName.node2 with cost arcName.weight both ways
 void Graph::addArc(arc arcName){
 
 	if((arcName.node1 == arcName.node2) || (arcName.weight == 0)){
 		//arc is invalid
+		std::cout<<"ARC ERROR"<<std::endl;
 		return;
 
-	} else if(arcCount(allArcs, arcName) == 0){
-		//arc is completely new, so add a new entry to adjacency
+	} else if(findArc(allArcs, arcName) == -1){
+
+		//arc is new, so add a new entry to adjacency
 		adjTable[arcName.node1].insert(make_pair(arcName.node2, arcName.weight));
 		adjTable[arcName.node2].insert(make_pair(arcName.node1, arcName.weight));
 
@@ -57,26 +80,8 @@ void Graph::addArc(arc arcName){
 		//this will change floyds solution, there is a new path
 		floydsComplete = false;
 		return;
-
-	} else{
-		//arc is not new
-		allArcs.push_back(arcName);
-		weight = weight + arcName.weight;
-
-		if(adjTable[arcName.node1][arcName.node2] < arcName.weight){
-			//if it is larger than the current entry, do not change anything - this will not affect floyd's
-			return;
-		}
-
-		//the new arc is smaller, alter adjacency, this will affect floyds as a shorter path now exists
-		adjTable[arcName.node1][arcName.node2] = arcName.weight;
-		adjTable[arcName.node2][arcName.node1] = arcName.weight;
-
-		floydsComplete = false;
-		return;
 	}
 }
-
 
 
 //remove an existing arc, arcName both ways
@@ -87,39 +92,8 @@ void Graph::removeArc(arc arcName){
 		//invalid arc, or arc hasnt been added
 		return;
 
-	} else if(arcCount(allArcs, arcName) > 1){
+	} else {
 
-		//there are more than one appearances of arcName
-		allArcs.erase(allArcs.begin() + findArc(allArcs, arcName));
-		weight = weight - arcName.weight;
-
-		//if what we are trying to remove is the shortest path, we need to find the next smallest path
-		if(adjTable[arcName.node1][arcName.node2] == arcName.weight){
-
-			//update adjacency with the new smallest arc
-			std::vector<arc> possibleArcs;
-
-			for(auto const& arcIterator: allArcs){
-				if((arcIterator == alternateArc) || (arcIterator == arcName)){
-					possibleArcs.push_back(arcIterator);
-				}
-			}
-
-			sort(possibleArcs.begin(), possibleArcs.end(), compareArcs);
-			arc newShortest = possibleArcs[0];
-
-			adjTable[arcName.node1][arcName.node2] = newShortest.weight;
-
-			//this affects floyd's
-			floydsComplete = false;
-			return;
-		}
-
-		//adjacency does not need to be updated if the arc being deleted is not the shortest
-		return;
-
-	} else{
-		//there is only one occurance of arcName or alternateArc
 		allArcs.erase(allArcs.begin() + findArc(allArcs, arcName));
 		weight = weight - arcName.weight;
 
@@ -130,7 +104,6 @@ void Graph::removeArc(arc arcName){
 		return;
 	}
 }
-
 
 
 //returns the index of a node in the vector allNodes
@@ -144,7 +117,6 @@ int findNode(std::vector<std::string> searchVector, std::string searchNode){
 		return -1;
 	}
 }
-
 
 
 //returns the index of an arc in the vector allArcs
@@ -169,35 +141,16 @@ int findArc(std::vector<arc> searchVector, arc searchArc){
 }
 
 
-//returns the number of occurences of an arc
-int arcCount(std::vector<arc> searchVector, arc searchArc){
-
-	//searches for duplicates aswell
-	arc alternateArc = createArc(searchArc.weight, searchArc.node2, searchArc.node1);
-	int currentCount = 0;
-
-	for(auto const& arcIterator: searchVector){
-		if((arcIterator == searchArc) || (arcIterator == alternateArc)){
-			currentCount ++;
-		}
-	}
-	return currentCount;
-}
-
-
-
 //returns the result of comparing the weight of node1 relative to the parent node to node2
 bool compareAdj(const std::tuple<int, std::string> &node1, const std::tuple<int, std::string> &node2){
 	return std::get<0>(node1) < std::get<0>(node2);
 }
 
 
-
 //returns the result of comparing the weight of arc1 to the weight of arc2, used to sort arcs for kruskal's algorithm
 bool compareArcs(const arc &arc1, const arc &arc2){
 	return arc1.weight < arc2.weight;
 }
-
 
 
 //returns true if there is an arc between node1 and node2 in graph tempGraph, false if not
@@ -210,7 +163,6 @@ bool areAdjacent(Graph tempGraph, std::string node1, std::string node2){
 		return false;
 	}
 }
-
 
 
 //used in containsCycle implimentation. This is the actual DFS part
@@ -228,7 +180,6 @@ bool Graph::traverseNode(std::string nodeName, std::map<std::string, bool> visit
 	}
 	return false;
 }
-
 
 
 //returns true if the graph contains a cycle, false otherwise. This uses DFS traversal, albiet a janky implimentation
@@ -255,6 +206,17 @@ bool Graph::containsCycle(){
 bool Graph::isEulerian(){
 	for(auto const& nodeIterator: allNodes){
 		if(adjTable[nodeIterator].size() % 2 != 0){
+			return false;
+		}
+	}
+	return true;
+}
+
+
+//is graph complete
+bool Graph::isComplete(){
+	for(auto const& nodeIterator: allNodes){
+		if(adjTable[nodeIterator].size() != (allNodes.size() - 1)){
 			return false;
 		}
 	}
@@ -326,7 +288,7 @@ void Graph::calculateFloyds(){
 		}
 	}
 	floydsComplete = true;
-	std::cout<<"======Floyd's algorithm completed======\n\n"<<std::endl;
+	std::cout<<"\nFloyd's algorithm completed"<<std::endl;
 }
 
 
@@ -368,6 +330,7 @@ void Graph::showGraph(){
 			std::cout<<"> Arc: "<<innerIterator->first<<", Weight: "<<innerIterator->second<<std::endl;
 		}
 	}
+
 	std::cout<<"\nALL NODES:"<<std::endl;
 	for(auto const& nodeIterator: allNodes){
 		std::cout<<nodeIterator<<std::endl;
@@ -416,7 +379,6 @@ void Graph::showGraph(){
 }
 
 
-
 //returns a MST of graph using kruskals algorithm
 Graph findMST(Graph tempGraph){
 	Graph MST; 
@@ -458,7 +420,6 @@ Graph findMST(Graph tempGraph){
 }
 
 
-
 //returns a MST of a graph, but after removing a node, nodeName
 Graph findRMST(Graph tempGraph, std::string nodeName){
 	Graph RMST = tempGraph;
@@ -474,7 +435,6 @@ Graph findRMST(Graph tempGraph, std::string nodeName){
 	
 	return findMST(RMST);
 }
-
 
 
 //returns an arc struct with weight arcweight, connecting node1 and node2
@@ -522,6 +482,7 @@ bool isNodeSafe(Graph tempGraph, std::string path[], int nodeIterator, int index
 	
 	return true;
 }
+
 
 bool hamiltonianRecurrer(Graph tempGraph, std::string path[], int index){
 

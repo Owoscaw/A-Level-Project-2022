@@ -9,30 +9,11 @@
 #include <vector>
 #include <algorithm>
 #include <iomanip>
+#include <fstream>
 
-struct arc{
-	std::string node1;
-	std::string node2;
-	int weight;
+struct arc;
 
-	//used in implimentation to search for arcs
-	bool operator==(const arc& rhs) const{
-		bool node1Match = (node1 == rhs.node1);
-		bool node2Match = (node2 == rhs.node2);
-		bool weightMatch = (weight == rhs.weight);
-
-		//used to search for an arc later on
-		return (node1Match && node2Match && weightMatch);
-	}
-};
-
-struct path{
-	std::vector<std::string> path;
-	std::string startNode;
-	std::string endNode;
-	int pathWeight = 0;
-	int pathSize = 0;
-};
+struct path;
 
 class Graph{
 	public:
@@ -65,6 +46,8 @@ class Graph{
 
 		bool isEulerian();
 
+		bool isComplete();
+
 		void calculateFloyds();
 
 		path pathBetweenNodes(std::string node1, std::string node2);
@@ -77,8 +60,6 @@ class Graph{
 int findNode(std::vector<std::string> searchVector, std::string searchNode);
 
 int findArc(std::vector<arc> searchVector, arc searchArc);
-
-int arcCount(std::vector<arc> searchVector, arc searchArc);
 
 bool compareAdj(const std::tuple<int, std::string> &node1, const std::tuple<int, std::string> &node2);
 

@@ -1,1 +1,272 @@
-{"nodes":[{"lat":52.40012892303699,"lng":0.0031945600494509563,"url":"markerIcon1.jpg","scaledSize":{"width":50,"height":50},"name":"Node 1","label":"Node 1","timeout":null,"colour":"247, 181, 41","active":true},{"lat":52.40143812927531,"lng":-0.0024273500457638875,"url":"markerIcon3.jpg","scaledSize":{"width":50,"height":50},"name":"Node 2","label":"Node 2","timeout":null,"colour":"23, 156, 82","active":true},{"lat":52.40141194553125,"lng":-0.0058605775848263875,"url":"markerIcon1.jpg","scaledSize":{"width":50,"height":50},"name":"Node 3","label":"Node 3","timeout":null,"colour":"247, 181, 41","active":true}],"arcs":[{"node1":{"lat":52.40012892303699,"lng":0.0031945600494509563,"url":"markerIcon1.jpg","scaledSize":{"width":50,"height":50},"name":"Node 1","label":"Node 1","timeout":null,"colour":"247, 181, 41","active":true},"node2":{"lat":52.40143812927531,"lng":-0.0024273500457638875,"url":"markerIcon3.jpg","scaledSize":{"width":50,"height":50},"name":"Node 2","label":"Node 2","timeout":null,"colour":"23, 156, 82","active":true},"weight":1},{"node1":{"lat":52.40143812927531,"lng":-0.0024273500457638875,"url":"markerIcon3.jpg","scaledSize":{"width":50,"height":50},"name":"Node 2","label":"Node 2","timeout":null,"colour":"23, 156, 82","active":true},"node2":{"lat":52.40141194553125,"lng":-0.0058605775848263875,"url":"markerIcon1.jpg","scaledSize":{"width":50,"height":50},"name":"Node 3","label":"Node 3","timeout":null,"colour":"247, 181, 41","active":true},"weight":1}],"adjTable":{"Node 1":{"Node 2":1,"Node 3":0},"Node 2":{"Node 1":1,"Node 3":1},"Node 3":{"Node 1":0,"Node 2":1}}}
+{
+    "nodes": [
+        {
+            "lat": 52.398714936666465,
+            "lng": -0.00997727271169424,
+            "url": "markerIcon3.jpg",
+            "scaledSize": {
+                "width": 50,
+                "height": 50
+            },
+            "name": "Node 1",
+            "label": "Node 1",
+            "timeout": null,
+            "colour": "255, 62, 48",
+            "active": true
+        },
+        {
+            "lat": 52.4029567598447,
+            "lng": -0.0014371192082762718,
+            "url": "markerIcon3.jpg",
+            "scaledSize": {
+                "width": 50,
+                "height": 50
+            },
+            "name": "Node 2",
+            "label": "Node 2",
+            "timeout": null,
+            "colour": "23, 107, 239",
+            "active": true
+        },
+        {
+            "lat": 52.409909040559036,
+            "lng": 0.09093533427646072,
+            "url": "markerIcon3.jpg",
+            "scaledSize": {
+                "width": 50,
+                "height": 50
+            },
+            "name": "Node 3",
+            "label": "Node 3",
+            "timeout": null,
+            "colour": "23, 156, 82",
+            "active": true
+        },
+        {
+            "lat": 52.36988983752225,
+            "lng": 0.051968313953434375,
+            "url": "markerIcon2.jpg",
+            "scaledSize": {
+                "width": 50,
+                "height": 50
+            },
+            "name": "Node 4",
+            "label": "Node 4",
+            "timeout": null,
+            "colour": "255, 62, 48",
+            "active": true
+        }
+    ],
+    "arcs": [
+        {
+            "node1": {
+                "lat": 52.398714936666465,
+                "lng": -0.00997727271169424,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 1",
+                "label": "Node 1",
+                "timeout": null,
+                "colour": "255, 62, 48",
+                "active": true
+            },
+            "node2": {
+                "lat": 52.4029567598447,
+                "lng": -0.0014371192082762718,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 2",
+                "label": "Node 2",
+                "timeout": null,
+                "colour": "23, 107, 239",
+                "active": true
+            },
+            "weight": 96
+        },
+        {
+            "node1": {
+                "lat": 52.398714936666465,
+                "lng": -0.00997727271169424,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 1",
+                "label": "Node 1",
+                "timeout": null,
+                "colour": "255, 62, 48",
+                "active": true
+            },
+            "node2": {
+                "lat": 52.409909040559036,
+                "lng": 0.09093533427646072,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 3",
+                "label": "Node 3",
+                "timeout": null,
+                "colour": "23, 156, 82",
+                "active": true
+            },
+            "weight": 115
+        },
+        {
+            "node1": {
+                "lat": 52.398714936666465,
+                "lng": -0.00997727271169424,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 1",
+                "label": "Node 1",
+                "timeout": null,
+                "colour": "255, 62, 48",
+                "active": true
+            },
+            "node2": {
+                "lat": 52.36988983752225,
+                "lng": 0.051968313953434375,
+                "url": "markerIcon2.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 4",
+                "label": "Node 4",
+                "timeout": null,
+                "colour": "255, 62, 48",
+                "active": true
+            },
+            "weight": 257
+        },
+        {
+            "node1": {
+                "lat": 52.4029567598447,
+                "lng": -0.0014371192082762718,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 2",
+                "label": "Node 2",
+                "timeout": null,
+                "colour": "23, 107, 239",
+                "active": true
+            },
+            "node2": {
+                "lat": 52.409909040559036,
+                "lng": 0.09093533427646072,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 3",
+                "label": "Node 3",
+                "timeout": null,
+                "colour": "23, 156, 82",
+                "active": true
+            },
+            "weight": 494
+        },
+        {
+            "node1": {
+                "lat": 52.4029567598447,
+                "lng": -0.0014371192082762718,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 2",
+                "label": "Node 2",
+                "timeout": null,
+                "colour": "23, 107, 239",
+                "active": true
+            },
+            "node2": {
+                "lat": 52.36988983752225,
+                "lng": 0.051968313953434375,
+                "url": "markerIcon2.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 4",
+                "label": "Node 4",
+                "timeout": null,
+                "colour": "255, 62, 48",
+                "active": true
+            },
+            "weight": 772
+        },
+        {
+            "node1": {
+                "lat": 52.409909040559036,
+                "lng": 0.09093533427646072,
+                "url": "markerIcon3.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 3",
+                "label": "Node 3",
+                "timeout": null,
+                "colour": "23, 156, 82",
+                "active": true
+            },
+            "node2": {
+                "lat": 52.36988983752225,
+                "lng": 0.051968313953434375,
+                "url": "markerIcon2.jpg",
+                "scaledSize": {
+                    "width": 50,
+                    "height": 50
+                },
+                "name": "Node 4",
+                "label": "Node 4",
+                "timeout": null,
+                "colour": "255, 62, 48",
+                "active": true
+            },
+            "weight": 693
+        }
+    ],
+    "adjTable": {
+        "Node 1": {
+            "Node 2": 96,
+            "Node 3": 115,
+            "Node 4": 257
+        },
+        "Node 2": {
+            "Node 1": 96,
+            "Node 3": 494,
+            "Node 4": 772
+        },
+        "Node 3": {
+            "Node 1": 115,
+            "Node 2": 494,
+            "Node 4": 693
+        },
+        "Node 4": {
+            "Node 1": 257,
+            "Node 2": 772,
+            "Node 3": 693
+        }
+    },
+    "startNode": "Node 2",
+    "path": []
+}
