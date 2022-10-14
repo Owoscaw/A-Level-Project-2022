@@ -16,7 +16,7 @@ function NewSol(props){
   const [ nodesInMenu, updateMenu ] = useState([]);
   const [ startNode, updateStartNode ] = useState({});
   const [ activeSol, setSol ] = useState({});
-  const [ apiResponse, updateResponse ] = useState("");
+  const [ apiResponse, updateResponse ] = useState({ message: "", data: null});
   const selectRef = useRef();
   const nodeTransitions = useTransition(nodesInMenu, {
     from: {
@@ -43,7 +43,7 @@ function NewSol(props){
       return;
     }
 
-    updateResponse("");
+    updateResponse({ message: "", data: null});
     setAvailibility(false);
 
     let solNetwork = new Network();
@@ -136,6 +136,13 @@ function NewSol(props){
   const activateStartNode = (event) => {
     updateStartNode(event);
   };
+
+  const passSol = () => {
+    props.setSol({
+      path: apiResponse.data.path,
+      data: activeSol
+    })
+  }
 
   const customStyles = {
     control: (styles, state) => ({
@@ -271,8 +278,8 @@ function NewSol(props){
       </div>
 
       {
-        coverIsOn ? <NetworkDisplay onCancel={cancelSol} title="Initial Network" 
-        nodes={activeSol.allNodes} arcs={activeSol.allArcs} apiStatus={apiResponse}/> : null
+        coverIsOn ? <NetworkDisplay onCancel={cancelSol} title={apiResponse.message === "Path found" ? "Optimal network" : "Initial network"} 
+        nodes={activeSol.allNodes} arcs={activeSol.allArcs} apiStatus={apiResponse} setSol={passSol}/> : null
       }
     </div>
   );

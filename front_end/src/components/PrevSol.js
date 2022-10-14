@@ -1,6 +1,7 @@
 import React from "react";
 
 function PrevSol(props){
+    console.log(props.solution);
     return (
         <div>
             Test

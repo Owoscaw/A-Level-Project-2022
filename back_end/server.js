@@ -14,6 +14,7 @@ app.use(cors());
 app.post("/", (request, response) => {
     response.setHeader("Content-Type", "application/json");
     let requestJson = request.body;
+    console.log("test");
     fs.writeFile("./data.json", JSON.stringify(requestJson, null, 4), "utf8", () => {
 
         let graphPromise = new Promise((resolve, reject) => {

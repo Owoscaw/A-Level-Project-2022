@@ -14,7 +14,7 @@ function NetworkDisplay(props){
         let nameStage = new createjs.Stage(canvasRef.current);
 
         let thetaIncrement = Math.PI*2/nodes.length;
-        let rad = (canvasRef.current.height - 75)/2;
+        let rad = (canvasRef.current.height - 100)/2;
         let cntr = {x: canvasRef.current.width/2, y: canvasRef.current.height/2};
 
         let fontSize = Math.floor(36/window.devicePixelRatio);
@@ -125,7 +125,7 @@ function NetworkDisplay(props){
                 <canvas ref={canvasRef} id="networkCanvas"/>
                 <div id="apiStatus" className={props.apiStatus.message === "" ? "apiLoading" : null}>
                     {
-                        props.apiStatus === "" ? "Calculating" : props.apiStatus.message
+                        props.apiStatus.message === "" ? "Calculating" : <input id="solutionButton" type="button" value="View route" onClick={props.setSol}/>
                     }
                 </div>
             </div>

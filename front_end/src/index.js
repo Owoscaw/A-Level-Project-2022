@@ -15,21 +15,31 @@ class App extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            currentScreen: props.state
+            currentScreen: props.state,
+            activeSol: {}
         };
 
         this.changeScreen = this.changeScreen.bind(this);
         this.saveSolution = this.saveSolution.bind(this);
+        this.setSolution = this.setSolution.bind(this);
     }
 
     changeScreen(state){
-        this.setState({
+        this.setState(prevState => ({
+            ...prevState,
             currentScreen: state
-        });
+        }));
     }
 
     saveSolution(options){
         return fetch("http://localhost:9000/", options);
+    }
+
+    setSolution(solution){
+        this.setState({
+            currentScreen: "prevSol",
+            activeSol: solution
+        });
     }
 
     render(){
@@ -38,9 +48,9 @@ class App extends React.Component{
             case "menu":
                 return <MainMenu changeScreen={this.changeScreen}/>; 
             case "newSol":
-                return <NewSol changeScreen={this.changeScreen} saveSol={this.saveSolution}/>;
+                return <NewSol changeScreen={this.changeScreen} saveSol={this.saveSolution} setSol={this.setSolution}/>;
             case "prevSol":
-                return <PrevSol changeScreen={this.changeScreen}/>;
+                return <PrevSol changeScreen={this.changeScreen} solution={this.state.activeSol}/>;
             default:
                 return <div>error</div>;
         }

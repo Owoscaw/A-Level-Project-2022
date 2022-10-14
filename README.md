@@ -1,2 +1,6 @@
 # A-Level-Project-2022
-TSP applied to google maps for my A level computer science project. To start this app, run start.bat
+TSP applied to google maps for my A level computer science project.
+
+devStart runs the project in development mode, with nodemon
+
+start runs the project in normal mode

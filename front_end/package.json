@@ -1,6 +1,7 @@
 {
   "name": "front_end",
   "version": "0.1.0",
+  "proxy": "http://localhost:9000",
   "private": true,
   "dependencies": {
     "@emotion/css": "^11.10.0",
