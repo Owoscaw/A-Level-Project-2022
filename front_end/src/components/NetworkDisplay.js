@@ -108,7 +108,7 @@ function NetworkDisplay(props){
         } else {
             drawNetwork(props.nodes, props.arcs, [], networkContext);
         }
-    }, [props.nodes, props.arcs, props.apiStatus.message]);
+    }, [props]);
 
 
     return (

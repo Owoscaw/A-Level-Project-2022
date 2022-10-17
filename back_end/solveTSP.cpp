@@ -337,11 +337,10 @@ int main(){
 
 	Graph solGraph;
 
-	std::ifstream jsonFile("data.json");
+	std::ifstream jsonFile("data.json", std::ifstream::binary);
 	Json::Value solJson;
-	Json::Reader jsonReader;
+	jsonFile >> solJson;
 
-	jsonReader.parse(jsonFile, solJson);
 	Json::Value solNodes = solJson["nodes"];
 	Json::Value solArcs = solJson["arcs"];
 	std::string startNode = solJson["startNode"].asString();
@@ -363,12 +362,17 @@ int main(){
 
 	Bound solBound = solve(solGraph);
 
-	path solPath = solBound.findPath(startNode);
-	Json::Value path;
-	for(int k = 0; k < solPath.pathSize + 1; k++){
-		path[k] = solPath.path[k];
+	if(solBound.isOptimal){
+		path solPath = solBound.findPath(startNode);
+		Json::Value path;
+		for(int k = 0; k < solPath.pathSize + 1; k++){
+			path[k] = solPath.path[k];
+		}
+		solJson["path"] = path;
+	} else {
+		solJson["path"] = "not found";
 	}
-	solJson["path"] = path;
+
 
 	Json::StreamWriterBuilder builder;
 	builder["commentStyle"] = "None";

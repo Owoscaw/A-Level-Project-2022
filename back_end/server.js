@@ -18,9 +18,11 @@ app.post("/calculate", (request, response) => {
 
         let graphPromise = new Promise((resolve, reject) => {
 
-            execFile("./solveTSP.exe", [], (error, data, dataError) => {
-                if(error || (data.includes("solution not found"))){
+            execFile("./solveTSP.exe", (error, data, dataError) => {
+                if(error){
                     reject(error, dataError);
+                } else if(data.includes("solution not found")){
+                    reject(null, "Failed to find path");
                 } else {
                     resolve(data);
                 }
@@ -48,7 +50,7 @@ app.post("/calculate", (request, response) => {
         }, (reject, rejectData) => {
             console.log(reject, rejectData);
             response.send({
-                message: "Error finding path",
+                message: typeof reject === "null" ? rejectData : "Error loading network",
                 data: null
             });
             return;

@@ -12,11 +12,72 @@ html, body {
   padding: 0;
 }
 
-#returnButton {
-    height: 20px;
-    width: 50px;
-    border: 1px solid black;
-    border-radius: 5px;
-    font-family: "Google Sans";
-    font-size: 20px;
+#prevSolution {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#leftPage {
+  height: 100%;
+  width: 40%;
+  background-color: blue;
+  float: left;
+}
+
+#solutionHeader {
+  height: 50px;
+  width: 100%;
+}
+
+#solutionMenu {
+  height: calc(95% - 58px);
+  width: 100%;
+  box-sizing: border-box;
+  background-color: red;
+  float: left;
+}
+
+#solutionFooter {
+  height: 5%;
+  width: 100%;
+  float: left;
+}
+
+#backButton {
+  width: 200px;
+  height: 100%;
+  border: 1px outset black;
+  border-radius: 10px;
+  margin: 4px;
+  box-sizing: border-box;
+  font-family: "Google Sans";
+  color: black;
+  background-color: white;
+  font-size: 26px;
+  transition: background-color 0.4s ease;
+}
+
+#backButton:hover {
+  background-color: #4285f4;
+  cursor: pointer;
+}
+
+#rightPage {
+  height: 100%;
+  width: 60%;
+  float: right;
+}
+
+#mapHeader {
+  height: 20%;
+  width: 100%;
+}
+
+#mapContainer {
+  height: 80%;
+  width: 100%;
+  background-color: red;
+  float: right;
 }
