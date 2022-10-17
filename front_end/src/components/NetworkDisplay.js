@@ -125,7 +125,7 @@ function NetworkDisplay(props){
                 <canvas ref={canvasRef} id="networkCanvas"/>
                 <div id="apiStatus" className={props.apiStatus.message === "" ? "apiLoading" : null}>
                     {
-                        props.apiStatus.message === "" ? "Calculating" : <input id="solutionButton" type="button" value="View route" onClick={props.setSol}/>
+                        props.apiStatus.message !== "Path found" ? (props.apiStatus.message === "" ? "Calculating" : props.apiStatus.message ) : <input id="solutionButton" type="button" value="View route" onClick={props.setSol}/>
                     }
                 </div>
             </div>

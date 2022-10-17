@@ -4,32 +4,32 @@
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 2",
-			"weight" : 915
+			"weight" : 41
 		},
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 3",
-			"weight" : 577
+			"weight" : 953
 		},
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 4",
-			"weight" : 450
+			"weight" : 516
 		},
 		{
 			"node1" : "Node 2",
 			"node2" : "Node 3",
-			"weight" : 946
+			"weight" : 549
 		},
 		{
 			"node1" : "Node 2",
 			"node2" : "Node 4",
-			"weight" : 419
+			"weight" : 569
 		},
 		{
 			"node1" : "Node 3",
 			"node2" : "Node 4",
-			"weight" : 335
+			"weight" : 351
 		}
 	],
 	"nodes" : [ "Node 1", "Node 2", "Node 3", "Node 4" ],

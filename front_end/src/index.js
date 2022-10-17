@@ -16,12 +16,15 @@ class App extends React.Component{
         super(props);
         this.state = {
             currentScreen: props.state,
-            activeSol: {}
+            routeIndex: 0,
+            data: null
         };
 
         this.changeScreen = this.changeScreen.bind(this);
-        this.saveSolution = this.saveSolution.bind(this);
-        this.setSolution = this.setSolution.bind(this);
+        this.changeData = this.changeData.bind(this);
+        this.calculateSolution = this.calculateSolution.bind(this);
+        this.writeSolution = this.writeSolution.bind(this);
+        this.clearSolution = this.clearSolution.bind(this);
     }
 
     changeScreen(state){
@@ -31,15 +34,33 @@ class App extends React.Component{
         }));
     }
 
-    saveSolution(options){
-        return fetch("http://localhost:9000/", options);
+    changeData(data){
+        this.setState(prevState => ({
+            ...prevState,
+            data: data
+        }));
     }
 
-    setSolution(solution){
-        this.setState({
-            currentScreen: "prevSol",
-            activeSol: solution
-        });
+    calculateSolution(options){
+        return fetch("http://localhost:9000/calculate", options);
+    }
+
+    writeSolution(options){
+        this.setState(prevState => ({
+            ...prevState,
+            routeIndex: prevState.routeIndex + 1
+        }));
+
+        return fetch("http://localhost:9000/save", options);
+    }
+
+    clearSolution(options){
+        this.setState(prevState => ({
+            ...prevState,
+            routeIndex: 0
+        }));
+
+        return fetch("http://localhost:9000/clear", options);
     }
 
     render(){
@@ -48,9 +69,11 @@ class App extends React.Component{
             case "menu":
                 return <MainMenu changeScreen={this.changeScreen}/>; 
             case "newSol":
-                return <NewSol changeScreen={this.changeScreen} saveSol={this.saveSolution} setSol={this.setSolution}/>;
+                return <NewSol changeScreen={this.changeScreen} calcSol={this.calculateSolution} 
+                writeSolution={this.writeSolution} changeData={this.changeData} routeIndex={this.state.routeIndex}/>;
             case "prevSol":
-                return <PrevSol changeScreen={this.changeScreen} solution={this.state.activeSol}/>;
+                return <PrevSol changeScreen={this.changeScreen} changeData={this.changeData} data={this.state.data}
+                clearSolution={this.clearSolution}/>;
             default:
                 return <div>error</div>;
         }

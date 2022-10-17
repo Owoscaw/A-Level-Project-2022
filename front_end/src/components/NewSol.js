@@ -59,12 +59,10 @@ function NewSol(props){
 
     let matrixPromise = getMatrix(toBeArced, nodeArray, solNetwork);
     matrixPromise.then(function(resolve){
-      console.log(resolve);
       setSol(solNetwork);
       setCover(true);
       let solJSON = solNetwork.toJSON(startNode.name);
-      console.log(solJSON);
-      props.saveSol({
+      props.calcSol({
         method: "POST",
         cache: "no-cache",
         headers: { 
@@ -138,10 +136,32 @@ function NewSol(props){
   };
 
   const passSol = () => {
-    props.setSol({
-      path: apiResponse.data.path,
-      data: activeSol
-    })
+
+    props.writeSolution({
+      method: "POST",
+      cache: "no-cache",
+      headers: { 
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        path: apiResponse.data.path,
+        nodes: activeSol.allNodes,
+        name: "Route " + props.routeIndex
+      }, null, 4)
+    }).then(response => response.json()).then(response => {
+      if(response.message === "Saved solution"){
+        props.changeData({
+          path: apiResponse.data.path,
+          nodes: activeSol.allNodes,
+          name: "Route " + props.routeIndex
+        });
+        props.changeScreen("prevSol");
+        return;
+      } else {
+        console.log(response);
+      }
+    });
   }
 
   const customStyles = {
