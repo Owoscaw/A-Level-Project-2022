@@ -1,50 +1,119 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 
 import "../styles/prevSol.css";
 
-function PrevSol(props){
+function PrevSol({data, ...props}){
 
     const [ solution, setSolution ] = useState(null);
+    const [ prevData, setData ] = useState([]);
+    const [ startNode, setStartNode ] = useState({});
+    const [ mapCenter, setCenter ] = useState({lat: 0, lng: 0});
+    const [ mapZoom, setZoom ] = useState(3);
+    const mapOptions = useMemo(() => ({
+        disableDefaultUI: true,
+        draggableCursor: "default",
+        draggingCursor: "grabbing"
+    }), []);
+
+    const { isLoaded } = useLoadScript({
+        googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws"
+    });
 
     useEffect(() => {
-        setSolution(props.data);
+        setSolution(data);
+        loadSolutions().then(response => {
+            setData(response.data); 
+            console.log(response);
+            if(response.data.length > 0 && data !== null){
+                console.log(response.data);
+                const pathStart = response.data[0].nodes.filter(node => (node.name === data.startNode))[0]
+                setStartNode(pathStart);
+                setCenter({lat: pathStart.lat, lng: pathStart.lng});
+                setZoom(15);
+                console.log(mapCenter);
+            }
+        });
 
         return () => {
             setSolution(null);
-            props.changeData(null);
+            setData([]);
+            setStartNode({});
+            setCenter({lat: 0, lng: 0});
         }
-    }, [props.data]);
+    }, [data]);
 
-    console.log(solution);
+    const clearSolution = () => {
+        props.api("clear", {
+            method: "GET",
+            cache: "no-cache",
+            headers: { 
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+            }
+        });
+
+        setZoom(3);
+    }
+
+    const loadSolutions = () => {
+        return props.api("load", {
+            method: "GET",
+            cache: "no-cache",
+            headers: { 
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+            }
+        }).then(response => response.json());
+    }
+
+    const loadRoute = () => {
+
+        if(data === null) return;
+
+        let routeOptions = {
+            unitSystem: window.google.maps.UnitSystem.METRIC,
+            provideRouteAlternatives: false
+        };
+    }
 
     return (
         <div id="prevSolution">
             <div id="leftPage">
-                <div id="solutionHeader">
-                    Header
+                <div id="solutionHeader" className="header">
+                    Previous solutions:
                 </div>
                 <div id="solutionMenu">
-                    <input type="button" value="clear" onClick={() => props.clearSolution({
-                        method: "POST",
-                        cache: "no-cache",
-                        headers: { 
-                        "Accept": "application/json",
-                        "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({})
-                    })}/>
+                    <ul id="solutionList">
+                        {
+                            prevData.map(route => (
+                            <li key={route.nodes[0].lat}>
+                                {route.nodes[0].name}
+                            </li>
+                            ))
+                        }
+                    </ul>
                 </div>
                 <div id="solutionFooter">
-                    <input type="button" id="backButton" value="Back" onClick={() => props.changeScreen("menu")}/>
+                    <input type="button" id="backButton" className="footerButton" value="Back" onClick={() => props.changeScreen("menu")}/>
+                    <input type="button" id="clearButton" className="footerButton" value="Clear solutions" onClick={() => {
+                        clearSolution();
+                        loadSolutions().then(response => {
+                            setData(response.data);   
+                        });
+                        }}/>
                 </div>
             </div>
 
             <div id="rightPage">
-                <div id="mapHeader">
-                    {props.data === null ? "No route selected" : props.data.name}
+                <div id="mapHeader" className={data === null ? "header" : "header activeHeader"}>
+                    {data === null ? "No route selected" : "Route selected"}
                 </div>
                 <div id="mapContainer">
-
+                        {
+                            isLoaded ? <GoogleMap id="map" zoom={mapZoom} center={mapCenter}
+                            options={mapOptions} onLoad={loadRoute}></GoogleMap> : <div id="mapLoading">Loading...</div>
+                        }
                 </div>
             </div>
         </div>

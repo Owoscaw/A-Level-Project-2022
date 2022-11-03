@@ -19,35 +19,19 @@ html, body {
   padding: 0;
 }
 
-#leftPage {
-  height: 100%;
-  width: 40%;
-  background-color: blue;
-  float: left;
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Google Sans";
+  background-color: #F1F3F4;
 }
 
-#solutionHeader {
-  height: 50px;
-  width: 100%;
+.activeHeader {
+  font-size: 28px;
 }
 
-#solutionMenu {
-  height: calc(95% - 58px);
-  width: 100%;
-  box-sizing: border-box;
-  background-color: red;
-  float: left;
-}
-
-#solutionFooter {
-  height: 5%;
-  width: 100%;
-  float: left;
-}
-
-#backButton {
-  width: 200px;
-  height: 100%;
+.footerButton {
   border: 1px outset black;
   border-radius: 10px;
   margin: 4px;
@@ -59,9 +43,83 @@ html, body {
   transition: background-color 0.4s ease;
 }
 
+#leftPage {
+  height: 100%;
+  width: 40%;
+  float: left;
+  background-color: #F1F3F4;
+}
+
+#solutionHeader {
+  height: 50px;
+  width: 100%;
+  font-size: 24px;
+}
+
+#solutionMenu {
+  height: calc(100% - 108px);
+  width: 100%;
+  float: left;
+}
+
+#solutionList {
+  height: 100%;
+  width: 100%;
+  list-style: none;
+  overflow: hidden;
+  overflow-y: auto;
+  text-align: center;
+  scrollbar-gutter: stable;
+  color: rgba(125, 125, 125, 0);
+  transition: color 0.4s ease;
+}
+
+#solutionList:empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Google Sans";
+  font-size: 20px;
+  color: rgba(125, 125, 125, 1);
+}
+
+#solutionList:empty:after {
+  content: "No solutions saved";
+}
+
+#solutionList li {
+  width: 100%;
+  height: 50px;
+  background-color: red;
+  color: black;
+}
+
+#solutionFooter {
+  height: 50px;
+  width: 100%;
+  float: left;
+  display: flex;
+}
+
+#backButton {
+  width: 200px;
+  height: 100%;
+}
+
 #backButton:hover {
   background-color: #4285f4;
   cursor: pointer;
+}
+
+#clearButton {
+  height: 100%;
+  min-width: 200px;
+  flex-grow: 100;
+}
+
+#clearButton:hover {
+  cursor: pointer;
+  background-color: #EA4335;
 }
 
 #rightPage {
@@ -71,13 +129,21 @@ html, body {
 }
 
 #mapHeader {
-  height: 20%;
+  height: 50px;
   width: 100%;
+  font-size: 22px;
+  background-color: #F1F3F4;
 }
 
 #mapContainer {
-  height: 80%;
+  height: calc(100% - 50px);
   width: 100%;
-  background-color: red;
   float: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#map {
+  margin-bottom: 10px;
 }

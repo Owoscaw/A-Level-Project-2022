@@ -84,13 +84,32 @@ app.post("/save", (request, response) => {
     });
 });
 
-app.post("/clear", (request, response) => {
+app.get("/clear", (request, response) => {
     response.setHeader("Content-Type", "application/json");
     fs.writeFile("./prevData.json", JSON.stringify({solutions: []}, null, 4), "utf-8", () => {
         response.send({
             message: "Solution cleared"
         });
         return;
+    });
+});
+
+app.get("/load", (request, response) => {
+    response.setHeader("Content-Type", "application/json");
+    fs.readFile("./prevData.json", (error, data) => {
+        if(error){
+            response.send({
+                message: "Error reading solutions",
+                data: null
+            });
+            return;
+        } else {
+            response.send({
+                message: "Solution read successful",
+                data: JSON.parse(data).solutions
+            });
+            return;
+        }
     });
 });
 

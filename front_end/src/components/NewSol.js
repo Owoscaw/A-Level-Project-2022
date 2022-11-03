@@ -62,7 +62,7 @@ function NewSol(props){
       setSol(solNetwork);
       setCover(true);
       let solJSON = solNetwork.toJSON(startNode.name);
-      props.calcSol({
+      props.api("calculate", {
         method: "POST",
         cache: "no-cache",
         headers: { 
@@ -137,7 +137,7 @@ function NewSol(props){
 
   const passSol = () => {
 
-    props.writeSolution({
+    props.api("save", {
       method: "POST",
       cache: "no-cache",
       headers: { 
@@ -147,14 +147,14 @@ function NewSol(props){
       body: JSON.stringify({
         path: apiResponse.data.path,
         nodes: activeSol.allNodes,
-        name: "Route " + props.routeIndex
+        startNode: apiResponse.data.path[0]
       }, null, 4)
     }).then(response => response.json()).then(response => {
       if(response.message === "Saved solution"){
         props.changeData({
           path: apiResponse.data.path,
           nodes: activeSol.allNodes,
-          name: "Route " + props.routeIndex
+          startNode: apiResponse.data.path[0]
         });
         props.changeScreen("prevSol");
         return;

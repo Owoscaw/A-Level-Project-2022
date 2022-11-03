@@ -16,15 +16,12 @@ class App extends React.Component{
         super(props);
         this.state = {
             currentScreen: props.state,
-            routeIndex: 0,
             data: null
         };
 
         this.changeScreen = this.changeScreen.bind(this);
         this.changeData = this.changeData.bind(this);
-        this.calculateSolution = this.calculateSolution.bind(this);
-        this.writeSolution = this.writeSolution.bind(this);
-        this.clearSolution = this.clearSolution.bind(this);
+        this.callApi = this.callApi.bind(this);
     }
 
     changeScreen(state){
@@ -41,39 +38,24 @@ class App extends React.Component{
         }));
     }
 
-    calculateSolution(options){
-        return fetch("http://localhost:9000/calculate", options);
-    }
+    callApi(mode, options){
 
-    writeSolution(options){
-        this.setState(prevState => ({
-            ...prevState,
-            routeIndex: prevState.routeIndex + 1
-        }));
+        if(mode === "clear"){
+            this.changeData(null);
+        }
 
-        return fetch("http://localhost:9000/save", options);
-    }
-
-    clearSolution(options){
-        this.setState(prevState => ({
-            ...prevState,
-            routeIndex: 0
-        }));
-
-        return fetch("http://localhost:9000/clear", options);
+        return fetch(`http://localhost:9000/${mode}`, options);
     }
 
     render(){
-        console.log(this.state);
         switch(this.state.currentScreen){
             case "menu":
                 return <MainMenu changeScreen={this.changeScreen}/>; 
             case "newSol":
-                return <NewSol changeScreen={this.changeScreen} calcSol={this.calculateSolution} 
-                writeSolution={this.writeSolution} changeData={this.changeData} routeIndex={this.state.routeIndex}/>;
+                return <NewSol changeScreen={this.changeScreen} api={this.callApi} changeData={this.changeData}/>;
             case "prevSol":
-                return <PrevSol changeScreen={this.changeScreen} changeData={this.changeData} data={this.state.data}
-                clearSolution={this.clearSolution}/>;
+                return <PrevSol changeScreen={this.changeScreen} changeData={this.changeData} 
+                data={this.state.data} api={this.callApi}/>;
             default:
                 return <div>error</div>;
         }
