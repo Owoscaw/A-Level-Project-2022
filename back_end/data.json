@@ -4,35 +4,36 @@
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 2",
-			"weight" : 597
+			"weight" : 551
 		},
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 3",
-			"weight" : 358
+			"weight" : 684
 		},
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 4",
-			"weight" : 385
+			"weight" : 545
 		},
 		{
 			"node1" : "Node 2",
 			"node2" : "Node 3",
-			"weight" : 963
+			"weight" : 831
 		},
 		{
 			"node1" : "Node 2",
 			"node2" : "Node 4",
-			"weight" : 401
+			"weight" : 931
 		},
 		{
 			"node1" : "Node 3",
 			"node2" : "Node 4",
-			"weight" : 235
+			"weight" : 805
 		}
 	],
 	"nodes" : [ "Node 1", "Node 2", "Node 3", "Node 4" ],
 	"path" : [ "Node 2", "Node 3", "Node 1", "Node 4", "Node 2" ],
-	"startNode" : "Node 2"
+	"startNode" : "Node 2",
+	"weight" : 2991
 }

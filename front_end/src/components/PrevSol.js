@@ -88,7 +88,9 @@ function PrevSol({data, ...props}){
                         {
                             prevData.map(route => (
                             <li key={route.nodes[0].lat}>
-                                {route.nodes[0].name}
+                                <div className="routeDiv">
+                                    {route.nodes[0].name}
+                                </div>
                             </li>
                             ))
                         }

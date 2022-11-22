@@ -116,7 +116,7 @@ function NetworkDisplay(props){
             <div id="canvasDiv">
                 <div id="networkTitle">
                     {
-                        props.title
+                        props.apiStatus.message !== "Path found" ? props.title : props.title + ": " + props.apiStatus.data.weight + " m"
                     }
                 </div>
                 {

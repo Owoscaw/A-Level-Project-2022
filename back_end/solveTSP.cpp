@@ -369,6 +369,7 @@ int main(){
 			path[k] = solPath.path[k];
 		}
 		solJson["path"] = path;
+		solJson["weight"] = solBound.weight;
 	} else {
 		solJson["path"] = "not found";
 	}

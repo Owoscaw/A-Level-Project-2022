@@ -1,9 +1,10 @@
-import React, { useState, Component, useRef } from "react";
+import React, { useState, Component, useRef, createRef } from "react";
 import Select from "react-select";
 import { useTransition, animated } from "react-spring";
-
+ 
 import NetworkDisplay from "./NetworkDisplay";
 import BetterMap from "./BetterMap";
+import { ReactComponent as TrashIcon } from "../styles/icons8-trash.svg";
 import "../styles/newSol.css";
 
 let activeNodes = {};
@@ -18,25 +19,23 @@ function NewSol(props){
   const [ activeSol, setSol ] = useState({});
   const [ apiResponse, updateResponse ] = useState({ message: "", data: null});
   const selectRef = useRef();
+
   const nodeTransitions = useTransition(nodesInMenu, {
     from: {
       left: "-110%",
-      paddingTop: "0px",
-      paddingBottom: "0px",
-      height: "100px"
+      height: "100px",
+      paddingTop: "8px"
     },
     enter: {
       left: "0%",
-      paddingTop: "2px",
-      paddingBottom: "2px",
-      height: "100px"
+      height: "100px",
+      paddingTop: "8px"
     },
-    leave: node => async (next) => {
-      await next({left: "110%"})
-      await next({paddingTop: "0px", paddingBottom: "0xp", height: "0px"})
+    leave: node => async(next, cancel) => {
+      await next({ left: "110%" })
+      await next({ height: "0px", paddingTop: "0px" })
     }
   });
-
 
   const calculateSol = () => {
     if((typeof startNode.name === "undefined") || (typeof startNode.name === "null") || (nodesInMenu.length  < 3) || !solAvailible){
@@ -248,8 +247,13 @@ function NewSol(props){
   return (
     <div id="newSolution">
       <div id="UpperPage">
-        <BetterMap activateNode={activateNode} deactivateNode={deactivateNode} 
-        deleteChildNode={deleteChildNode} renameChildNode={renameChildNode}/>
+        <div id="newMapContainer">
+          <div id="newMapHeader">
+            Map
+          </div>
+          <BetterMap activateNode={activateNode} deactivateNode={deactivateNode} 
+          deleteChildNode={deleteChildNode} renameChildNode={renameChildNode}/>
+        </div>
         <div id="nodeMenu">
           <div id="headOfNodes">
             Node Menu
@@ -257,8 +261,8 @@ function NewSol(props){
           <div id="divOfNodes">
             <ul id="listOfNodes">
               {
-                nodeTransitions((nodeStyle, node) => (
-                  <NodeInList key={node.name} node={node} transition={nodeStyle}
+                nodeTransitions((styles, node) => (
+                  <NodeInList key={node.name} node={node} styles={styles}
                   deleteHandler={deactivateNode} renameHandler={renameNode}/>
                 ))
               }
@@ -365,7 +369,7 @@ function getMatrix(toBeArced, nodeArray, network){
 class NodeInList extends Component {
 
   constructor(props){
-    super();
+    super(props);
 
     this.state = {
       name: props.node.name,
@@ -375,7 +379,6 @@ class NodeInList extends Component {
       isStartNode: false
     };
 
-    this.nodeStyle = props.transition;
     this.deleteHandler = props.deleteHandler.bind(this);
     this.renameHandler = props.renameHandler.bind(this);
     this.keyPress = this.keyPress.bind(this);
@@ -443,11 +446,12 @@ class NodeInList extends Component {
   render(){
 
     return (
-      <animated.li style={{paddingTop: this.nodeStyle.paddingTop, paddingBottom: this.nodeStyle.paddingBottom, height: this.nodeStyle.height}}>
-        <animated.div className="NodeInList" style={{left: this.nodeStyle.left}}>
-          <div className="NameDiv">{this.state.node.name}</div>
-          <input className="RemovalButton" type="button" value="Remove Node"
-          onClick={() => {this.deleteHandler(this.state.node);}}/>
+      <animated.li style={this.props.styles}>
+        <div className="NodeInList">
+          <div className="NameDiv">{this.state.name}</div>
+          <button className="RemovalButton" type="button" onClick={() => {this.deleteHandler(this.state.node);}}>
+            <TrashIcon/>
+          </button>
           <div className="LatLngDiv">
             {this.state.node.lat.toFixed(8).toString() + ", " + this.state.node.lng.toFixed(8).toString()}
           </div>
@@ -458,7 +462,7 @@ class NodeInList extends Component {
             onBlur={event => this.divBlurHandler(event)} onFocus={this.divFocusHandler}/>
             <div className={this.state.divFocused ? "TextButtonDiv" : "ButtonTextDiv"}>{this.state.nameUsed ? "Invalid Name" : "Rename Node"}</div>
           </div>
-        </animated.div>
+        </div>
       </animated.li>
     );
   }
