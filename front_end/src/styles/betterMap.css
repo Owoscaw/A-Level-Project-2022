@@ -19,7 +19,9 @@
 }
 
 .nodeCluster {
-    background-color: red;
+    font-family: "Google Sans";
+    font-size: 26px;
+    font-weight: bold;
 }
 
 .Node {

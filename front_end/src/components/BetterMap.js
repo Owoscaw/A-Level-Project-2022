@@ -32,11 +32,20 @@ function BetterMap(props){
         disableDefaultUI: true,
         clickableIcons: false,
         draggableCursor: "default",
-        draggingCursor: "grabbing"
+        draggingCursor: "grabbing",
+        gestureHandling: "greedy"
     }), []);
     const clusterOptions = useMemo(() => ({
         clusterClass: "nodeCluster",
         ignoreHidden: true,
+        averageCenter: true,
+        calculator: (markers, icons) => {
+
+            console.log(markers);
+            return { text: markers.length + " nodes", index: 1 };
+        },
+        imageExtension: "jpg",
+        imagePath: "markerIcon",
     }), []);
 
 
@@ -167,23 +176,29 @@ function BetterMap(props){
         id="betterMap" zoom={15} 
         center={mapCenter} options={mapOptions} 
         onLoad={onMapLoad} onClick={addNodeHandler}>
-            <MarkerClusterer options={clusterOptions}>
+            <MarkerClusterer options={clusterOptions}> 
                 {
-                    (clusterer) => nodes.map(node => (
+                    (clusterer) => nodes.map(node => {
+
+                        console.log(clusterer);
+
+                        return (
                         <Fragment key={node.name}>
                             <Marker position={{lat: node.lat, lng: node.lng}} icon={{url: node.url, scaledSize: node.scaledSize}} 
                             onMouseOver={() => {clearNodeTimeout(node);}} 
                             onMouseOut={() => {setNodeTimeout(node);}}
                             onLoad={() => {setNodeTimeout(node);}}
-                            clusterer={clusterer}/>,
-                            <OverlayView position={{lat: node.lat, lng: node.lng}} 
-                            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
-                                <NodeVerlay node={node} 
-                                setNodeTimeout={setNodeTimeout} clearNodeTimeout={clearNodeTimeout}
-                                clickNode={nodeClickHandler}/>
-                            </OverlayView>
+                            clusterer={clusterer}>,
+                                <OverlayView position={{lat: node.lat, lng: node.lng}} 
+                                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
+                                    <NodeVerlay node={node} 
+                                    setNodeTimeout={setNodeTimeout} clearNodeTimeout={clearNodeTimeout}
+                                    clickNode={nodeClickHandler}/>
+                                </OverlayView>
+                            </Marker>
                         </Fragment>
-                    ))
+                        );
+                    })
                 }
             </MarkerClusterer>
         </GoogleMap>
@@ -243,6 +258,7 @@ class NodeVerlay extends Component{
     render(){
 
         let className = "Node";
+
         if(this.state.clicked && this.state.hovered){
             className += " HoveredClicked";
         } else if (this.state.clicked){
@@ -251,51 +267,18 @@ class NodeVerlay extends Component{
             className += " Hovered";
         }
 
+
         return (
             <div className={className} 
                 style={{backgroundColor: "rgba(" + this.node.colour + ", 0.5)"}}
                 ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
                 onMouseLeave={this.setUnhover} onMouseOver={this.setHover} onClick={this.setClicked}>
-                <b>{this.node.name}</b><br/>Click to remove
+                <b>{this.node.name}</b>
+                {
+                    this.state.clicked ? (this.state.hovered ? <><br/>Click to remove</> : <></>) : (this.state.hovered ? <><br/>Click to add</> : <></>)
+                }
             </div>
         );
-
-        // if(this.state.clicked && this.state.hovered){
-        //     return (
-        //         <div className="Node HoveredClicked" style={{backgroundColor: "rgba(" + this.node.colour + ", 0.5)"}}
-        //         ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
-        //         onMouseLeave={this.setUnhover} onClick={this.setClicked}>
-        //             <b>{this.node.name}</b><br/>Click to remove
-        //         </div>
-        //     );
-
-        // } else if(this.state.clicked){
-        //     return (
-        //         <div className="Node Clicked" style={{backgroundColor: "rgba(" + this.node.colour + ", 0.5)"}}
-        //         ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
-        //         onMouseOver={this.setHover} onClick={this.setClicked}>
-        //             <b>{this.node.name}</b>
-        //         </div>
-        //     );
-
-        // } else if(this.state.hovered){
-        //     return (
-        //         <div className="Node Hovered" style={{backgroundColor: "rgba(" + this.node.colour + ", 0.5)"}}
-        //         ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
-        //         onMouseLeave={this.setUnhover} onClick={this.setClicked}>
-        //             <b>{this.node.name}</b><br/>Click to add
-        //         </div>
-        //     );
-
-        // } else {
-        //     return (
-        //         <div className="Node" 
-        //         ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
-        //         onMouseOver={this.setHover} onClick={this.setClicked}>
-        //             <b>{this.node.name}</b>
-        //         </div>
-        //     );
-        //}
     }
 }
 

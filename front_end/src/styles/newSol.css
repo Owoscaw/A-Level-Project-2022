@@ -352,14 +352,47 @@ h1 {
   background-color: #EA4335;
 }
 
-
-#SolutionOptions {
+#SubPage {
   width: 100%;
   height: 300px;
-  float: left;
+  position: relative;
   margin-top: 10px;
 }
 
+#SolutionOptions {
+  width: 30%;
+  height: 100%;
+  position: absolute;
+}
+
+#optionsGrid {
+  width: 100%;
+  height: 250px;
+  position: absolute;
+  display: inline-grid;
+  box-sizing: border-box;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: auto auto auto;
+  bottom: 0;
+  gap: 7px 7px;
+  margin-left: 4px;
+  margin-bottom: 4px;
+}
+
+.optionsGrid-item {
+  border: 1px solid black;
+  border-radius: 125px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#InfoArea {
+  width: 30%;
+  height: 100%;
+  float: right;
+  background-color: yellow;
+}
 
 ::-webkit-scrollbar {
   width: 15px;

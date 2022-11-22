@@ -297,8 +297,22 @@ function NewSol(props){
         
       </div>
 
-      <div id="SolutionOptions">
-        <h1>Options:</h1>
+      <div id="SubPage">
+        <div id="SolutionOptions">
+          <h1>Options:</h1>
+          <div id="optionsGrid">
+            <div className="optionsGrid-item">1</div>
+            <div className="optionsGrid-item">2</div>
+            <div className="optionsGrid-item">3</div>
+            <div className="optionsGrid-item">4</div>
+            <div className="optionsGrid-item">5</div>
+            <div className="optionsGrid-item">6</div>
+          </div>
+        </div>
+
+        <div id="InfoArea">
+          Information
+        </div>
       </div>
 
       {
