@@ -6,6 +6,7 @@ import NetworkDisplay from "./NetworkDisplay";
 import BetterMap from "./BetterMap";
 import { ReactComponent as TrashIcon } from "../styles/icons8-trash.svg";
 import "../styles/newSol.css";
+import { Data } from "@react-google-maps/api";
 
 let activeNodes = {};
 
@@ -17,6 +18,7 @@ function NewSol(props){
   const [ nodesInMenu, updateMenu ] = useState([]);
   const [ startNode, updateStartNode ] = useState({});
   const [ activeSol, setSol ] = useState({});
+  const [ solOptions, setOptions ] = useState({ travelMode: "driving", trafficMode: "bestguess" });
   const [ apiResponse, updateResponse ] = useState({ message: "", data: null});
   const selectRef = useRef();
 
@@ -56,7 +58,7 @@ function NewSol(props){
       toBeArced[i] = {lat: currentNode.lat, lng: currentNode.lng};
     }
 
-    let matrixPromise = getMatrix(toBeArced, nodeArray, solNetwork);
+    let matrixPromise = getMatrix(toBeArced, nodeArray, solNetwork, solOptions);
     matrixPromise.then(function(resolve){
       setSol(solNetwork);
       setCover(true);
@@ -134,8 +136,8 @@ function NewSol(props){
     updateStartNode(event);
   };
 
-  const passSol = () => {
-
+  const passSol = (name) => {
+    
     props.api("save", {
       method: "POST",
       cache: "no-cache",
@@ -146,14 +148,17 @@ function NewSol(props){
       body: JSON.stringify({
         path: apiResponse.data.path,
         nodes: activeSol.allNodes,
-        startNode: apiResponse.data.path[0]
+        startNode: apiResponse.data.path[0],
+        weight: apiResponse.data.weight,
+        name: name
       }, null, 4)
     }).then(response => response.json()).then(response => {
       if(response.message === "Saved solution"){
         props.changeData({
           path: apiResponse.data.path,
           nodes: activeSol.allNodes,
-          startNode: apiResponse.data.path[0]
+          startNode: apiResponse.data.path[0],
+          name: name
         });
         props.changeScreen("prevSol");
         return;
@@ -161,6 +166,16 @@ function NewSol(props){
         console.log(response);
       }
     });
+  }
+
+  const loadRoutes = () => {
+     return props.api("load", {
+      method: "GET",
+      cache: "no-cache",
+      headers: { 
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+      }}).then(response => response.json());
   }
 
   const customStyles = {
@@ -294,19 +309,28 @@ function NewSol(props){
             }
           </div>
         </div>
-        
       </div>
 
       <div id="SubPage">
         <div id="SolutionOptions">
-          <h1>Options:</h1>
-          <div id="optionsGrid">
-            <div className="optionsGrid-item">1</div>
-            <div className="optionsGrid-item">2</div>
-            <div className="optionsGrid-item">3</div>
-            <div className="optionsGrid-item">4</div>
-            <div className="optionsGrid-item">5</div>
-            <div className="optionsGrid-item">6</div>
+          <div id="optionHead">Options:</div>
+          <div id="optionGrid">
+            <div className="optionGrid-item travelDiv">
+              Travel Mode:
+              <ul>
+                <OptionButton name="driving" type="travel" options={solOptions} setOptions={setOptions}/>
+                <OptionButton name="cycling" type="travel" options={solOptions} setOptions={setOptions}/>
+                <OptionButton name="walking" type="travel" options={solOptions} setOptions={setOptions}/>
+              </ul>
+            </div>
+            <div className={`optionGrid-item trafficDiv${solOptions.travelMode === "driving" ? "" : " trafficDiv-disabled"}`}>
+              Traffic Mode:
+              <ul>
+                <OptionButton name="bestguess" type="traffic" options={solOptions} setOptions={setOptions}/>
+                <OptionButton name="optimistic" type="traffic" options={solOptions} setOptions={setOptions}/>
+                <OptionButton name="pessimistic" type="traffic" options={solOptions} setOptions={setOptions}/>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -317,7 +341,7 @@ function NewSol(props){
 
       {
         coverIsOn ? <NetworkDisplay onCancel={cancelSol} title={apiResponse.message === "Path found" ? "Optimal network" : "Initial network"} 
-        nodes={activeSol.allNodes} arcs={activeSol.allArcs} apiStatus={apiResponse} setSol={passSol}/> : null
+        nodes={activeSol.allNodes} arcs={activeSol.allArcs} apiStatus={apiResponse} setSol={passSol} loadRoutes={loadRoutes}/> : null
       }
     </div>
   );
@@ -325,7 +349,7 @@ function NewSol(props){
 
 
 //function to query google with lats and lngs, returns a promise with matrix info
-function getMatrix(toBeArced, nodeArray, network){
+function getMatrix(toBeArced, nodeArray, network, options){
 
   let matrixStatus = "matrix fully loaded";
    
@@ -341,28 +365,34 @@ function getMatrix(toBeArced, nodeArray, network){
         let fromNode = nodeArray[i];
         let toNodes = nodeArray.slice(i + 1);
 
-        // let solMatrix = new window.google.maps.DistanceMatrixService();
-        // solMatrix.getDistanceMatrix({
-        //   origins: [currentOrigin],
-        //   destinations: currentDestinations,
-        //   travelMode: "DRIVING"
-        // }, function(response, status){
+        let travelMode = options.travelMode.toUpperCase();
+        let drivingOptions = {
+          trafficModel: options.trafficMode
+        };
 
-        //   if(status === "OK"){
-        //     for(let sink = 0; sink < response.rows[0].elements.length; sink++){
-        //       network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
-        //     }
+        let solMatrix = new window.google.maps.DistanceMatrixService();
+        solMatrix.getDistanceMatrix({
+          origins: [currentOrigin],
+          destinations: currentDestinations,
+          travelMode: travelMode,
+          drivingOptions: drivingOptions
+        }, function(response, status){
 
-        //     resolve("matrix fully loaded");
-        //   } else {
-        //     reject("matrix failed to load");
-        //   }
-        // });
+          if(status === "OK"){
+            for(let sink = 0; sink < response.rows[0].elements.length; sink++){
+              network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
+            }
 
-        for(let j = 0; j < toNodes.length; j++){
-          network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
-        }
-        resolve("matrix fully loaded");
+            resolve("matrix fully loaded");
+          } else {
+            reject("matrix failed to load");
+          }
+        });
+
+        // for(let j = 0; j < toNodes.length; j++){
+        //   network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
+        // }
+        // resolve("matrix fully loaded");
       });
 
       let matrixResult = await currentMatrixPromise;
@@ -379,6 +409,49 @@ function getMatrix(toBeArced, nodeArray, network){
 }
 
 
+class OptionButton extends Component {
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      name: props.name,
+      type: props.type,
+    }
+
+    this.setOptions = props.setOptions.bind(this);
+  }
+
+  render(){
+
+    let onClick;
+    let additionalClass = "";
+
+    if(this.state.type === "travel"){
+      onClick = () => {
+        this.setOptions((prevState) => ({...prevState, travelMode: `${this.state.name}`}));
+      };
+      if(this.state.name === this.props.options.travelMode){
+        additionalClass = "optionButton-active";
+      }
+    } else if(this.state.type === "traffic"){
+      onClick = () => {
+        this.setOptions((prevState) => ({...prevState, trafficMode: `${this.state.name}`}));
+      }
+      if(this.state.name === this.props.options.trafficMode){
+        additionalClass = "optionButton-active";
+      }
+    }
+
+    return (
+      <li>
+        <button className={`optionButton ${additionalClass}`} 
+        type="button" onClick={onClick}/>{this.state.name.charAt(0).toUpperCase() + this.state.name.slice(1)}
+      </li>
+    );
+  }
+}
+
 //custom component to represent a node in the node menu
 class NodeInList extends Component {
 
@@ -393,6 +466,7 @@ class NodeInList extends Component {
       isStartNode: false
     };
 
+    this.name = props.node.name
     this.deleteHandler = props.deleteHandler.bind(this);
     this.renameHandler = props.renameHandler.bind(this);
     this.keyPress = this.keyPress.bind(this);
@@ -403,11 +477,7 @@ class NodeInList extends Component {
 
   inputChecker(nameInput){
 
-    if((nameInput in activeNodes) || (`\`!@#$%^&*()_+-=[]{};':"\\|<>/?~`.split('').some(char => (nameInput.includes(char))))){
-      return false;
-    }
-
-    return true;
+    return !((nameInput in activeNodes) || (`\`!@#$%^&*()_+-=[]{};':"\\|<>/?~`.split('').some(char => (nameInput.includes(char)))));
   }
 
 
@@ -415,7 +485,7 @@ class NodeInList extends Component {
 
     if(event.key !== "Enter"){
       return;
-    } else if(!this.inputChecker(this.state.name.trim().replace(/\s+/g, " "))){
+    } else if(!this.inputChecker(this.name.trim().replace(/\s+/g, " "))){
       event.target.blur();
       this.setState({
         ...this.state,
@@ -428,7 +498,7 @@ class NodeInList extends Component {
 
     event.target.blur();
 
-    let renamedNode = this.renameHandler(this.state.node, this.state.name.trim().replace(/\s+/g, " "));
+    let renamedNode = this.renameHandler(this.state.node, this.name.trim().replace(/\s+/g, " "));
     this.setState({
       ...this.state,
       name: renamedNode.name,
@@ -437,7 +507,6 @@ class NodeInList extends Component {
       nameUsed: false
     });
   }
-
 
   divFocusHandler(){
     this.setState({
@@ -471,7 +540,7 @@ class NodeInList extends Component {
           </div>
           <div className="RenameButtonDiv">
             <input className="TextBox" type="text" maxLength="30" 
-            onChange={event => this.setState({...this.state, name: event.target.value})}
+            onChange={event => this.name = event.target.value}
             onKeyDown={event => this.keyPress(event)} 
             onBlur={event => this.divBlurHandler(event)} onFocus={this.divFocusHandler}/>
             <div className={this.state.divFocused ? "TextButtonDiv" : "ButtonTextDiv"}>{this.state.nameUsed ? "Invalid Name" : "Rename Node"}</div>

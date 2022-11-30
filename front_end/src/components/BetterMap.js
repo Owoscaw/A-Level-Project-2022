@@ -179,9 +179,6 @@ function BetterMap(props){
             <MarkerClusterer options={clusterOptions}> 
                 {
                     (clusterer) => nodes.map(node => {
-
-                        console.log(clusterer);
-
                         return (
                         <Fragment key={node.name}>
                             <Marker position={{lat: node.lat, lng: node.lng}} icon={{url: node.url, scaledSize: node.scaledSize}} 

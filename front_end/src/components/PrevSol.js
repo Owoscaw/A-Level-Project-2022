@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, Component } from "react";
 import { GoogleMap, useLoadScript } from "@react-google-maps/api";
 
 import "../styles/prevSol.css";
@@ -87,11 +87,7 @@ function PrevSol({data, ...props}){
                     <ul id="solutionList">
                         {
                             prevData.map(route => (
-                            <li key={route.nodes[0].lat}>
-                                <div className="routeDiv">
-                                    {route.nodes[0].name}
-                                </div>
-                            </li>
+                                <Route data={route} selectHandler={loadRoute}/>
                             ))
                         }
                     </ul>
@@ -120,6 +116,35 @@ function PrevSol({data, ...props}){
             </div>
         </div>
     );
+}
+
+class Route extends Component {
+
+    constructor(props){
+        super(props);
+
+        this.state = structuredClone(props.data);
+
+        this.selectHandler = props.selectHandler.bind(this);
+    }
+
+    render(){
+        return (
+        <li key={this.state.name}>
+            <div className="routeDiv">
+                <div className="routeName">
+                    {this.state.name}
+                </div>
+                <div className="routeWeight">
+                    {this.state.weight}
+                </div>
+                <div className="routeStart">
+                    {this.state.startNode}
+                </div>
+
+            </div>
+        </li>);
+    }
 }
 
 export default PrevSol;

@@ -26,11 +26,6 @@ html, body {
   padding: 0;
 }
 
-h1 {
-  font-family: "Google Sans";
-  font-size: xx-large;
-}
-
 #UpperPage {
   height: 80%;
   width: 100%;
@@ -271,6 +266,7 @@ h1 {
 #backButton {
   float: left;
   font-size: 26px;
+  margin-left: 10px;
   transition: background-color 0.4s ease;
 }
 
@@ -365,26 +361,88 @@ h1 {
   position: absolute;
 }
 
-#optionsGrid {
+#optionHead {
   width: 100%;
-  height: 250px;
-  position: absolute;
-  display: inline-grid;
-  box-sizing: border-box;
-  grid-template-columns: 50% 50%;
-  grid-template-rows: auto auto auto;
-  bottom: 0;
-  gap: 7px 7px;
-  margin-left: 4px;
-  margin-bottom: 4px;
+  height: 50px;
+  position: relative;
+  margin-left: 8px;
+  font-family: "Google Sans";
+  font-size: xx-large;
+  font-weight: bold;
 }
 
-.optionsGrid-item {
+.travelDiv {
+  float: left;
+}
+
+.trafficDiv {
+  float: right;
+  transition: background-color 0.2s ease;
+}
+
+.trafficDiv-disabled {
+  background-color: rgba(125, 125, 125, 0.4);
+  pointer-events: none;
+}
+
+.trafficDiv-disabled button {
+  background-color: transparent;
+}
+
+#optionGrid {
+  display: grid;
+  width: calc(100% - 20px);
+  height: calc(100% - 70px);
+  grid-template-columns: 50% 50%;
+  column-gap: 10px;
+  margin: 10px;
+}
+
+.optionGrid-item {
+  display: inline-block;
+  position: relative;
   border: 1px solid black;
-  border-radius: 125px;
+  border-radius: 15px;
+  text-align: center;
+  padding-top: 8px;
+  overflow: hidden;
+  font-size: 24px;
+  font-family: "Google Sans";
+}
+
+.optionGrid-item ul {
+  height: calc(100% - 30px);
+  list-style: none;
+  font-size: 22px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.optionGrid-item ul li {
+  display: flex;
   align-items: center;
+  text-align: left;
+}
+
+.optionButton {
+  width: 25px;
+  height: 25px;
+  border: 2px solid black;
+  border-radius: 5px;
+  margin-right: 20px;
+  margin-left: 10px;
+  background-color: white;
+  transition: background-color 0.2s ease;
+}
+
+.optionButton:hover {
+  background-color: red;
+  cursor: pointer;
+}
+
+.optionButton-active {
+  background-color: #34a853;
 }
 
 #InfoArea {

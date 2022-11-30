@@ -1,5 +1,8 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as createjs from "createjs-module";
+import { ReactComponent as EditIcon } from "../styles/icons8-edit.svg"; 
+import { ReactComponent as ValidIcon } from "../styles/icons8-done.svg"
+import { ReactComponent as InvalidIcon } from "../styles/icons8-close.svg"
 import { jsx } from "@emotion/react";
 
 import "../styles/networkDisplay.css";
@@ -7,6 +10,10 @@ import "../styles/networkDisplay.css";
 function NetworkDisplay(props){
 
     const canvasRef = useRef(null);
+    const titleRef = useRef();
+    const solRef = useRef();
+    const [ networkValid, setValidity ] = useState(true);
+    const [ networkTitle, setTitle ] = useState("");
 
     const drawNetwork = (nodes, arcs, path, ctx) => {
         let transparentLayer = canvasRef.current.cloneNode();
@@ -104,19 +111,57 @@ function NetworkDisplay(props){
         networkContext.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
         if(props.apiStatus.message === "Path found"){
+            setTitle(props.title + ": " + props.apiStatus.data.weight + "m");
             drawNetwork(props.nodes, props.arcs, props.apiStatus.data.path, networkContext);
         } else {
+            setTitle(props.title)
             drawNetwork(props.nodes, props.arcs, [], networkContext);
         }
+
+        props.loadRoutes().then(routes => {
+            solRef.current = routes.data.map(route => (route.name));
+        });
+
     }, [props]);
 
+    const saveSol = (name) => {
+        console.log(name);
+        props.setSol(name);
+    } 
+
+    const checkInput = (event) => {
+
+        console.log(titleRef.current.size);
+
+        let newName = titleRef.current.value.trim().replace(/\s+/g, " ");
+
+        if(event.key !== "Enter"){
+            return;
+        } else if((`\`!@#$%^&*()_+-=[]{}"\\|<>/?~`.split('').some(char => (newName.includes(char)))) || (solRef.current.includes(newName)) || (newName === "")){
+            setValidity(false);
+        } else {
+            setValidity(true);
+        }
+
+        setTitle(newName);
+    }
+
+    useEffect(() => {
+        titleRef.current.blur();
+    }, [networkTitle]);
 
     return (
         <div id="cover">
             <div id="canvasDiv">
-                <div id="networkTitle">
+                <div id="networkHeader">
+                    <button id="networkButton" onClick={() => titleRef.current.focus()}>
+                        <EditIcon/>
+                    </button>
+                    <input id="networkTitle" type="text" defaultValue={networkTitle}
+                    ref={titleRef} className={networkValid ? "networkTitle-valid" : "networkTitle-invalid"} 
+                    autoComplete="off" onKeyDown={(event) => checkInput(event)} onBlur={(event) => {event.target.value = event.target.defaultValue}}/>
                     {
-                        props.apiStatus.message !== "Path found" ? props.title : props.title + ": " + props.apiStatus.data.weight + " m"
+                        networkValid ? <ValidIcon id="validIcon"/> : <InvalidIcon id="invalidIcon"/>
                     }
                 </div>
                 {
@@ -125,7 +170,8 @@ function NetworkDisplay(props){
                 <canvas ref={canvasRef} id="networkCanvas"/>
                 <div id="apiStatus" className={props.apiStatus.message === "" ? "apiLoading" : null}>
                     {
-                        props.apiStatus.message !== "Path found" ? (props.apiStatus.message === "" ? "Calculating" : props.apiStatus.message ) : <input id="solutionButton" type="button" value="View route" onClick={props.setSol}/>
+                        props.apiStatus.message !== "Path found" ? (props.apiStatus.message === "" ? "Calculating" : props.apiStatus.message )
+                        : <input className={`solutionButton ${networkValid ? "solutionButton-valid" : "solutionButton-invalid"}`} type="button" value={networkValid ? "Save route" : "Invalid name"} onClick={() => saveSol(networkTitle)}/>
                     }
                 </div>
             </div>
