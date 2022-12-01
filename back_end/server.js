@@ -22,6 +22,7 @@ app.post("/calculate", (request, response) => {
                 if(error){
                     reject(error, dataError);
                 } else if(data.includes("solution not found")){
+                    console.log(data);
                     reject(null, "Failed to find path");
                 } else {
                     resolve(data);
@@ -50,7 +51,7 @@ app.post("/calculate", (request, response) => {
         }, (reject, rejectData) => {
             console.log(reject, rejectData);
             response.send({
-                message: typeof reject === "null" ? rejectData : "Error loading network",
+                message: reject === null ? "Failed to find path" : "Error loading network",
                 data: null
             });
             return;

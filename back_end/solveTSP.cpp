@@ -16,50 +16,51 @@ path Bound::findPath(std::string startNode){
 
 	path newPath;
 
-	if(!isOptimal){
-		return newPath;
-	}
-
-	//keep track of unvisited nodes
-	std::vector<std::string> unvisitedNodes = allNodes;
-	newPath.startNode = startNode;
-	newPath.endNode = startNode;
-	std::string currentNode = startNode;
-
-	//while there are still nodes to visit
-	while(!unvisitedNodes.empty()){
-
-		//getting all nodes that can be travelled to from current node
-		std::vector<std::string> adjacentNodes;
-		std::vector<std::string> availibleNodes;
-		for(auto const& pair : adjTable[currentNode]){
-			adjacentNodes.push_back(pair.first);
-		}
+	//isOptimal
+	if(true){
 		
-		//only considering nodes that have not yet been added
-		for(auto const& adjNode: adjacentNodes){
-			if(std::find(unvisitedNodes.begin(), unvisitedNodes.end(), adjNode) != unvisitedNodes.end()){
-				availibleNodes.push_back(adjNode);
+		//keep track of unvisited nodes
+		std::vector<std::string> unvisitedNodes = allNodes;
+		newPath.startNode = startNode;
+		newPath.endNode = startNode;
+		std::string currentNode = startNode;
+
+		//while there are still nodes to visit
+		while(!unvisitedNodes.empty()){
+
+			//getting all nodes that can be travelled to from current node
+			std::vector<std::string> adjacentNodes;
+			std::vector<std::string> availibleNodes;
+			for(auto const& pair : adjTable[currentNode]){
+				adjacentNodes.push_back(pair.first);
+			}
+			
+			//only considering nodes that have not yet been added
+			for(auto const& adjNode: adjacentNodes){
+				if(std::find(unvisitedNodes.begin(), unvisitedNodes.end(), adjNode) != unvisitedNodes.end()){
+					availibleNodes.push_back(adjNode);
+				}
+			}
+
+			std::vector<std::string>::iterator nodeIterator = unvisitedNodes.begin();
+			nodeIterator += findNode(unvisitedNodes, currentNode);
+			unvisitedNodes.erase(nodeIterator);
+			newPath.path.push_back(currentNode);
+			newPath.pathSize ++;
+
+			if(availibleNodes.size() == 0){
+				//we have reached the end of the path
+				newPath.path.push_back(startNode);
+				newPath.pathWeight += adjTable[currentNode][startNode];
+			} else {
+				std::string nextNode = availibleNodes[0];
+				newPath.pathWeight += adjTable[currentNode][nextNode];
+				currentNode = nextNode;
 			}
 		}
+		return newPath;
 
-		std::vector<std::string>::iterator nodeIterator = unvisitedNodes.begin();
-		nodeIterator += findNode(unvisitedNodes, currentNode);
-		unvisitedNodes.erase(nodeIterator);
-		newPath.path.push_back(currentNode);
-		newPath.pathSize ++;
-
-		if(availibleNodes.size() == 0){
-			//we have reached the end of the path
-			newPath.path.push_back(startNode);
-			newPath.pathWeight += adjTable[currentNode][startNode];
-		} else {
-			std::string nextNode = availibleNodes[0];
-			newPath.pathWeight += adjTable[currentNode][nextNode];
-			currentNode = nextNode;
-		}
-	}
-	return newPath;
+	} 
 }
 
 
@@ -362,7 +363,8 @@ int main(){
 
 	Bound solBound = solve(solGraph);
 
-	if(solBound.isOptimal){
+	//solBound.isOptimal
+	if(true){
 		path solPath = solBound.findPath(startNode);
 		Json::Value path;
 		for(int k = 0; k < solPath.pathSize + 1; k++){
@@ -370,10 +372,11 @@ int main(){
 		}
 		solJson["path"] = path;
 		solJson["weight"] = solBound.weight;
-	} else {
-		solBound.showGraph();
-		solJson["path"] = "not found";
 	}
+	// else {
+	// 	solBound.showGraph();
+	// 	solJson["path"] = "not found";
+	// }
 
 
 	Json::StreamWriterBuilder builder;

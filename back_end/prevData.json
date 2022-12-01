@@ -614,6 +614,246 @@
             "startNode": "Node 1",
             "weight": 1965,
             "name": "Optimal network: 1965m"
+        },
+        {
+            "path": [
+                "Node 2",
+                "Node 1",
+                "Node 4",
+                "Node 5",
+                "Node 3",
+                "Node 2"
+            ],
+            "nodes": [
+                {
+                    "lat": 52.4049977005057,
+                    "lng": -0.0055789947509765625,
+                    "url": "markerIcon3.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 1",
+                    "label": "Node 1",
+                    "timeout": null,
+                    "colour": "23, 156, 82",
+                    "active": true
+                },
+                {
+                    "lat": 52.40539042311508,
+                    "lng": -0.011887550354003906,
+                    "url": "markerIcon2.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 2",
+                    "label": "Node 2",
+                    "timeout": null,
+                    "colour": "23, 107, 239",
+                    "active": true
+                },
+                {
+                    "lat": 52.40439551904779,
+                    "lng": -0.017423629760742188,
+                    "url": "markerIcon2.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 3",
+                    "label": "Node 3",
+                    "timeout": null,
+                    "colour": "247, 181, 41",
+                    "active": true
+                },
+                {
+                    "lat": 52.402615108401044,
+                    "lng": -0.0027036666870117188,
+                    "url": "markerIcon3.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 4",
+                    "label": "Node 4",
+                    "timeout": null,
+                    "colour": "23, 156, 82",
+                    "active": true
+                },
+                {
+                    "lat": 52.39832088123445,
+                    "lng": -0.0076389312744140625,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 5",
+                    "label": "Node 5",
+                    "timeout": null,
+                    "colour": "23, 107, 239",
+                    "active": true
+                }
+            ],
+            "startNode": "Node 2",
+            "weight": 29535,
+            "name": "Optimal network: 29535m"
+        },
+        {
+            "path": [
+                "Node 2",
+                "Node 1",
+                "Node 3",
+                "Node 2"
+            ],
+            "nodes": [
+                {
+                    "lat": 52.40303403501718,
+                    "lng": -0.0061798095703125,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 1",
+                    "label": "Node 1",
+                    "timeout": null,
+                    "colour": "23, 156, 82",
+                    "active": true
+                },
+                {
+                    "lat": 52.40544278586554,
+                    "lng": -0.014376640319824219,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 2",
+                    "label": "Node 2",
+                    "timeout": null,
+                    "colour": "255, 62, 48",
+                    "active": true
+                },
+                {
+                    "lat": 52.40384569401623,
+                    "lng": 0.006222724914550781,
+                    "url": "markerIcon2.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 3",
+                    "label": "Node 3",
+                    "timeout": null,
+                    "colour": "23, 107, 239",
+                    "active": true
+                }
+            ],
+            "startNode": "Node 2",
+            "weight": 24958,
+            "name": "Optimal network: 24958m"
+        },
+        {
+            "path": [
+                "Node 2",
+                "Node 1",
+                "Node 4",
+                "Node 5",
+                "Node 3",
+                "Node 6",
+                "Node 2"
+            ],
+            "nodes": [
+                {
+                    "lat": 52.406359123937285,
+                    "lng": -0.009741783142089844,
+                    "url": "markerIcon2.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 1",
+                    "label": "Node 1",
+                    "timeout": null,
+                    "colour": "23, 156, 82",
+                    "active": true
+                },
+                {
+                    "lat": 52.404028969788115,
+                    "lng": 0.006394386291503906,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 2",
+                    "label": "Node 2",
+                    "timeout": null,
+                    "colour": "255, 62, 48",
+                    "active": true
+                },
+                {
+                    "lat": 52.39287394316057,
+                    "lng": 0.011844635009765625,
+                    "url": "markerIcon2.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 3",
+                    "label": "Node 3",
+                    "timeout": null,
+                    "colour": "247, 181, 41",
+                    "active": true
+                },
+                {
+                    "lat": 52.3946809346377,
+                    "lng": -0.015149116516113281,
+                    "url": "markerIcon2.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 4",
+                    "label": "Node 4",
+                    "timeout": null,
+                    "colour": "255, 62, 48",
+                    "active": true
+                },
+                {
+                    "lat": 52.40109646607175,
+                    "lng": -0.009055137634277344,
+                    "url": "markerIcon3.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 5",
+                    "label": "Node 5",
+                    "timeout": null,
+                    "colour": "247, 181, 41",
+                    "active": true
+                },
+                {
+                    "lat": 52.40321731416091,
+                    "lng": -0.0171661376953125,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 6",
+                    "label": "Node 6",
+                    "timeout": null,
+                    "colour": "255, 62, 48",
+                    "active": true
+                }
+            ],
+            "startNode": "Node 2",
+            "weight": 2549,
+            "name": "Optimal network: 2549m"
         }
     ]
 }
