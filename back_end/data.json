@@ -1,120 +1,259 @@
 {
-    "nodes": [
-        "Node 1",
-        "Node 2",
-        "Node 3",
-        "Node 4",
-        "Node 5",
-        "Node 6",
-        "Node 7"
-    ],
-    "arcs": [
-        {
-            "node1": "Node 1",
-            "node2": "Node 2",
-            "weight": 681
-        },
-        {
-            "node1": "Node 1",
-            "node2": "Node 3",
-            "weight": 191
-        },
-        {
-            "node1": "Node 1",
-            "node2": "Node 4",
-            "weight": 945
-        },
-        {
-            "node1": "Node 1",
-            "node2": "Node 5",
-            "weight": 668
-        },
-        {
-            "node1": "Node 1",
-            "node2": "Node 6",
-            "weight": 808
-        },
-        {
-            "node1": "Node 1",
-            "node2": "Node 7",
-            "weight": 380
-        },
-        {
-            "node1": "Node 2",
-            "node2": "Node 3",
-            "weight": 265
-        },
-        {
-            "node1": "Node 2",
-            "node2": "Node 4",
-            "weight": 115
-        },
-        {
-            "node1": "Node 2",
-            "node2": "Node 5",
-            "weight": 372
-        },
-        {
-            "node1": "Node 2",
-            "node2": "Node 6",
-            "weight": 529
-        },
-        {
-            "node1": "Node 2",
-            "node2": "Node 7",
-            "weight": 745
-        },
-        {
-            "node1": "Node 3",
-            "node2": "Node 4",
-            "weight": 164
-        },
-        {
-            "node1": "Node 3",
-            "node2": "Node 5",
-            "weight": 91
-        },
-        {
-            "node1": "Node 3",
-            "node2": "Node 6",
-            "weight": 244
-        },
-        {
-            "node1": "Node 3",
-            "node2": "Node 7",
-            "weight": 491
-        },
-        {
-            "node1": "Node 4",
-            "node2": "Node 5",
-            "weight": 798
-        },
-        {
-            "node1": "Node 4",
-            "node2": "Node 6",
-            "weight": 613
-        },
-        {
-            "node1": "Node 4",
-            "node2": "Node 7",
-            "weight": 917
-        },
-        {
-            "node1": "Node 5",
-            "node2": "Node 6",
-            "weight": 909
-        },
-        {
-            "node1": "Node 5",
-            "node2": "Node 7",
-            "weight": 506
-        },
-        {
-            "node1": "Node 6",
-            "node2": "Node 7",
-            "weight": 145
-        }
-    ],
-    "startNode": "Node 2",
-    "path": []
+	"arcs" : 
+	[
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 2",
+			"weight" : 217
+		},
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 3",
+			"weight" : 1107
+		},
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 4",
+			"weight" : 1434
+		},
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 5",
+			"weight" : 1039
+		},
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 6",
+			"weight" : 286
+		},
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 7",
+			"weight" : 286
+		},
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 8",
+			"weight" : 13779
+		},
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 9",
+			"weight" : 11245
+		},
+		{
+			"node1" : "Node 1",
+			"node2" : "Node 10",
+			"weight" : 11238
+		},
+		{
+			"node1" : "Node 2",
+			"node2" : "Node 3",
+			"weight" : 1324
+		},
+		{
+			"node1" : "Node 2",
+			"node2" : "Node 4",
+			"weight" : 1650
+		},
+		{
+			"node1" : "Node 2",
+			"node2" : "Node 5",
+			"weight" : 1255
+		},
+		{
+			"node1" : "Node 2",
+			"node2" : "Node 6",
+			"weight" : 503
+		},
+		{
+			"node1" : "Node 2",
+			"node2" : "Node 7",
+			"weight" : 502
+		},
+		{
+			"node1" : "Node 2",
+			"node2" : "Node 8",
+			"weight" : 13996
+		},
+		{
+			"node1" : "Node 2",
+			"node2" : "Node 9",
+			"weight" : 11462
+		},
+		{
+			"node1" : "Node 2",
+			"node2" : "Node 10",
+			"weight" : 11455
+		},
+		{
+			"node1" : "Node 3",
+			"node2" : "Node 4",
+			"weight" : 1412
+		},
+		{
+			"node1" : "Node 3",
+			"node2" : "Node 5",
+			"weight" : 1017
+		},
+		{
+			"node1" : "Node 3",
+			"node2" : "Node 6",
+			"weight" : 921
+		},
+		{
+			"node1" : "Node 3",
+			"node2" : "Node 7",
+			"weight" : 821
+		},
+		{
+			"node1" : "Node 3",
+			"node2" : "Node 8",
+			"weight" : 13758
+		},
+		{
+			"node1" : "Node 3",
+			"node2" : "Node 9",
+			"weight" : 11224
+		},
+		{
+			"node1" : "Node 3",
+			"node2" : "Node 10",
+			"weight" : 11217
+		},
+		{
+			"node1" : "Node 4",
+			"node2" : "Node 5",
+			"weight" : 672
+		},
+		{
+			"node1" : "Node 4",
+			"node2" : "Node 6",
+			"weight" : 1248
+		},
+		{
+			"node1" : "Node 4",
+			"node2" : "Node 7",
+			"weight" : 1148
+		},
+		{
+			"node1" : "Node 4",
+			"node2" : "Node 8",
+			"weight" : 13413
+		},
+		{
+			"node1" : "Node 4",
+			"node2" : "Node 9",
+			"weight" : 10879
+		},
+		{
+			"node1" : "Node 4",
+			"node2" : "Node 10",
+			"weight" : 10872
+		},
+		{
+			"node1" : "Node 5",
+			"node2" : "Node 6",
+			"weight" : 853
+		},
+		{
+			"node1" : "Node 5",
+			"node2" : "Node 7",
+			"weight" : 753
+		},
+		{
+			"node1" : "Node 5",
+			"node2" : "Node 8",
+			"weight" : 12740
+		},
+		{
+			"node1" : "Node 5",
+			"node2" : "Node 9",
+			"weight" : 10207
+		},
+		{
+			"node1" : "Node 5",
+			"node2" : "Node 10",
+			"weight" : 10200
+		},
+		{
+			"node1" : "Node 6",
+			"node2" : "Node 7",
+			"weight" : 100
+		},
+		{
+			"node1" : "Node 6",
+			"node2" : "Node 8",
+			"weight" : 13593
+		},
+		{
+			"node1" : "Node 6",
+			"node2" : "Node 9",
+			"weight" : 11059
+		},
+		{
+			"node1" : "Node 6",
+			"node2" : "Node 10",
+			"weight" : 11053
+		},
+		{
+			"node1" : "Node 7",
+			"node2" : "Node 8",
+			"weight" : 13493
+		},
+		{
+			"node1" : "Node 7",
+			"node2" : "Node 9",
+			"weight" : 10960
+		},
+		{
+			"node1" : "Node 7",
+			"node2" : "Node 10",
+			"weight" : 10953
+		},
+		{
+			"node1" : "Node 8",
+			"node2" : "Node 9",
+			"weight" : 7857
+		},
+		{
+			"node1" : "Node 8",
+			"node2" : "Node 10",
+			"weight" : 3674
+		},
+		{
+			"node1" : "Node 9",
+			"node2" : "Node 10",
+			"weight" : 5256
+		}
+	],
+	"nodes" : 
+	[
+		"Node 1",
+		"Node 2",
+		"Node 3",
+		"Node 4",
+		"Node 5",
+		"Node 6",
+		"Node 7",
+		"Node 8",
+		"Node 9",
+		"Node 10"
+	],
+	"path" : 
+	[
+		"Node 2",
+		"Node 1",
+		"Node 6",
+		"Node 7",
+		"Node 4",
+		"Node 5",
+		"Node 8",
+		"Node 10",
+		"Node 9",
+		"Node 3",
+		"Node 2"
+	],
+	"startNode" : "Node 2",
+	"weight" : 36641
 }

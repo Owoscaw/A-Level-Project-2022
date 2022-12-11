@@ -18,25 +18,22 @@ app.post("/calculate", (request, response) => {
 
         let graphPromise = new Promise((resolve, reject) => {
 
-            execFile("./solveTSP.exe", (error, data, dataError) => {
-                if(error){
-                    reject(error, dataError);
-                } else if(data.includes("solution not found")){
-                    console.log(data);
-                    reject(null, "Failed to find path");
-                } else {
+            execFile("./TSPsolver.exe", (error, data, dataError) => {
+                console.log(data, error, dataError);
+                if(data.includes("solution found")){
                     resolve(data);
+                } else {
+                    reject(data);
                 }
             });
         });
 
         graphPromise.then((resolve) => {
-            console.log(resolve);
 
             fs.readFile("./data.json", "utf8", (err, data) => {
                 if(err){
                     response.send({
-                        message: "Failed to read path",
+                        message: "Failed to write path",
                         data: null
                     });
                     return;
@@ -48,10 +45,9 @@ app.post("/calculate", (request, response) => {
                     return;
                 }
             });
-        }, (reject, rejectData) => {
-            console.log(reject, rejectData);
+        }, (reject) => {
             response.send({
-                message: reject === null ? "Failed to find path" : "Error loading network",
+                message: "Internal error",
                 data: null
             });
             return;

@@ -365,35 +365,35 @@ function getMatrix(toBeArced, nodeArray, network, options){
         let fromNode = nodeArray[i];
         let toNodes = nodeArray.slice(i + 1);
 
-        // let travelMode = options.travelMode.toUpperCase();
-        // let drivingOptions = {
-        //   trafficModel: options.trafficMode,
-        //   departureTime: new Date(Date.now())
-        // };
+        let travelMode = options.travelMode.toUpperCase();
+        let drivingOptions = {
+          trafficModel: options.trafficMode,
+          departureTime: new Date(Date.now())
+        };
 
-        // let solMatrix = new window.google.maps.DistanceMatrixService();
-        // solMatrix.getDistanceMatrix({
-        //   origins: [currentOrigin],
-        //   destinations: currentDestinations,
-        //   travelMode: travelMode,
-        //   drivingOptions: drivingOptions
-        // }, function(response, status){
+        let solMatrix = new window.google.maps.DistanceMatrixService();
+        solMatrix.getDistanceMatrix({
+          origins: [currentOrigin],
+          destinations: currentDestinations,
+          travelMode: travelMode,
+          drivingOptions: drivingOptions
+        }, function(response, status){
 
-        //   if(status === "OK"){
-        //     for(let sink = 0; sink < response.rows[0].elements.length; sink++){
-        //       network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
-        //     }
+          if(status === "OK"){
+            for(let sink = 0; sink < response.rows[0].elements.length; sink++){
+              network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
+            }
 
-        //     resolve("matrix fully loaded");
-        //   } else {
-        //     reject("matrix failed to load");
-        //   }
-        // });
+            resolve("matrix fully loaded");
+          } else {
+            reject("matrix failed to load");
+          }
+        });
 
-        for(let j = 0; j < toNodes.length; j++){
-          network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
-        }
-        resolve("matrix fully loaded");
+        // for(let j = 0; j < toNodes.length; j++){
+        //   network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
+        // }
+        // resolve("matrix fully loaded");
       });
 
       let matrixResult = await currentMatrixPromise;
