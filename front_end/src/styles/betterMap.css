@@ -20,6 +20,29 @@
     font-family: "Google Sans";
 }
 
+#mapLoading {
+    content: "";
+    animation: ellipsisAnimation 1.5s infinite;
+}
+
+@keyframes ellipsisAnimation {
+    0% {
+        content: "";
+    }
+
+    25% {
+        content: ".";
+    }
+
+    50% {
+        content: "..";
+    }
+
+    75% {
+        content: "...";
+    }
+}
+
 .nodeCluster {
     font-family: "Google Sans";
     font-size: 26px;

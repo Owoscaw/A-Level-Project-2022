@@ -58,10 +58,10 @@ function NewSol(props){
       toBeArced[i] = {lat: currentNode.lat, lng: currentNode.lng};
     }
 
+    setSol(solNetwork);
+    setCover(true);
     let matrixPromise = getMatrix(toBeArced, nodeArray, solNetwork, solOptions);
     matrixPromise.then(function(resolve){
-      setSol(solNetwork);
-      setCover(true);
       let solJSON = solNetwork.toJSON(startNode.name);
       props.api("calculate", {
         method: "POST",
@@ -150,6 +150,10 @@ function NewSol(props){
         nodes: activeSol.allNodes,
         startNode: apiResponse.data.path[0],
         weight: apiResponse.data.weight,
+        options: {
+          travelMode: solOptions.travelMode,
+          trafficMode: solOptions.trafficMode
+        },
         name: name
       }, null, 4)
     }).then(response => response.json()).then(response => {
@@ -158,6 +162,11 @@ function NewSol(props){
           path: apiResponse.data.path,
           nodes: activeSol.allNodes,
           startNode: apiResponse.data.path[0],
+          weight: apiResponse.data.weight,
+          options: {
+            travelMode: solOptions.travelMode,
+            trafficMode: solOptions.trafficMode
+          },
           name: name
         });
         props.changeScreen("prevSol");
@@ -340,7 +349,7 @@ function NewSol(props){
       </div>
 
       {
-        coverIsOn ? <NetworkDisplay onCancel={cancelSol} title={apiResponse.message === "Path found" ? "Optimal network" : "Initial network"} 
+        coverIsOn ? <NetworkDisplay onCancel={cancelSol} title={apiResponse.message === "Path found" ? "Optimal network" : ""} 
         nodes={activeSol.allNodes} arcs={activeSol.allArcs} apiStatus={apiResponse} setSol={passSol} loadRoutes={loadRoutes}/> : null
       }
     </div>
@@ -371,29 +380,29 @@ function getMatrix(toBeArced, nodeArray, network, options){
           departureTime: new Date(Date.now())
         };
 
-        let solMatrix = new window.google.maps.DistanceMatrixService();
-        solMatrix.getDistanceMatrix({
-          origins: [currentOrigin],
-          destinations: currentDestinations,
-          travelMode: travelMode,
-          drivingOptions: drivingOptions
-        }, function(response, status){
+        // let solMatrix = new window.google.maps.DistanceMatrixService();
+        // solMatrix.getDistanceMatrix({
+        //   origins: [currentOrigin],
+        //   destinations: currentDestinations,
+        //   travelMode: travelMode,
+        //   drivingOptions: drivingOptions
+        // }, function(response, status){
 
-          if(status === "OK"){
-            for(let sink = 0; sink < response.rows[0].elements.length; sink++){
-              network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
-            }
+        //   if(status === "OK"){
+        //     for(let sink = 0; sink < response.rows[0].elements.length; sink++){
+        //       network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
+        //     }
 
-            resolve("matrix fully loaded");
-          } else {
-            reject("matrix failed to load");
-          }
-        });
+        //     resolve("matrix fully loaded");
+        //   } else {
+        //     reject("matrix failed to load");
+        //   }
+        // });
 
-        // for(let j = 0; j < toNodes.length; j++){
-        //   network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
-        // }
-        // resolve("matrix fully loaded");
+        for(let j = 0; j < toNodes.length; j++){
+          network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
+        }
+        resolve("matrix fully loaded");
       });
 
       let matrixResult = await currentMatrixPromise;

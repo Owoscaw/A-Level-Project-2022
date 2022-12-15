@@ -24,14 +24,16 @@ function PrevSol({data, ...props}){
         setSolution(data);
         loadSolutions().then(response => {
             setData(response.data); 
-            console.log(response);
+            console.log("Load response:", response);
             if(response.data.length > 0 && data !== null){
-                console.log(response.data);
-                const pathStart = response.data[0].nodes.filter(node => (node.name === data.startNode))[0]
-                setStartNode(pathStart);
-                setCenter({lat: pathStart.lat, lng: pathStart.lng});
+
+                //getting startNode data from the data passed from newSol
+                let startNodeData = data.nodes.filter(node => (node.name === data.startNode))[0];
+                setStartNode(startNodeData);
+                setCenter({lat: startNodeData.lat, lng: startNodeData.lng});
                 setZoom(15);
                 console.log(mapCenter);
+                console.log(data.options);
             }
         });
 
@@ -87,14 +89,14 @@ function PrevSol({data, ...props}){
                     <ul id="solutionList">
                         {
                             prevData.map(route => (
-                                <Route data={route} selectHandler={loadRoute}/>
+                                <Route data={route} selectHandler={loadRoute} sessionData={data}/>
                             ))
                         }
                     </ul>
                 </div>
                 <div id="solutionFooter">
-                    <input type="button" id="backButton" className="footerButton" value="Back" onClick={() => props.changeScreen("menu")}/>
-                    <input type="button" id="clearButton" className="footerButton" value="Clear solutions" onClick={() => {
+                    <input type="button" id="backButton-prevSol" className="footerButton" value="Back" onClick={() => props.changeScreen("menu")}/>
+                    <input type="button" id="clearButton-prevSol" className="footerButton" value="Clear solutions" onClick={() => {
                         clearSolution();
                         loadSolutions().then(response => {
                             setData(response.data);   
@@ -105,7 +107,7 @@ function PrevSol({data, ...props}){
 
             <div id="rightPage">
                 <div id="mapHeader" className={data === null ? "header" : "header activeHeader"}>
-                    {data === null ? "No route selected" : "Route selected"}
+                    {data === null ? "No route selected" : data.name}
                 </div>
                 <div id="mapContainer">
                         {
@@ -123,12 +125,16 @@ class Route extends Component {
     constructor(props){
         super(props);
 
-        this.state = structuredClone(props.data);
+        this.state = {
+            ...structuredClone(props.data),
+            active: props.data.name === props.sessionData.name
+        };
 
         this.selectHandler = props.selectHandler.bind(this);
     }
 
     render(){
+
         return (
         <li key={this.state.name}>
             <div className="routeDiv">
@@ -141,7 +147,9 @@ class Route extends Component {
                 <div className="routeStart">
                     {this.state.startNode}
                 </div>
+                <button className={`routeSelect ${this.state.active ? "routeSelect-active" : null}`}>
 
+                </button>
             </div>
         </li>);
     }
