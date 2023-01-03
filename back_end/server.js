@@ -11,6 +11,18 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
+
+
+const readPrev = (callback) => {
+    fs.readFile("./prevData.json", "utf8", (error, data) => callback(error, data));
+}
+
+const writePrev = (data, callback) => {
+    fs.writeFile("./prevData.json", JSON.stringify(data, null, 4), "utf8", callback);
+}
+
+
+
 app.post("/calculate", (request, response) => {
     response.setHeader("Content-Type", "application/json");
     let requestJson = request.body;
@@ -47,7 +59,7 @@ app.post("/calculate", (request, response) => {
             });
         }, (reject) => {
             response.send({
-                message: "Internal error",
+                message: "Graph error",
                 data: null
             });
             return;
@@ -57,21 +69,24 @@ app.post("/calculate", (request, response) => {
     return;
 });
 
+
+
 app.post("/save", (request, response) => {
     response.setHeader("Content-Type", "application/json");
     let newSolution = request.body;
-    fs.readFile("./prevData.json", (error, data) => {
+
+    readPrev((error, data) => {
         if(error){
             response.send({
                 message: "Error reading solutions"
             });
             return;
-
+            
         } else {
             let solutionJson = JSON.parse(data);
             solutionJson.solutions.push(newSolution);
-
-            fs.writeFile("./prevData.json", JSON.stringify(solutionJson, null, 4), "utf-8", () => {
+            
+            writePrev(solutionJson, () => {
                 response.send({
                     message: "Saved solution"
                 });
@@ -81,9 +96,37 @@ app.post("/save", (request, response) => {
     });
 });
 
+
+
+app.post("/delete-route", (request, response) => {
+
+    response.setHeader("Content-Type", "application/json");
+    let routeName = request.body.name;
+
+    readPrev((error, data) => {
+        let newData = JSON.parse(data).solutions.filter(route => (route.name !== routeName));
+
+        if(error){
+            response.send({
+                message: "Removal failed"
+            });
+            return;
+        }
+
+        writePrev({solutions: newData}, () => {
+            response.send({
+                message: "Removal OK"
+            });
+        });
+    });
+});
+
+
+
 app.get("/clear", (request, response) => {
     response.setHeader("Content-Type", "application/json");
-    fs.writeFile("./prevData.json", JSON.stringify({solutions: []}, null, 4), "utf-8", () => {
+
+    writePrev({solutions: []}, () => {
         response.send({
             message: "Solution cleared"
         });
@@ -91,9 +134,12 @@ app.get("/clear", (request, response) => {
     });
 });
 
+
+
 app.get("/load", (request, response) => {
     response.setHeader("Content-Type", "application/json");
-    fs.readFile("./prevData.json", (error, data) => {
+
+    readPrev((error, data) => {
         if(error){
             response.send({
                 message: "Error reading solutions",
@@ -109,6 +155,8 @@ app.get("/load", (request, response) => {
         }
     });
 });
+
+
 
 app.listen(port, () => {
     console.log(`server listening on port ${port}`);

@@ -4,21 +4,21 @@
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 2",
-			"weight" : 311
+			"weight" : 698
 		},
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 3",
-			"weight" : 689
+			"weight" : 942
 		},
 		{
 			"node1" : "Node 2",
 			"node2" : "Node 3",
-			"weight" : 209
+			"weight" : 920
 		}
 	],
 	"nodes" : [ "Node 1", "Node 2", "Node 3" ],
-	"path" : [ "Node 2", "Node 3", "Node 1", "Node 2" ],
+	"path" : [ "Node 2", "Node 1", "Node 3", "Node 2" ],
 	"startNode" : "Node 2",
-	"weight" : 1209
+	"weight" : 2560
 }

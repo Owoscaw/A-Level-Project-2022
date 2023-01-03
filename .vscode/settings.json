@@ -61,5 +61,7 @@
         "stack": "cpp",
         "unordered_map": "cpp",
         "xhash": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/back_end/jsoncpp/include",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

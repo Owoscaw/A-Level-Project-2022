@@ -2,31 +2,33 @@ import React, { useCallback, useMemo, useRef, useState, Component, Fragment, use
 import { GoogleMap, useLoadScript, OverlayView, Marker, MarkerClusterer } from "@react-google-maps/api";
 
 import "../styles/betterMap.css";
+import { ReactComponent as EditIcon } from "../styles/icons8-edit.svg";
+import { ReactComponent as TrashIcon } from "../styles/icons8-trash.svg";
 
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
+const googleColours = ["23, 107, 239", "255, 62, 48", "247, 181, 41", "23, 156, 82"];
 let usedNames;
 
 function BetterMap(props){
 
     useEffect(() => {
         usedNames = {};
+
         return () => {
             usedNames = undefined;
         }
     }, []);
 
+
     const { isLoaded } = useLoadScript({
 
-        //dont look!!!
         googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws"
     });
  
-    //references and memos to avoid re-rendering map
+
     const mapRef = useRef();
-    const [ nodes, updateNodes ] = useState([]);
-    const [ googleColours, setColours ] = useState(["23, 107, 239", "255, 62, 48", "247, 181, 41", "23, 156, 82"]);
-    const [ prevColour, setPrevColour ] = useState();
     const onMapLoad = useCallback((map) => (mapRef.current = map), []);
+
     const mapCenter = useMemo(() => ({lat: 52.4, lng: 0}), []);
     const mapOptions = useMemo(() => ({
         disableDefaultUI: true,
@@ -49,26 +51,43 @@ function BetterMap(props){
     }), []);
 
 
-    //so we can access the functions to remove/rename a node from the menu from newSol
-    React.useEffect(() => {
-        props.deleteChildNode.current = deleteNode;
-    });
-    React.useEffect(() => {
-        props.renameChildNode.current = renameNode;
-    });
-
-
-    //re-rendering without the deleted node, auditing usedNames
-    const deleteNode = (node) => {
-
-        updateNodes(prevState => prevState.filter(entr => {
-            return entr.name !== node.name;
-        }));
-        delete usedNames[node.name];
+    
+    
+    //adds a new node with a marker wherever the map was clicked
+    const addNodeHandler = (event) => {
+        
+        if(Object.keys(usedNames).length > 10){
+            return;
+        }
+        
+        //resetting node index
+        let nodeIndex = 1;
+        while(("Node " + nodeIndex.toString()) in usedNames){
+            nodeIndex ++;
+        }
+        
+        let newNodeColour = googleColours[Math.floor(Math.random()*googleColours.length)];
+        
+        //creating new node
+        let newNode = {
+            lat: event.latLng.lat(),
+            lng: event.latLng.lng(),
+            url: possibleIcons[Math.floor(Math.random()*3)],
+            scaledSize: new window.google.maps.Size(50, 50),
+            name: "Node " + nodeIndex.toString(),
+            label: "Node " + nodeIndex.toString(),
+            timeout: null,
+            colour: newNodeColour
+        };
+        
+        //re-rending with new node included
+        usedNames[newNode.name] = true;
+        props.setNodes(prevState => ([...prevState, newNode]));
     };
 
-    //renames a node on the map
-    const renameNode = (node, newName) => {
+
+
+    const renameNodeHandler = (node, newName) => {
         
         let renamedNode = {
             ...node,
@@ -79,91 +98,18 @@ function BetterMap(props){
         delete usedNames[node.name];
         usedNames[newName] = true;
 
-        updateNodes(prevState => prevState.map(entr => (entr.name === node.name ? renamedNode : entr)));
+        props.setNodes(prevState => prevState.map(entr => (entr.name === node.name ? renamedNode : entr)));
         return renamedNode;
     };
-
-    //used to initialise a timeout, after which a node is deleted
-    const setNodeTimeout = (node) => {
-
-        if(node.active){
-            return;
-        }
-
-        if(node.timeout != null){
-            clearTimeout(node.timeout);
-        }
-        node.timeout = setTimeout(deleteNode, 2000, node);
-    };
+    
 
 
-    //used to clear said timeout 
-    const clearNodeTimeout = (node) => {
-
-        if(node.active){
-            return;
-        }
-
-        if(node.timeout != null){
-            clearTimeout(node.timeout);
-            node.timeout = null;
-        }
+    const removeNodeHandler = (node) => {
+        delete usedNames[node.name];
+        props.setNodes(prevState => (prevState.filter(prevNode => prevNode.name !== node.name)));
     }
 
-    //adds a new node with a marker wherever the map was clicked
-    const addNodeHandler = (event) => {
 
-        if(Object.keys(usedNames).length > 10){
-            return;
-        }
-
-        //resetting node index
-        let nodeIndex = 1;
-        while(("Node " + nodeIndex.toString()) in usedNames){
-            nodeIndex ++;
-        }
-
-        let newNodeColour = googleColours[Math.floor(Math.random()*googleColours.length)];
-        setColours(prevState => {
-            if(typeof prevColour === "undefined"){
-                return prevState.filter(colour => colour !== newNodeColour);
-            } else {
-                return [...prevState.filter(colour => colour !== newNodeColour), prevColour];
-            }
-        });
-        setPrevColour(newNodeColour);
-
-        //creating new node
-        let newNode = {
-            lat: event.latLng.lat(),
-            lng: event.latLng.lng(),
-            url: possibleIcons[Math.floor(Math.random()*3)],
-            scaledSize: new window.google.maps.Size(50, 50),
-            name: "Node " + nodeIndex.toString(),
-            label: "Node " + nodeIndex.toString(),
-            timeout: null,
-            colour: newNodeColour,
-            active: false
-        };
-
-        //re-rending with new node included
-        usedNames[newNode.name] = true;
-        updateNodes(prevState => ([...prevState, newNode]));
-    };
-
-
-    //adds a node to the menu, signifies that it has been included in the solution
-    const nodeClickHandler = (node) => {
-
-        if(node.active){
-            node.active = false;
-            props.deactivateNode(node);
-            return;
-        }
-
-        node.active = true;
-        props.activateNode(node);
-    };
 
     if(!isLoaded){
         return (
@@ -172,34 +118,100 @@ function BetterMap(props){
     }
 
     return (
-        <GoogleMap 
-        id="betterMap" zoom={15} 
-        center={mapCenter} options={mapOptions} 
-        onLoad={onMapLoad} onClick={addNodeHandler}>
-            <MarkerClusterer options={clusterOptions}> 
-                {
-                    (clusterer) => nodes.map(node => {
-                        return (
-                        <Fragment key={node.name}>
-                            <Marker position={{lat: node.lat, lng: node.lng}} icon={{url: node.url, scaledSize: node.scaledSize}} 
-                            onMouseOver={() => {clearNodeTimeout(node);}} 
-                            onMouseOut={() => {setNodeTimeout(node);}}
-                            onLoad={() => {setNodeTimeout(node);}}
-                            clusterer={clusterer}>,
-                                <OverlayView position={{lat: node.lat, lng: node.lng}} 
-                                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
-                                    <NodeVerlay node={node} 
-                                    setNodeTimeout={setNodeTimeout} clearNodeTimeout={clearNodeTimeout}
-                                    clickNode={nodeClickHandler}/>
-                                </OverlayView>
-                            </Marker>
-                        </Fragment>
-                        );
-                    })
-                }
-            </MarkerClusterer>
-        </GoogleMap>
+        <div id="betterMap-container">
+            <div id="betterMap-Map-header">
+                Map
+            </div>
+            <GoogleMap 
+            id="betterMap" zoom={15} 
+            center={mapCenter} options={mapOptions} 
+            onLoad={onMapLoad} onClick={addNodeHandler}>
+                <MarkerClusterer options={clusterOptions}> 
+                    {
+                        (clusterer) => props.nodes.map(node => {
+                            return (
+                            <Fragment key={node.name}>
+                                <Marker position={{lat: node.lat, lng: node.lng}} icon={{url: node.url, scaledSize: node.scaledSize}} 
+                                clusterer={clusterer}>,
+                                    <OverlayView position={{lat: node.lat, lng: node.lng}} 
+                                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
+                                        <NodeVerlay node={node} clickHandler={removeNodeHandler}/>
+                                    </OverlayView>
+                                </Marker>
+                            </Fragment>
+                            );
+                        })
+                    }
+                </MarkerClusterer>
+            </GoogleMap>
+
+            <div id="betterMap-Menu-header">
+                Node Menu
+            </div>
+            <div id="betterMap-menu">
+                <ul id="betterMap-Menu-list">
+                    {
+                        props.nodes.size === 0 ? "Click map to add nodes" 
+                        : props.nodes.map(node => (
+                            <NodeMenuItem key={node.name} node={node} removeNodeHandler={removeNodeHandler} renameNodeHandler={renameNodeHandler}/>
+                        ))
+                    }
+                </ul>
+            </div>
+        </div>
     );
+}
+
+
+
+class NodeMenuItem extends Component{
+
+    constructor(props){
+        super(props);
+
+        this.node = props.node;
+        this.inputRef = React.createRef();
+        this.removeNodeHandler = props.removeNodeHandler.bind(this);
+        this.renameNodeHandler = props.renameNodeHandler.bind(this);
+        this.inputHandler = this.inputHandler.bind(this);
+    }
+
+
+    inputHandler(name){
+
+        let newName = name.trim().replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '');
+        if((newName in usedNames) || (newName.length === 0)){
+            this.inputRef.current.value = this.node.name;
+            return;
+        }
+
+        this.inputRef.current.value = newName;
+        this.renameNodeHandler(this.node, newName);
+    }
+
+
+    render(){
+
+        return(
+            <li>
+                <div className="betterMap-Menu-node">
+                    <div className="betterMap-Menu-Node-renameContainer">
+                        <input type="text" className="betterMap-Menu-Node-rename" defaultValue={this.node.name} 
+                        ref={this.inputRef} onBlur={() => this.inputHandler(this.inputRef.current.value)} onKeyDown={(event) => {
+                            if(event.key === "Enter"){
+                                this.inputRef.current.blur();
+                            }
+                        }}/>
+                        <EditIcon onClick={() => this.inputRef.current.focus()}/>
+                    </div>
+                    <div className="betterMap-Menu-Node-latlng">
+                        {`${this.node.lat.toFixed(4)}, ${this.node.lng.toFixed(4)}`}
+                    </div>
+                    <TrashIcon className="betterMap-Menu-Node-delete" onClick={() => this.removeNodeHandler(this.node)}/>
+                </div>
+            </li>
+        );
+    }
 }
 
 
@@ -207,72 +219,40 @@ function BetterMap(props){
 class NodeVerlay extends Component{
      
     constructor(props){
-        super();
+        super(props);
 
         this.state = {
-            hovered: false,
-            clicked: props.node.active
+            hovered: false
         };
 
         this.node = props.node;
+        this.clickHandler = props.clickHandler.bind(this);
         this.setHover = this.setHover.bind(this);
         this.setUnhover = this.setUnhover.bind(this);
-        this.setClicked = this.setClicked.bind(this);
-        this.setNodeTimeout = props.setNodeTimeout.bind(this);
-        this.clearNodeTimeout = props.clearNodeTimeout.bind(this);
-        this.clickNode = props.clickNode.bind(this);
     }
 
-
-    //changing style of node based on hover and activeness
     setHover(){
-        this.setState(prevState => ({
-            ...prevState,
+        this.setState({
             hovered: true
-        }));
-
-        this.clearNodeTimeout(this.node);
+        });
     }
 
     setUnhover(){
-        this.setState(prevState => ({
-            ...prevState,
-            hovered: false
-        }));
-
-        this.setNodeTimeout(this.node);
-    }
-
-    setClicked(){
         this.setState({
-            hovered: true,
-            clicked: true
+            hovered: false
         });
-
-        this.clickNode(this.node);
     }
 
     render(){
 
-        let className = "Node";
-
-        if(this.state.clicked && this.state.hovered){
-            className += " HoveredClicked";
-        } else if (this.state.clicked){
-            className += " Clicked";
-        } else if (this.state.hovered){
-            className += " Hovered";
-        }
-
-
         return (
-            <div className={className} 
+            <div className="Node"  key={this.node.name}
                 style={{backgroundColor: "rgba(" + this.node.colour + ", 0.5)"}}
                 ref={ref => ref && window.google.maps.OverlayView.preventMapHitsFrom(ref)}
-                onMouseLeave={this.setUnhover} onMouseOver={this.setHover} onClick={this.setClicked}>
+                onMouseLeave={this.setUnhover} onMouseOver={this.setHover} onClick={() => this.clickHandler(this.node)}>
                 <b>{this.node.name}</b>
                 {
-                    this.state.clicked ? (this.state.hovered ? <><br/>Click to remove</> : <></>) : (this.state.hovered ? <><br/>Click to add</> : <></>)
+                    this.state.hovered ? <><br/>Click to remove</> : null
                 }
             </div>
         );

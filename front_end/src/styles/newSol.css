@@ -10,6 +10,7 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  scrollbar-gutter: stable;
 }
 
 #root {
@@ -32,242 +33,32 @@ html, body {
   display: flex;
 }
 
-#newMapContainer {
-  width: calc(100% - 400px);
-}
-
-#newMapHeader {
-  height: 7%;
-  width: 100%;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Google Sans";
-  font-weight: bold;
-  font-size: 24px;
-}
-
-#nodeMenu {
-  width: 400px;
-}
-
-#headOfNodes {
-  height: 7%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Google Sans";
-  font-weight: bold;
-  font-size: 24px;
-}
-
-#divOfNodes {
-  height: 93%;
-  width: calc(100% - 15px);
-  margin-right: 10px;
-  margin-left: 5px;
-  overflow: hidden;
-  border-radius: 10px;
-  background-color: #F1F3F4;
-}
-
-#listOfNodes {
-  height: 100%;
-  width: 100%;
-  list-style: none;
-  overflow: hidden;
-  overflow-y: auto;
-  line-height: 0px;
-  color: rgba(125, 125, 125, 0);
-  transition: color 0.4s ease;
-}
-
-#listOfNodes::-webkit-scrollbar {
-  display: none;
-}
-
-#listOfNodes:empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Google Sans";
-  font-size: 20px;
-  color: rgba(125, 125, 125, 1);
-  transition: color 0.2s ease;
-}
-
-#listOfNodes:empty:before {
-  content: "Click map to add nodes";
-}
-
-#listOfNodes li {
-  width: 350px;
-  display: block;
-  margin: auto;
-  position: relative;
-}
-
-#listOfNodes li:last-child {
-  padding-bottom: 8px;
-}
-
-.NodeInList {
-  width: 100%;
-  height: 100%;
-  border: 2px solid black;
-  background-color: white;
-  border-radius: 15px;
-  box-sizing: border-box;
-  display: block;
-  position: relative;
-  line-height: normal;
-  color: black;
-}
-
-.RemovalButton {
-  height: fit-content;
-  width: fit-content;
-  position: absolute;
-  border: none;
-  background-color: inherit;
-  bottom: 0;
-  right: 0;
-  margin-bottom: 5px;
-  margin-right: 10px;
-}
-
-.RemovalButton > svg {
-  fill: #606060;
-}
-
-.RemovalButton:hover > svg {
-  cursor: pointer;
-  fill: #EA4335;
-}
-
-.NameDiv {
-  height: 40%;
-  width: 65%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 4px;
-  margin-left: 8px;
-  text-align: left;
-  font-family: "Roboto";
-  font-size: 22px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.LatLngDiv {
-  width: 30%;
-  height: 40%;
-  font-size: 12px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin-top: 6px;
-  margin-right: 14px;
-  text-align: right;
-  font-family: "Google Sans";
-  font-size: 16px;
-}
-
-.RenameButtonDiv {
-  width: 150px;
-  height: 40px;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  margin: 6px;
-}
-
-
-.ButtonTextDiv {
-  width: fit-content;
-  height: fit-content;
-  position: absolute;
-  bottom: 10px;
-  left: 20.015px;
-  font-family: "Google Sans";
-  font-size: 16px;
-  color: black;
-  pointer-events: none;
-  transition-property: all;
-  transition-duration: 1s;
-  transition-timing-function: cubic-bezier(0.230, 1.000, 0.320, 1.000);
-}
-
-.TextButtonDiv {
-  width: fit-content;
-  height: fit-content;
-  position: absolute;
-  bottom: 100%;
-  left: 4px;
-  font-family: "Google Sans";
-  font-size: 12px;
-  color: black;
-  pointer-events: none;
-  transition-property: all;
-  transition-duration: 1s;
-  transition-timing-function: cubic-bezier(0.075, 0.820, 0.165, 1.000);
-}
-
-.TextBox {
-  width: 100%;
-  height: 100%;
-  appearance: none;
-  outline: none;
-  box-sizing: border-box;
-  border: 1px outset black;
-  border-radius: 10px;
-  padding: 4px;
-  font-size: 16px;
-  text-align: left;
-  font-family: "Google Sans";
-  background-color: white;
-  color: black;
-  transition: background-color 0.4s ease;
-}
-
-
-.TextBox:hover {
-  background-color: #34a853;
-  cursor: pointer;
-  transition: background-color 0.4s ease;
-}
-
-.TextBox:focus {
-  pointer-events: none;
-}
 
 #LowerPage {
   width: 100%;
   height: 50px;
   margin-top: 5px;
+  display: grid;
+  grid-template-columns: 200px auto 200px 200px 200px;
+  grid-template-rows: 50px;
+  grid-gap: 5px;
 }
 
 .LowerMenuButton {
-  width: 200px;
-  height: 100%;
   box-sizing: border-box;
   border: 1px outset black;
   border-radius: 10px;
-  margin: 4px;
   font-family: "Google Sans";
   color: black;
   background-color: white;
 }
 
 #backButton {
-  float: left;
+  grid-row: 1;
+  grid-column: 1;
   font-size: 26px;
-  margin-left: 10px;
   transition: background-color 0.4s ease;
+  margin-left: 10px;
 }
 
 #backButton:hover {
@@ -276,69 +67,23 @@ html, body {
 }
 
 #startNodeDiv {
-  min-width: 200px;
-  width: fit-content;
-  max-width: 550px;
-  float: left;
-  display: flex;
-  align-items: center;
-  padding-left: 8px;
-  font-size: 22px;
-  cursor: default;
-}
-
-.react-select__container {
-  min-width: 190px;
-  width: fit-content;
-  max-width: 400px;
-  height: 80%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 10px;
-  font-size: 18px;
-  color: black;
-}
-
-@keyframes dropDown {
-  0% {
-    max-height: 0px;
-  }
-
-  100% {
-    max-height: 150px;
-  }
+  grid-row: 1;
+  grid-column: 3;
 }
 
 #statusDiv {
-  min-width: 200px;
-  width: fit-content;
-  max-width: 400px;
+  grid-row: 1;
+  grid-column: 4;
+  pointer-events: none;
   display: flex;
-  align-items: center;
   justify-content: center;
-  float: right;
-}
-
-#statusHeader {
-  height: 70%;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: left;
-  padding-left: 8px;
-  padding-right: 8px;
-  font-size: 22px;
-}
-
-#statusContent {
-  padding-right: 10px;
   font-size: 18px;
-  translate: 0px 1px;
 }
 
 #calculateButton {
-  float: right;
+  grid-row: 1;
+  grid-column: 5;
   font-size: 26px;
   transition: background-color 0.4s ease;
 }
@@ -446,7 +191,7 @@ html, body {
 }
 
 #InfoArea {
-  width: 30%;
+  width: 10%;
   height: 100%;
   float: right;
   background-color: yellow;

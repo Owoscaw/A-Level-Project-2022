@@ -1,0 +1,6 @@
+C:/Users/oscar/Documents/GitHub/A-Level-Project-2022/build/CMakeFiles/edit_cache.dir
+C:/Users/oscar/Documents/GitHub/A-Level-Project-2022/build/CMakeFiles/rebuild_cache.dir
+C:/Users/oscar/Documents/GitHub/A-Level-Project-2022/build/CMakeFiles/list_install_components.dir
+C:/Users/oscar/Documents/GitHub/A-Level-Project-2022/build/CMakeFiles/install.dir
+C:/Users/oscar/Documents/GitHub/A-Level-Project-2022/build/CMakeFiles/install/local.dir
+C:/Users/oscar/Documents/GitHub/A-Level-Project-2022/build/CMakeFiles/install/strip.dir

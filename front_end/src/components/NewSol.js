@@ -1,58 +1,43 @@
-import React, { useState, Component, useRef, createRef } from "react";
-import Select from "react-select";
-import { useTransition, animated } from "react-spring";
- 
+import React, { useState, Component, useEffect } from "react";
+
 import NetworkDisplay from "./NetworkDisplay";
 import BetterMap from "./BetterMap";
-import { ReactComponent as TrashIcon } from "../styles/icons8-trash.svg";
+import CoolDropdown from "./CoolDropdown";
 import "../styles/newSol.css";
-import { Data } from "@react-google-maps/api";
 
-let activeNodes = {};
+
 
 function NewSol(props){
 
-  //states to show nodeMenu and solution cover
   const [ coverIsOn, setCover ] = useState(false);
-  const [ solAvailible, setAvailibility ] = useState(true);
-  const [ nodesInMenu, updateMenu ] = useState([]);
-  const [ startNode, updateStartNode ] = useState({});
+  const [ nodes, setNodes ] = useState([]);
+  const [ startNode, setStartNode ] = useState(null);
   const [ activeSol, setSol ] = useState({});
   const [ solOptions, setOptions ] = useState({ travelMode: "driving", trafficMode: "bestguess" });
   const [ apiResponse, updateResponse ] = useState({ message: "", data: null});
-  const selectRef = useRef();
 
-  const nodeTransitions = useTransition(nodesInMenu, {
-    from: {
-      left: "-110%",
-      height: "100px",
-      paddingTop: "8px"
-    },
-    enter: {
-      left: "0%",
-      height: "100px",
-      paddingTop: "8px"
-    },
-    leave: node => async(next, cancel) => {
-      await next({ left: "110%" })
-      await next({ height: "0px", paddingTop: "0px" })
+
+  //used to make sure startNode is set to null if it is removed from the map
+  useEffect(() => {
+    if(nodes.indexOf(startNode) === -1){
+      setStartNode(null);
     }
-  });
+  }, [nodes])
 
   const calculateSol = () => {
-    if((typeof startNode.name === "undefined") || (typeof startNode.name === "null") || (nodesInMenu.length  < 3) || !solAvailible){
+    if((typeof startNode.name === "undefined") || (startNode === null) || (nodes.length  < 3)){
       return;
     }
 
     updateResponse({ message: "", data: null});
-    setAvailibility(false);
 
     let solNetwork = new Network();
     let toBeArced = [];
     let nodeArray = [];
 
-    for(let i = 0; i < nodesInMenu.length; i++){
-      let currentNode = nodesInMenu[i];
+    //finding most efficient arcs to query
+    for(let i = 0; i < nodes.length; i++){
+      let currentNode = nodes[i];
       solNetwork.addNode(currentNode);
       nodeArray[i] = currentNode;
       toBeArced[i] = {lat: currentNode.lat, lng: currentNode.lng};
@@ -60,8 +45,10 @@ function NewSol(props){
 
     setSol(solNetwork);
     setCover(true);
+
     let matrixPromise = getMatrix(toBeArced, nodeArray, solNetwork, solOptions);
-    matrixPromise.then(function(resolve){
+
+    matrixPromise.then((resolve) => {
       let solJSON = solNetwork.toJSON(startNode.name);
       props.api("calculate", {
         method: "POST",
@@ -72,71 +59,16 @@ function NewSol(props){
         },
         body: JSON.stringify(solJSON, null, 4)
       }).then(response => response.json()).then(response => {
-        console.log(response);
         updateResponse(response);
-        setAvailibility(true);
       });
 
-    }, function(reject){
+    }, (reject) => {
       console.log(reject);
     });
   };
 
-  const cancelSol = () => {
-    setCover(false);
-  };
-
-  //reference to the function used to delete and rename a marker/overlay from the map
-  const deleteChildNode = useRef(null);
-  const renameChildNode = useRef(null);
-
-  //called from betterMap when a node is included in the solution
-  const activateNode = (node) => {
-    activeNodes[node.name] = node;
-    updateMenu(prevState => ([...prevState, node]));
-  };
-
-  //opposite of above
-  const deactivateNode = (node) => {
-    deleteChildNode.current(node);
-    delete activeNodes[node.name];
- 
-    updateMenu(prevState => (prevState.filter(entr => (entr.name !== node.name))));
-
-    if(typeof startNode !== "undefined"){
-      if(startNode.name === node.name){
-        selectRef.current.clearValue();
-        updateStartNode({});
-      }
-    }
-  };
-
-  const renameNode = (node, newName) => {
-    let renamedNode = renameChildNode.current(node, newName); 
-    delete activeNodes[node.name];
-    activeNodes[newName] = renamedNode;
-
-    if(startNode.name === node.name){
-      updateStartNode(renamedNode);
-    }
-
-    updateMenu(prevState => prevState.map(entr => {
-      if(entr.name === node.name){
-        entr.name = newName;
-        entr.label = newName;
-      }
-      return entr;
-    }));
-
-    return renamedNode;
-  };
-
-
-  const activateStartNode = (event) => {
-    updateStartNode(event);
-  };
-
-  const passSol = (name) => {
+  
+  const saveSol = (name) => {
     
     props.api("save", {
       method: "POST",
@@ -187,136 +119,28 @@ function NewSol(props){
       }}).then(response => response.json());
   }
 
-  const customStyles = {
-    control: (styles, state) => ({
-      ...styles,
-      minWidth: "150px",
-      width: "100%",
-      maxWidth: "inherit",
-      height: "100%",
-      margin: "4px",
-      border: "1px solid black",
-      borderBottom: state.selectProps.menuIsOpen ? "1px solid rgba(210, 210, 210, 0.5)" : "1px solid black",
-      borderRadius: "5px",
-      borderBottomLeftRadius: state.selectProps.menuIsOpen ? "0px" : "5px",
-      borderBottomRightRadius: state.selectProps.menuIsOpen ? "0px" : "5px",
-      backgroundColor: "white",
-      boxShadow: "none",
-      transition: "background-color 0.2s ease",
-
-      '&:hover': {
-        border: "1px solid black",
-        backgroundColor: "rgba(210, 210, 210, 0.5)",
-        cursor: state.selectProps.menuIsOpen ? "default" : "pointer",
-        borderBottom: state.selectProps.menuIsOpen ? "1px solid rgba(210, 210, 210, 0.5)" : "1px solid black"
-      }
-    }),
-    dropdownIndicator: (styles, state) => ({
-      ...styles,
-      color: "rgba(45, 45, 45, 0.5)",
-      transform: state.selectProps.menuIsOpen ? "rotate(90deg)" : "none",
-      transition: "transform 0.1s ease, color 0.3s ease",
-
-      '&:hover': {
-        color: "rgba(45, 45, 45, 1)",
-        cursor: "pointer"
-      }
-    }),
-    menu: (styles) => ({
-      ...styles,
-      minWidth: "150px",
-      width: "calc(100% - 8px)",
-      maxWidth: "inherit",
-      height: "auto",
-      border: "1px solid black",
-      borderTopLeftRadius: "0px",
-      borderTopRightRadius: "0px",
-      borderTop: "0px solid black",
-      borderRadius: "5px",
-      overflow: "hidden",
-      marginTop: "0px",
-      boxShadow: "none",
-      animation: "dropDown 0.5s linear",
-
-      '&:hover': {
-        cursor: "default"
-      }
-    }),
-    menuList: (styles) => ({
-      ...styles,
-      paddingTop: "0px",
-      paddingBottom: "0px",
-    }),
-    option: (styles, state) => ({
-      ...styles,
-      backgroundColor: "white",
-      color: "#969696",
-      height: "fit-content",
-      transition: "background-color 0.2s ease",
-
-      '&:hover': {
-        cursor: "pointer",
-        color: "rgba(" + state.data.colour + ", 1)",
-        fontWeight: "bold",
-        backgroundColor: "rgba(210, 210, 210, 0.5)"
-      }
-    }),
-    singleValue: (styles, state) => ({
-      ...styles,
-      fontWeight: "bold",
-      color: "rgba(" + state.data.colour + ", 1)"
-    })
-  };
 
   return (
     <div id="newSolution">
       <div id="UpperPage">
-        <div id="newMapContainer">
-          <div id="newMapHeader">
-            Map
-          </div>
-          <BetterMap activateNode={activateNode} deactivateNode={deactivateNode} 
-          deleteChildNode={deleteChildNode} renameChildNode={renameChildNode}/>
-        </div>
-        <div id="nodeMenu">
-          <div id="headOfNodes">
-            Node Menu
-          </div>
-          <div id="divOfNodes">
-            <ul id="listOfNodes">
-              {
-                nodeTransitions((styles, node) => (
-                  <NodeInList key={node.name} node={node} styles={styles}
-                  deleteHandler={deactivateNode} renameHandler={renameNode}/>
-                ))
-              }
-            </ul>
-          </div>
-        </div>
+          <BetterMap nodes={nodes} setNodes={setNodes}/>
       </div>
 
       <div id="LowerPage">
         <input id="backButton" className="LowerMenuButton" type="button" value="Back" onClick={() => props.changeScreen("menu")}/>
 
-        <div id="startNodeDiv" className="LowerMenuButton">
-          Starting node: 
-          <Select options={nodesInMenu} ref={selectRef} onChange={(event) => activateStartNode(event)}
-          className="react-select__container" styles={customStyles} menuPlacement="bottom" 
-          noOptionsMessage={() => ("No nodes?")} placeholder="Select node" maxMenuHeight={150}/>
+        <div id="startNodeDiv">
+          <CoolDropdown maxHeight="150px" options={nodes} onSelect={setStartNode}
+          defaultValue="Select node" value={startNode} emptyMessage="No nodes?"/>
         </div>
 
         <input id="calculateButton" className="LowerMenuButton" type="button" value="Calculate" 
         onClick={calculateSol}/>
 
         <div id="statusDiv" className="LowerMenuButton">
-          <div id="statusHeader">
-            Status:
-          </div>
-          <div id="statusContent">
-            {
-              (nodesInMenu.length > 2) ? (typeof startNode.name !== "undefined" ? "Ready to solve" : "Select start node") : "Add at least 3 nodes"
-            }
-          </div>
+          {
+            (nodes.length > 2) ? (startNode !== null ? "Ready to solve" : "Select start node") : "Add at least 3 nodes"
+          }
         </div>
       </div>
 
@@ -349,8 +173,8 @@ function NewSol(props){
       </div>
 
       {
-        coverIsOn ? <NetworkDisplay onCancel={cancelSol} title={apiResponse.message === "Path found" ? "Optimal network" : ""} 
-        nodes={activeSol.allNodes} arcs={activeSol.allArcs} apiStatus={apiResponse} setSol={passSol} loadRoutes={loadRoutes}/> : null
+        coverIsOn ? <NetworkDisplay onCancel={() => setCover(false)} title={apiResponse.message === "Path found" ? "Optimal network" : ""} 
+        nodes={activeSol.allNodes} arcs={activeSol.allArcs} apiStatus={apiResponse} setSol={saveSol} loadRoutes={loadRoutes}/> : null
       }
     </div>
   );
@@ -462,104 +286,6 @@ class OptionButton extends Component {
   }
 }
 
-//custom component to represent a node in the node menu
-class NodeInList extends Component {
-
-  constructor(props){
-    super(props);
-
-    this.state = {
-      name: props.node.name,
-      node: props.node,
-      divFocused: false,
-      nameUsed: false,
-      isStartNode: false
-    };
-
-    this.name = props.node.name
-    this.deleteHandler = props.deleteHandler.bind(this);
-    this.renameHandler = props.renameHandler.bind(this);
-    this.keyPress = this.keyPress.bind(this);
-    this.divFocusHandler = this.divFocusHandler.bind(this);
-    this.divBlurHandler = this.divBlurHandler.bind(this);
-    this.inputChecker = this.inputChecker.bind(this);
-  }
-
-  inputChecker(nameInput){
-
-    return !((nameInput in activeNodes) || (`\`!@#$%^&*()_+-=[]{};':"\\|<>/?~`.split('').some(char => (nameInput.includes(char)))));
-  }
-
-
-  keyPress(event){
-
-    if(event.key !== "Enter"){
-      return;
-    } else if(!this.inputChecker(this.name.trim().replace(/\s+/g, " "))){
-      event.target.blur();
-      this.setState({
-        ...this.state,
-        divFocused: false,
-        nameUsed: true
-      });
-
-      return;
-    }
-
-    event.target.blur();
-
-    let renamedNode = this.renameHandler(this.state.node, this.name.trim().replace(/\s+/g, " "));
-    this.setState({
-      ...this.state,
-      name: renamedNode.name,
-      node: renamedNode,
-      divFocused: false,
-      nameUsed: false
-    });
-  }
-
-  divFocusHandler(){
-    this.setState({
-      ...this.state,
-      divFocused: true,
-      nameUsed: false
-    });
-  }
-
-  divBlurHandler(event){
-    event.target.value = "";
-    this.setState({
-      ...this.state,
-      divFocused: false,
-      nameUsed: false
-    });
-  }
-
-
-  render(){
-
-    return (
-      <animated.li style={this.props.styles}>
-        <div className="NodeInList">
-          <div className="NameDiv">{this.state.name}</div>
-          <button className="RemovalButton" type="button" onClick={() => {this.deleteHandler(this.state.node);}}>
-            <TrashIcon/>
-          </button>
-          <div className="LatLngDiv">
-            {this.state.node.lat.toFixed(8).toString() + ", " + this.state.node.lng.toFixed(8).toString()}
-          </div>
-          <div className="RenameButtonDiv">
-            <input className="TextBox" type="text" maxLength="30" 
-            onChange={event => this.name = event.target.value}
-            onKeyDown={event => this.keyPress(event)} 
-            onBlur={event => this.divBlurHandler(event)} onFocus={this.divFocusHandler}/>
-            <div className={this.state.divFocused ? "TextButtonDiv" : "ButtonTextDiv"}>{this.state.nameUsed ? "Invalid Name" : "Rename Node"}</div>
-          </div>
-        </div>
-      </animated.li>
-    );
-  }
-}
 
 class Network {
   
