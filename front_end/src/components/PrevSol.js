@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, Component, useRef } from "react";
-import { GoogleMap, useLoadScript, Marker, DirectionsRenderer, OverlayView } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript, Marker, DirectionsRenderer, OverlayView, Polyline } from "@react-google-maps/api";
 
 import { ReactComponent as EditIcon } from "../styles/icons8-edit.svg";
 import { ReactComponent as TrashIcon } from "../styles/icons8-trash.svg";
@@ -9,7 +9,7 @@ import "../styles/prevSol.css";
 function PrevSol({data, ...props}){
 
     const [ solution, setSolution ] = useState(null);
-    const [ directionsRoute, setRoute ] = useState();
+    const [ directionsRoute, setRoute ] = useState({ routes: [] });
     const [ prevData, setData ] = useState([]);
     const [ mapCenter, setCenter ] = useState({lat: 0, lng: 0});
     const [ mapZoom, setZoom ] = useState(3);
@@ -25,22 +25,36 @@ function PrevSol({data, ...props}){
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws"
     });
-
+    
     useEffect(() => {
+
+        //loading active solution from newSol
         setSolution(data);
+
+        //loading previous solutions to show them
         loadSolutions().then(response => {
             setData(response.data); 
         });
-
         return () => {
+
+            //removing all data for a fresh start
+            props.changeData(null);
             setSolution(null);
             setData([]);
             setCenter({lat: 0, lng: 0});
             setZoom(3);
+            setRoute({ routes: [] });
         }
-    }, [data]);
+    }, []);
 
+    //clears all solutions from prevData.json
     const clearSolution = () => {
+
+        setSolution(null);
+        setRoute({ routes: [] });
+        setZoom(3);
+        setCenter({lat: 0, lng: 0});
+
         props.api("clear", {
             method: "GET",
             cache: "no-cache",
@@ -49,12 +63,9 @@ function PrevSol({data, ...props}){
             "Content-Type": "application/json"
             }
         });
-
-        setZoom(3);
-        setSolution(null);
-        setRoute(null);
     }
 
+    //returns promise containing all previous solutions from prevData.json
     const loadSolutions = () => {
         return props.api("load", {
             method: "GET",
@@ -66,13 +77,13 @@ function PrevSol({data, ...props}){
         }).then(response => response.json());
     }
 
+
+    //uses google map's directions API to show a route on the map
     const loadRoute = (route) => {
 
         if(route === null) return;
-
+        setRoute({ routes: [] });
         let startNodeData = route.nodes.filter(node => (node.name === route.startNode))[0];
-        setCenter({lat: startNodeData.lat, lng: startNodeData.lng});
-        setZoom(15);
 
         let nodes = {};
         route.nodes.map(node => {
@@ -111,7 +122,17 @@ function PrevSol({data, ...props}){
     }
 
     const deleteRoute = (name) => {
-        console.log(name);
+    
+        //sometimes solution is null
+        try{
+            if(solution.name === name){
+                setSolution(null);
+                setRoute({ routes: [] });
+                setCenter({lat: 0, lng: 0});
+                setZoom(3);
+            }
+        } catch(error){}
+
         props.api("delete-route", {
             method: "POST",
             cache: "no-cache",
@@ -123,31 +144,54 @@ function PrevSol({data, ...props}){
                 name: name
             }, null, 4)
         }).then(response => response.json()).then(response => {
+
+            //re-loading solutions after deletion
             loadSolutions().then(newData => {
                 setData(newData.data); 
             });
         });
     }
 
+    const renameHandler = (route, newName) => {
+
+        props.api("rename-route", {
+            method: "POST",
+            cache: "no-cache",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                oldName: route.name,
+                newName: newName
+            }, null, 4)
+        }).then(response => response.json()).then(response => {
+            console.log(response.message);
+            loadSolutions().then(response => {
+                setData(response.data);   
+            });
+        });
+    }
+
     return (
-        <div id="prevSolution">
-            <div id="leftPage">
-                <div id="solutionHeader" className="header">
+        <div id="prevSol-container">
+            <div id="prevSol-left">
+                <div id="prevSol-solutions" className="prevSol-header">
                     Previous solutions:
                 </div>
-                <div id="solutionMenu">
-                    <ul id="solutionList">
+                <div id="prevSol-solution-menu">
+                    <ul id="prevSol-solution-list">
                         {
                             prevData.map(route => (
-                                <Route key={route.name} data={route} selectHandler={loadRoute} activeSolution={solution} 
-                                setSolution={setSolution} deleteRoute={deleteRoute}/>
+                                <Route key={route.name} data={route} selectHandler={loadRoute} deleteRoute={deleteRoute} 
+                                prevData={prevData} inputHandler={renameHandler} currentSolution={solution} setSolution={setSolution}/>
                             ))
                         }
                     </ul>
                 </div>
-                <div id="solutionFooter">
-                    <input type="button" id="backButton-prevSol" className="footerButton" value="Back" onClick={() => props.changeScreen("menu")}/>
-                    <input type="button" id="clearButton-prevSol" className="footerButton" value="Clear solutions" onClick={() => {
+                <div id="prevSol-footer">
+                    <input type="button" id="prevSol-back" className="prevSol-footer-button" value="Back" onClick={() => props.changeScreen("menu")}/>
+                    <input type="button" id="prevSol-clear" className="prevSol-footer-button" value="Clear solutions" onClick={() => {
                         clearSolution();
                         loadSolutions().then(response => {
                             setData(response.data);   
@@ -156,21 +200,28 @@ function PrevSol({data, ...props}){
                 </div>
             </div>
 
-            <div id="rightPage">
-                <div id="mapHeader" className={solution === null ? "header" : "header activeHeader"}>
-                    {solution === null ? "No route selected" : solution.name}
+            <div id="prevSol-right">
+                <div id="prevSol-map-header" className={solution === null ? "prevSol-header" : "prevSol-header prevSol-header-active"}>
+                    {
+                        solution === null ? "No route selected" : solution.name
+                    }
                 </div>
-                <div id="mapContainer">
+                <div id="prevSol-map-container">
                         {
-                            isLoaded ? <GoogleMap id="map" zoom={mapZoom} center={mapCenter}
+                            isLoaded ? <GoogleMap id="prevSol-map" zoom={mapZoom} center={mapCenter}
                             options={mapOptions} onLoad={() => loadRoute(solution)}>
                                 {
-                                    solution === null ? null : (solution.nodes.map(node => (
-                                        <Marker position={{lat: node.lat, lng: node.lng}} icon={{url: node.url, scaledSize: node.scaledSize}}>
-                                            <OverlayView mapPaneName={OverlayView.OVERLAY_LAYER} position={{lat: node.lat, lng: node.lng}}>
-                                                <div className="routeNode">
+                                    solution && solution.nodes.map(node => (
+                                        <Marker key={node.name} position={{lat: node.lat, lng: node.lng}} 
+                                        icon={{url: node.url, scaledSize: node.scaledSize}} clickable={false}>
+                                            <OverlayView mapPaneName={OverlayView.FLOAT_PANE} position={{lat: node.lat, lng: node.lng}}>
+                                                <div className="prevSol-map-node" style={{ 
+                                                    backgroundColor: `rgba(${node.colour}, 0.6)`,
+                                                    borderColor: node.name === solution.startNode ? "gold" : "black",
+                                                    borderWidth: node.name === solution.startNode ? "3px" : "1px"
+                                                    }}>
                                                     {
-                                                        node.name === solution.startNode ? "Start/End" : `Waypoint ${solution.path.indexOf(node.name)}`
+                                                        node.name === solution.startNode ? "Start/End:" : `Waypoint ${solution.path.indexOf(node.name)}:`
                                                     }
                                                     <br/>
                                                     {
@@ -179,7 +230,7 @@ function PrevSol({data, ...props}){
                                                 </div>
                                             </OverlayView>
                                         </Marker>
-                                    )))
+                                    ))
                                 }
                                 <DirectionsRenderer directions={directionsRoute} options={{ 
                                     suppressMarkers: true,
@@ -189,29 +240,47 @@ function PrevSol({data, ...props}){
                                                 icon: {
                                                     path: window.google.maps.SymbolPath.CIRCLE,
                                                     scale: 10,
-                                                    fillColor: "#FF0000",
+                                                    fillColor: "#1AA260",
                                                     strokeWeight: 0,
                                                     fillOpacity: 1
                                                 },
-                                                repeat: 0
-                                            },
-                                            {
-                                                icon: {
-                                                    path: window.google.maps.SymbolPath.FORWARD_OPEN_ARROW,
-                                                    scale: 5,
-                                                    fillColor: "#0000FF",
-                                                    strokeWeight: 0,
-                                                    fillOpacity: 1
-                                                },
-                                                offset: "25%",
-                                                repeat: "25%"
+                                                repeat: 0,
+                                                zIndex: 999
                                             }
                                         ],
-                                        strokeColor: "#4597ff",
+                                        strokeColor: "#1AA260",
                                         strokeWeight: 6,
-                                        strokeOpacity: 0.6
+                                        strokeOpacity: 0.6,
+                                        clickable: false
                                     }
                                 }}/>
+                                {
+                                    directionsRoute.routes.length !== 0 ? 
+                                    solution.nodes.map(node => (
+                                        <Polyline key={node.name} path={[
+                                            {
+                                                lat: node.lat,
+                                                lng: node.lng
+                                            },
+                                            directionsRoute.routes[0].legs[solution.path.indexOf(node.name)].start_location
+                                        ]} options={{
+                                            strokeOpacity: 0,
+                                            clickable: false,
+                                            icons: [
+                                                {
+                                                    icon: {
+                                                        path: "M 0, -1 0, 1",
+                                                        strokeOpacity: 0.4,
+                                                        strokeColor: "#1AA260",
+                                                        scale: 5
+                                                    },
+                                                    offset: 0,
+                                                    repeat: "20px"
+                                                }
+                                            ]
+                                        }}/>
+                                    )) : null
+                                }
                             </GoogleMap> : <div id="mapLoading">Loading...</div>
                         }
                 </div>
@@ -229,44 +298,75 @@ class Route extends Component {
             ...structuredClone(props.data)
         };
 
+        this.inputRef = React.createRef();
         this.selectHandler = props.selectHandler.bind(this);
-        this.setSolution = props.setSolution.bind(this);
-        this.handleSelect = this.handleSelect.bind(this);
         this.handleDelete = props.deleteRoute.bind(this);
+        this.handleInput = this.handleInput.bind(this);
+        this.inputHandler = props.inputHandler.bind(this);
+        this.setSolution = props.setSolution.bind(this);
     }
 
-    handleSelect(){
+    handleInput(){
 
-        this.setSolution(this.state)
-        this.selectHandler(this.state);
+        //trimming whitespace and replacing dissallowed characters with empty string
+        let newName = this.inputRef.current.value.trim().replace(/[^a-zA-Z0-9: ]/g, '');
+        let nameAllowed = true;
+
+        //mapping over previous solutions to see if newName has been used yet
+        this.props.prevData.map(route => {
+            if((route.name === newName) || (newName.length === 0)){
+                nameAllowed = false;
+            }
+        });
+
+        if(nameAllowed){
+            this.inputHandler(this.state, newName);
+            this.setState(prevState => ({
+                ...prevState,
+                name: newName
+            }));
+            this.setSolution({
+                ...this.state,
+                name: newName
+            });
+        }
     }
 
     render(){
 
         let activeClassName = "";
-        if((this.props.activeSolution !== null) && (this.props.activeSolution !== undefined)){
-            if(this.props.activeSolution.name === this.state.name){
-                activeClassName = "routeSelect-active";
+        if((this.props.currentSolution !== null) && (this.props.currentSolution !== undefined)){
+            if(this.props.currentSolution.name === this.state.name){
+                activeClassName = "prevSol-route-select-active";
             }   
         }
 
         return (
         <li key={this.state.name}>
-            <div className="routeDiv">
-                <input className="routeName" type="text" defaultValue={this.state.name}/>
-                <button className="routeEdit">
+            <div className="prevSol-route">
+                <input className="prevSol-route-name" type="text" ref={this.inputRef} 
+                defaultValue={this.state.name} onBlur={() => this.handleInput()}
+                onKeyDown={(event) => {
+                    if(event.key === "Enter"){
+                        this.inputRef.current.blur();
+                    }
+                }}/>
+                <button className="prevSol-route-edit" onClick={() => this.inputRef.current.focus()}>
                     <EditIcon/>
                 </button>
-                <div className="routeWeight">
+                <div className="prevSol-route-weight">
                     {`Weight:   ${this.state.weight}`}
                 </div>
-                <div className="routeStart">
+                <div className="prevSol-route-startNode">
                     {`Start:    ${this.state.startNode}`}
                 </div>
-                <button className="routeDelete" onClick={() => this.handleDelete(this.state.name)}>
+                <button className="prevSol-route-delete" onClick={() => this.handleDelete(this.state.name)}>
                     <TrashIcon/>
                 </button>
-                <button className={`routeSelect ${activeClassName}`} onClick={this.handleSelect}>
+                <button className={`prevSol-route-select ${activeClassName}`} onClick={() => {
+                    this.setSolution(this.state);
+                    this.selectHandler(this.state);
+                }}>
                     <RouteIcon/>
                 </button>
             </div>

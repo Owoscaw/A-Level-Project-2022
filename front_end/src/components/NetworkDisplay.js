@@ -3,7 +3,6 @@ import * as createjs from "createjs-module";
 import { ReactComponent as EditIcon } from "../styles/icons8-edit.svg"; 
 import { ReactComponent as ValidIcon } from "../styles/icons8-done.svg";
 import { ReactComponent as InvalidIcon } from "../styles/icons8-close.svg";
-import { jsx } from "@emotion/react";
 
 import "../styles/networkDisplay.css";
 
@@ -12,11 +11,14 @@ function NetworkDisplay(props){
     const solRef = useRef();
     const [ pathFound, setFound ] = useState(false);
     const [ networkTitle, setTitle ] = useState("");
+
+    //manages state of network name
     const [ networkValid, setValidity ] = useState(true);
 
-    const drawNetwork = (canvasRef) => {
 
-        console.log("drawing");
+    //bunch of canvas stuff, did some cool math to make regular polygons
+    //i am not commenting all of this
+    const drawNetwork = (canvasRef) => {
 
         canvasRef.current.width = 850 * window.devicePixelRatio;
         canvasRef.current.height = 425 * window.devicePixelRatio;
@@ -97,6 +99,7 @@ function NetworkDisplay(props){
             setTitle(props.title);
         }
 
+        //used to check input name against previously used network names
         props.loadRoutes().then(routes => {
             solRef.current = routes.data.map(route => (route.name));
         });
@@ -110,9 +113,9 @@ function NetworkDisplay(props){
     } 
 
     return (
-        <div id="cover">
-            <div id="canvasDiv">
-                <div id="networkHeader">
+        <div id="ntwrk-container">
+            <div id="ntwrk-canvas-container">
+                <div id="ntwrk-header">
                     {
                         pathFound ? 
                         <NetworkHeader defaultName={networkTitle} setTitle={setTitle} 
@@ -124,12 +127,12 @@ function NetworkDisplay(props){
                     pathFound
                     ?   <>
                         <NetworkCanvas pathFound={pathFound} drawNetwork={drawNetwork}/>
-                        <input className={`solutionButton ${networkValid ? "solutionButton-valid" : "solutionButton-invalid"}`} 
+                        <input className={`ntwrk-save ${networkValid ? "ntwrk-save-valid" : "ntwrk-save-invalid"}`} 
                         type="button" value={networkValid ? "Save route" : "Invalid name"} onClick={() => saveSol(networkTitle)}/>
                     </>
                     :   <>
-                        <input id="cancelButton" type="button" value="×" onClick={props.onCancel}/>
-                        <div id="apiStatus" className={props.apiStatus.message === "" ? "apiLoading" : "apiWarning"}>
+                        <input id="ntwrk-cancel" type="button" value="×" onClick={props.onCancel}/>
+                        <div id="ntwrk-api-status" className={props.apiStatus.message === "" ? "ntwrk-api-loading" : "ntwrk-api-warning"}>
                             {
                                 props.apiStatus.message === "" ? "Loading" : props.apiStatus.message
                             }
@@ -154,6 +157,7 @@ class NetworkCanvas extends Component{
         this.draw = props.drawNetwork.bind(this);
     }
 
+    //drawing the graph only when it loads
     componentDidMount(){
         this.draw(this.canvasRef);
     }
@@ -161,7 +165,7 @@ class NetworkCanvas extends Component{
     render(){
 
         return (
-            <canvas ref={this.canvasRef} id="networkCanvas"/> 
+            <canvas ref={this.canvasRef} id="ntwrk-canvas"/> 
         );
     }
 }
@@ -172,7 +176,6 @@ class NetworkHeader extends Component{
         super(props);
 
         this.state = {
-            inputFocused: true,
             nameValid: true,
             defaultName: props.defaultName 
         }
@@ -181,19 +184,8 @@ class NetworkHeader extends Component{
         this.prevNames = props.prevNames;
         this.setTitle = props.setTitle.bind(this);
         this.setValidity = props.setValidity.bind(this);
-        this.focusInput = this.focusInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
-    }
-
-    focusInput(){
-
-        this.setState(prevState => ({
-            ...prevState,
-            inputFocused: true
-        }));
-
-        this.titleRef.current.focus();
     }
 
     handleChange(event){
@@ -205,8 +197,10 @@ class NetworkHeader extends Component{
 
     handleSubmit(){
 
+        //trimming whitespace
         let newName = this.titleRef.current.value.trim().replace(/\s+/g, " ");
 
+        //testing if the name contains any special characters or has been used before
         if((`\`!@#$%^&*()_+-=[]{}"\\|<>/?~`.split('').some(char => (newName.includes(char))))
         || (this.prevNames.includes(newName)) || (newName === "")){
             this.setState(prevState => ({
@@ -222,7 +216,6 @@ class NetworkHeader extends Component{
             this.setState(prevState => ({
                 ...prevState,
                 defaultName: newName,
-                inputFocused: false,
                 nameValid: true
             }));
 
@@ -235,13 +228,12 @@ class NetworkHeader extends Component{
     render(){
 
         return(
-            <div id="networkTitle-container">
-                <button id="networkButton" onClick={this.focusInput}>
+            <div id="ntwrk-title-container">
+                <button id="ntwrk-title-edit" onClick={() => this.titleRef.current.focus()}>
                     <EditIcon/>
                 </button>
                 <input type="text" defaultValue={this.state.defaultName} onKeyDown={event => this.handleChange(event)}
-                onFocus={() => this.setState(prevState => ({...prevState, inputFocused: true}))} onBlur={this.handleSubmit}
-                ref={this.titleRef} className={`networkTitle ${this.state.nameValid ? "networkTitle-valid" : "networkTitle-invalid"}`} 
+                onBlur={this.handleSubmit} ref={this.titleRef} className={`ntwrk-title ${this.state.nameValid ? "ntwrk-title-valid" : "ntwrk-title-invalid"}`} 
                 autoComplete="off" maxLength={30}/>
                 {
                     this.state.nameValid ? <ValidIcon id="validIcon"/> : <InvalidIcon id="invalidIcon"/>

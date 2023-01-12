@@ -5,12 +5,16 @@ import "../styles/betterMap.css";
 import { ReactComponent as EditIcon } from "../styles/icons8-edit.svg";
 import { ReactComponent as TrashIcon } from "../styles/icons8-trash.svg";
 
+//defining constants for possible marker icons and colours
 const possibleIcons = ["markerIcon1.jpg", "markerIcon2.jpg", "markerIcon3.jpg"];
 const googleColours = ["23, 107, 239", "255, 62, 48", "247, 181, 41", "23, 156, 82"];
+
+//used to keep track of currently occupied names on the map
 let usedNames;
 
 function BetterMap(props){
 
+    //clears used names when component is removed
     useEffect(() => {
         usedNames = {};
 
@@ -19,9 +23,7 @@ function BetterMap(props){
         }
     }, []);
 
-
     const { isLoaded } = useLoadScript({
-
         googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws"
     });
  
@@ -29,6 +31,7 @@ function BetterMap(props){
     const mapRef = useRef();
     const onMapLoad = useCallback((map) => (mapRef.current = map), []);
 
+    //does not have to be redefined when reflows happen
     const mapCenter = useMemo(() => ({lat: 52.4, lng: 0}), []);
     const mapOptions = useMemo(() => ({
         disableDefaultUI: true,
@@ -37,13 +40,15 @@ function BetterMap(props){
         draggingCursor: "grabbing",
         gestureHandling: "greedy"
     }), []);
+
+    //configures the behaviour of nodes when the cluster
     const clusterOptions = useMemo(() => ({
         clusterClass: "nodeCluster",
         ignoreHidden: true,
         averageCenter: true,
         calculator: (markers, icons) => {
 
-            console.log(markers);
+            console.log(markers, icons);
             return { text: markers.length + " nodes", index: 1 };
         },
         imageExtension: "jpg",
@@ -89,20 +94,22 @@ function BetterMap(props){
 
     const renameNodeHandler = (node, newName) => {
         
+        //redefines node with new name, all previous attributes spread across it
         let renamedNode = {
             ...node,
             name: newName,
             label: newName
         };
 
+        //marking the node's old name as availible and current name as unavailible
         delete usedNames[node.name];
         usedNames[newName] = true;
 
+        //filters out the previous node, replacing it with our renamed node
         props.setNodes(prevState => prevState.map(entr => (entr.name === node.name ? renamedNode : entr)));
         return renamedNode;
     };
     
-
 
     const removeNodeHandler = (node) => {
         delete usedNames[node.name];
@@ -110,7 +117,7 @@ function BetterMap(props){
     }
 
 
-
+    //loading screen
     if(!isLoaded){
         return (
             <div id="mapLoading">Loading...</div>
@@ -134,6 +141,7 @@ function BetterMap(props){
                                 <Marker position={{lat: node.lat, lng: node.lng}} icon={{url: node.url, scaledSize: node.scaledSize}} 
                                 clusterer={clusterer}>,
                                     <OverlayView position={{lat: node.lat, lng: node.lng}} 
+                                    //map panel that recieves mouse DOM events
                                     mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
                                         <NodeVerlay node={node} clickHandler={removeNodeHandler}/>
                                     </OverlayView>
@@ -151,8 +159,7 @@ function BetterMap(props){
             <div id="betterMap-menu">
                 <ul id="betterMap-Menu-list">
                     {
-                        props.nodes.size === 0 ? "Click map to add nodes" 
-                        : props.nodes.map(node => (
+                        props.nodes.map(node => (
                             <NodeMenuItem key={node.name} node={node} removeNodeHandler={removeNodeHandler} renameNodeHandler={renameNodeHandler}/>
                         ))
                     }
@@ -170,6 +177,8 @@ class NodeMenuItem extends Component{
         super(props);
 
         this.node = props.node;
+
+        //so we can access its content - avoides using state
         this.inputRef = React.createRef();
         this.removeNodeHandler = props.removeNodeHandler.bind(this);
         this.renameNodeHandler = props.renameNodeHandler.bind(this);
@@ -179,12 +188,14 @@ class NodeMenuItem extends Component{
 
     inputHandler(name){
 
+        //trimming whitespace and dissallowed characters
         let newName = name.trim().replace(/[&\/\\#,+()$~%'":*?<>{}]/g, '');
         if((newName in usedNames) || (newName.length === 0)){
             this.inputRef.current.value = this.node.name;
             return;
         }
 
+        //managint the content of the input field
         this.inputRef.current.value = newName;
         this.renameNodeHandler(this.node, newName);
     }
@@ -215,7 +226,7 @@ class NodeMenuItem extends Component{
 }
 
 
-//custom component that acts like a label for a marker
+//node overlay haha
 class NodeVerlay extends Component{
      
     constructor(props){

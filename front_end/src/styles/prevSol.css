@@ -12,7 +12,7 @@ html, body {
   padding: 0;
 }
 
-#prevSolution {
+#prevSol-container {
   height: 100%;
   width: 100%;
   display: flex;
@@ -20,7 +20,7 @@ html, body {
   padding: 0;
 }
 
-.header {
+.prevSol-header {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,11 +28,11 @@ html, body {
   background-color: #F1F3F4;
 }
 
-.activeHeader {
+.prevSol-header-active {
   font-size: 28px;
 }
 
-.footerButton {
+.prevSol-footer-button {
   border: 1px outset black;
   border-radius: 10px;
   margin: 2.5px 0 2.5px 0;
@@ -43,20 +43,20 @@ html, body {
   transition: background-color 0.4s ease;
 }
 
-#leftPage {
+#prevSol-left {
   height: 100%;
   width: 500px;
   float: left;
   background-color: #F1F3F4;
 }
 
-#solutionHeader {
+#prevSol-solutions {
   height: 50px;
   width: 100%;
   font-size: 24px;
 }
 
-#solutionMenu {
+#prevSol-solution-menu {
   height: calc(100% - 108px);
   width: 100%;
   float: left;
@@ -66,7 +66,7 @@ html, body {
   align-items: center;
 }
 
-#solutionList {
+#prevSol-solution-list {
   height: calc(100% - 5px);
   width: 480px;
   list-style: none;
@@ -79,7 +79,7 @@ html, body {
   transition: color, background-color 0.4s ease;
 }
 
-#solutionList:empty {
+#prevSol-solution-list:empty {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -89,11 +89,11 @@ html, body {
   background-color: rgba(0, 0, 0, 0);
 }
 
-#solutionList:empty:after {
+#prevSol-solution-list:empty:after {
   content: "No solutions saved";
 }
 
-#solutionList li:first-child {
+#prevSol-solution-list li:first-child {
   width: 400px;
   height: 75px;
   display: inline-block;
@@ -101,14 +101,14 @@ html, body {
   margin-bottom: 14px;
 }
 
-#solutionList li {
+#prevSol-solution-list li {
   width: 400px;
   height: 75px;
   display: inline-block;
   margin-bottom: 14px;
 }
 
-.routeDiv {
+.prevSol-route {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -122,7 +122,7 @@ html, body {
   overflow: hidden;
 }
 
-.routeName {
+.prevSol-route-name {
   font-size: 24px;
   display: flex;
   border: none;
@@ -134,7 +134,7 @@ html, body {
   grid-row: 1;
 }
 
-.routeEdit {
+.prevSol-route-edit {
   grid-column: -1;
   grid-row: 1;
   outline: none;
@@ -142,20 +142,20 @@ html, body {
   background-color: inherit;
 }
 
-.routeEdit > svg {
+.prevSol-route-edit > svg {
   height: 25px;
   width: 25px;
   fill: #202124;
   transition: fill 0.2s;
 } 
 
-.routeEdit > svg:hover {
+.prevSol-route-edit > svg:hover {
   fill: #5F6368;
   transition: fill 0.2s;
   cursor: pointer;
 }
 
-.routeWeight {
+.prevSol-route-weight {
   grid-column: 1;
   grid-row: 2;
   font-size: 18px;
@@ -165,7 +165,7 @@ html, body {
   padding-top: 3px;
 }
 
-.routeStart {
+.prevSol-route-startNode {
   grid-column: 2;
   grid-row: 2;
   font-size: 18px;
@@ -176,7 +176,7 @@ html, body {
   padding-top: 3px;
 }
 
-.routeDelete {
+.prevSol-route-delete {
   grid-column: -2;
   grid-row: 2;
   outline: none;
@@ -184,20 +184,20 @@ html, body {
   background-color: inherit;
 }
 
-.routeDelete > svg {
+.prevSol-route-delete > svg {
   height: 30px;
   width: 30px;
   fill: #606060;
   transition: fill 0.2s;
 }
 
-.routeDelete > svg:hover {
+.prevSol-route-delete > svg:hover {
   cursor: pointer;
   fill: #EA4335;
   transition: fill 0.2s;
 }
 
-.routeSelect {
+.prevSol-route-select {
   grid-column: -1;
   grid-row: 2;
   outline: none;
@@ -205,24 +205,24 @@ html, body {
   background-color: inherit;
 }
 
-.routeSelect > svg {
+.prevSol-route-select > svg {
   height: 30px;
   width: 30px;
   transition: fill 0.2s;
 }
 
-.routeSelect > svg:hover {
+.prevSol-route-select > svg:hover {
   fill: #1AA260;
   cursor: pointer;
   transition: fill 0.2s;
 }
 
-.routeSelect-active > svg {
+.prevSol-route-select-active > svg {
   fill: #1AA260;
   transition: fill 0.2s;
 }
 
-#solutionFooter {
+#prevSol-footer {
   height: 50px;
   width: 480px;
   margin: auto;
@@ -230,43 +230,43 @@ html, body {
   justify-content: center;
 }
 
-#backButton-prevSol {
+#prevSol-back {
   height: 100%;
   flex: 2 1 0;
   margin-right: 5px;
 }
 
-#backButton-prevSol:hover {
+#prevSol-back:hover {
   background-color: #4285f4;
   cursor: pointer;
 }
 
-#clearButton-prevSol {
+#prevSol-clear {
   height: 100%;
   flex: 3 1 0;
   margin-left: 5px;
 }
 
-#clearButton-prevSol:hover {
+#prevSol-clear:hover {
   cursor: pointer;
   background-color: #EA4335;
 }
 
-#rightPage {
+#prevSol-right {
   height: 100%;
   flex-grow: 1;
   float: right;
   background-color: #F1F3F4;
 }
 
-#mapHeader {
+#prevSol-map-header {
   height: 50px;
   width: 100%;
   font-size: 22px;
   background-color: #F1F3F4;
 }
 
-#mapContainer {
+#prevSol-map-container {
   height: calc(100% - 55px);
   width: calc(100% - 5px);
   float: right;
@@ -277,16 +277,23 @@ html, body {
   margin: 0 5px 5px 0;
 }
 
-#map {
+#prevSol-map {
   height: 100%;
   width: 100%;
   border-radius: 10px;
 }
 
-.routeNode {
+.prevSol-map-node {
+  min-width: 50px;
   width: fit-content;
-  height: 25px;
+  min-height: 30px;
+  height: fit-content;
+  border: 1px solid black;
+  border-radius: 10px;  
   text-align: center;
   background-color: red;
-  translate: -50% -50px;
+  translate: -50% -200%;
+  font-size: 18px;
+  padding: 5px;
+  z-index: 999;
 }

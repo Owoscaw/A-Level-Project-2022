@@ -123,6 +123,38 @@ app.post("/delete-route", (request, response) => {
 
 
 
+app.post("/rename-route", (request, response) => {
+
+    response.setHeader("Content-Type", "application/json");
+    
+    readPrev((error, data) => {
+        if(error){
+            response.send({
+                message: "Rename failed"
+            });
+            return
+        }
+
+        let newData = JSON.parse(data).solutions.map(route => {
+            if(route.name === request.body.oldName){
+                return ({
+                    ...route,
+                    name: request.body.newName
+                });
+            } else {
+                return route;
+            }
+        });
+
+        writePrev({solutions: newData}, () => {
+            response.send({
+                message: "Rename OK"
+            });
+        });
+    })
+});
+
+
 app.get("/clear", (request, response) => {
     response.setHeader("Content-Type", "application/json");
 

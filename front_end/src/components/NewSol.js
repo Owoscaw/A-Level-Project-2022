@@ -46,6 +46,7 @@ function NewSol(props){
     setSol(solNetwork);
     setCover(true);
 
+    //uses directionsMatrix api to get all arcs in the network
     let matrixPromise = getMatrix(toBeArced, nodeArray, solNetwork, solOptions);
 
     matrixPromise.then((resolve) => {
@@ -68,6 +69,7 @@ function NewSol(props){
   };
 
   
+  //saving solution and changing screen to show route
   const saveSol = (name) => {
     
     props.api("save", {
@@ -109,6 +111,7 @@ function NewSol(props){
     });
   }
 
+  //loads previous routes from prevData.json
   const loadRoutes = () => {
      return props.api("load", {
       method: "GET",
@@ -121,34 +124,34 @@ function NewSol(props){
 
 
   return (
-    <div id="newSolution">
-      <div id="UpperPage">
+    <div id="newSol-container">
+      <div id="newSol-upper-container">
           <BetterMap nodes={nodes} setNodes={setNodes}/>
       </div>
 
-      <div id="LowerPage">
-        <input id="backButton" className="LowerMenuButton" type="button" value="Back" onClick={() => props.changeScreen("menu")}/>
+      <div id="newSol-lower-container">
+        <input id="newSol-back" className="newSol-lower-button" type="button" value="Back" onClick={() => props.changeScreen("menu")}/>
 
-        <div id="startNodeDiv">
+        <div id="newSol-startNode">
           <CoolDropdown maxHeight="150px" options={nodes} onSelect={setStartNode}
           defaultValue="Select node" value={startNode} emptyMessage="No nodes?"/>
         </div>
 
-        <input id="calculateButton" className="LowerMenuButton" type="button" value="Calculate" 
+        <input id="newSol-calculate" className="newSol-lower-button" type="button" value="Calculate" 
         onClick={calculateSol}/>
 
-        <div id="statusDiv" className="LowerMenuButton">
+        <div id="newSol-status" className="newSol-lower-button">
           {
             (nodes.length > 2) ? (startNode !== null ? "Ready to solve" : "Select start node") : "Add at least 3 nodes"
           }
         </div>
       </div>
 
-      <div id="SubPage">
-        <div id="SolutionOptions">
-          <div id="optionHead">Options:</div>
-          <div id="optionGrid">
-            <div className="optionGrid-item travelDiv">
+      <div id="newSol-subpage-container">
+        <div id="newSol-options">
+          <div id="newSol-options-header">Options:</div>
+          <div id="newSol-options-grid">
+            <div className="newSol-options-grid-item newSol-travel-options">
               Travel Mode:
               <ul>
                 <OptionButton name="driving" type="travel" options={solOptions} setOptions={setOptions}/>
@@ -156,7 +159,7 @@ function NewSol(props){
                 <OptionButton name="walking" type="travel" options={solOptions} setOptions={setOptions}/>
               </ul>
             </div>
-            <div className={`optionGrid-item trafficDiv${solOptions.travelMode === "driving" ? "" : " trafficDiv-disabled"}`}>
+            <div className={`newSol-options-grid-item newSol-traffic-options${solOptions.travelMode === "driving" ? "" : " trafficDiv-disabled"}`}>
               Traffic Mode:
               <ul>
                 <OptionButton name="bestguess" type="traffic" options={solOptions} setOptions={setOptions}/>
@@ -167,7 +170,7 @@ function NewSol(props){
           </div>
         </div>
 
-        <div id="InfoArea">
+        <div id="newSol-info">
           Information
         </div>
       </div>
@@ -186,6 +189,7 @@ function getMatrix(toBeArced, nodeArray, network, options){
 
   let matrixStatus = "matrix fully loaded";
    
+  //using async ensures that all arcs are loaded before continuing
   let matrixLoop = async _ => {
 
     for(let i = 0; i < toBeArced.length - 1; i++){
@@ -204,29 +208,29 @@ function getMatrix(toBeArced, nodeArray, network, options){
           departureTime: new Date(Date.now())
         };
 
-        // let solMatrix = new window.google.maps.DistanceMatrixService();
-        // solMatrix.getDistanceMatrix({
-        //   origins: [currentOrigin],
-        //   destinations: currentDestinations,
-        //   travelMode: travelMode,
-        //   drivingOptions: drivingOptions
-        // }, function(response, status){
+        let solMatrix = new window.google.maps.DistanceMatrixService();
+        solMatrix.getDistanceMatrix({
+          origins: [currentOrigin],
+          destinations: currentDestinations,
+          travelMode: travelMode,
+          drivingOptions: drivingOptions
+        }, function(response, status){
 
-        //   if(status === "OK"){
-        //     for(let sink = 0; sink < response.rows[0].elements.length; sink++){
-        //       network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
-        //     }
+          if(status === "OK"){
+            for(let sink = 0; sink < response.rows[0].elements.length; sink++){
+              network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
+            }
 
-        //     resolve("matrix fully loaded");
-        //   } else {
-        //     reject("matrix failed to load");
-        //   }
-        // });
+            resolve("matrix fully loaded");
+          } else {
+            reject("matrix failed to load");
+          }
+        });
 
-        for(let j = 0; j < toNodes.length; j++){
-          network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
-        }
-        resolve("matrix fully loaded");
+        // for(let j = 0; j < toNodes.length; j++){
+        //   network.addArc(Math.floor(Math.random()*1000), fromNode, toNodes[j]);
+        // }
+        // resolve("matrix fully loaded");
       });
 
       let matrixResult = await currentMatrixPromise;
@@ -243,6 +247,7 @@ function getMatrix(toBeArced, nodeArray, network, options){
 }
 
 
+//used to define options to use when calculating distances
 class OptionButton extends Component {
 
   constructor(props){
@@ -266,20 +271,20 @@ class OptionButton extends Component {
         this.setOptions((prevState) => ({...prevState, travelMode: `${this.state.name}`}));
       };
       if(this.state.name === this.props.options.travelMode){
-        additionalClass = "optionButton-active";
+        additionalClass = "newSol-option-button-active";
       }
     } else if(this.state.type === "traffic"){
       onClick = () => {
         this.setOptions((prevState) => ({...prevState, trafficMode: `${this.state.name}`}));
       }
       if(this.state.name === this.props.options.trafficMode){
-        additionalClass = "optionButton-active";
+        additionalClass = "newSol-option-button-active";
       }
     }
 
     return (
       <li>
-        <button className={`optionButton ${additionalClass}`} 
+        <button className={`newSol-option-button ${additionalClass}`} 
         type="button" onClick={onClick}/>{this.state.name.charAt(0).toUpperCase() + this.state.name.slice(1)}
       </li>
     );

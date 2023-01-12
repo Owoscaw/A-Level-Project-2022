@@ -86,7 +86,7 @@
     overflow-y: auto;
     line-height: 0px;
     color: rgba(125, 125, 125, 0);
-    background-color: rgba(125, 125, 125, 0);
+    background-color: rgba(125, 125, 125, 0.1);
     border-radius: 10px;
     transition: color, background-color 0.4s ease;
 }
@@ -97,13 +97,17 @@
 
 #betterMap-Menu-list:empty {
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-family: "Google Sans";
-    font-size: 20px;
+    align-items: center;
     color: rgba(125, 125, 125, 1);
-    background-color: rgba(125, 125, 125, 0.4);
-    transition: color, background-color 0.2s ease;
+    background-color: rgba(125, 125, 125, 0.2);
+    font-family: "Google sans";
+    font-size: 24px;
+    font-weight: 300;
+}
+
+#betterMap-Menu-list:empty::after {
+    content: "Click the map";
 }
  
 #betterMap-Menu-list li {
@@ -147,13 +151,13 @@
     font-size: 24px;
     border: 1px solid transparent;
     border-radius: 7.5px;
+    background-color: inherit;
     transition: background-color, border-color 0.2s linear;
 }
 
 .betterMap-Menu-Node-rename:hover {
     cursor: pointer;
     background-color: rgba(125, 125, 125, 0.2);
-    transition: background-color, border-color 0.2s linear;
 }
 
 .betterMap-Menu-Node-rename:focus {

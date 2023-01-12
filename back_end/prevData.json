@@ -2,15 +2,15 @@
     "solutions": [
         {
             "path": [
-                "Node 2",
                 "Node 1",
+                "Node 2",
                 "Node 3",
-                "Node 2"
+                "Node 1"
             ],
             "nodes": [
                 {
-                    "lat": 52.395108324769154,
-                    "lng": 0.008668899536132812,
+                    "lat": 52.39950033871494,
+                    "lng": -0.005299747390381526,
                     "url": "markerIcon1.jpg",
                     "scaledSize": {
                         "width": 50,
@@ -19,12 +19,12 @@
                     "name": "Node 1",
                     "label": "Node 1",
                     "timeout": null,
-                    "colour": "23, 107, 239"
+                    "colour": "255, 62, 48"
                 },
                 {
-                    "lat": 52.40194273104868,
-                    "lng": 0.0024890899658203125,
-                    "url": "markerIcon1.jpg",
+                    "lat": 52.39740549808913,
+                    "lng": -0.008561313552490901,
+                    "url": "markerIcon3.jpg",
                     "scaledSize": {
                         "width": 50,
                         "height": 50
@@ -35,8 +35,8 @@
                     "colour": "23, 156, 82"
                 },
                 {
-                    "lat": 52.39780555407229,
-                    "lng": -0.003991127014160156,
+                    "lat": 52.39716982229529,
+                    "lng": 0.01448422630346613,
                     "url": "markerIcon2.jpg",
                     "scaledSize": {
                         "width": 50,
@@ -45,16 +45,16 @@
                     "name": "Node 3",
                     "label": "Node 3",
                     "timeout": null,
-                    "colour": "23, 107, 239"
+                    "colour": "23, 156, 82"
                 }
             ],
-            "startNode": "Node 2",
-            "weight": 2560,
+            "startNode": "Node 1",
+            "weight": 6602,
             "options": {
                 "travelMode": "driving",
                 "trafficMode": "bestguess"
             },
-            "name": "Optimal network: 2560m"
+            "name": "Optimal network: 66"
         }
     ]
 }
