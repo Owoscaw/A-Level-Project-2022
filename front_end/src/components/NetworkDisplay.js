@@ -1,8 +1,10 @@
 import React, { useRef, useEffect, useState, Component } from "react";
 import * as createjs from "createjs-module";
+
 import { ReactComponent as EditIcon } from "../styles/icons8-edit.svg"; 
 import { ReactComponent as ValidIcon } from "../styles/icons8-done.svg";
 import { ReactComponent as InvalidIcon } from "../styles/icons8-close.svg";
+import imDead from "../styles/error.gif";
 
 import "../styles/networkDisplay.css";
 
@@ -114,7 +116,7 @@ function NetworkDisplay(props){
 
     return (
         <div id="ntwrk-container">
-            <div id="ntwrk-canvas-container">
+            <div id="ntwrk-canvas-container" className={props.apiStatus.message === "what" ? "error" : ""}>
                 <div id="ntwrk-header">
                     {
                         pathFound ? 
@@ -134,9 +136,14 @@ function NetworkDisplay(props){
                         <input id="ntwrk-cancel" type="button" value="×" onClick={props.onCancel}/>
                         <div id="ntwrk-api-status" className={props.apiStatus.message === "" ? "ntwrk-api-loading" : "ntwrk-api-warning"}>
                             {
-                                props.apiStatus.message === "" ? "Loading" : props.apiStatus.message
+                                props.apiStatus.message === "" ? "Calculating" : props.apiStatus.message
                             }
                         </div>
+                        {
+                            props.apiStatus.message === "what" 
+                            ? <img src={imDead} alt=""/>
+                            : null
+                        }
                     </>
                 }
             </div>

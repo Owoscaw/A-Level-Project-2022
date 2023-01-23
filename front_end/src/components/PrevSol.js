@@ -35,6 +35,7 @@ function PrevSol({data, ...props}){
         loadSolutions().then(response => {
             setData(response.data); 
         });
+
         return () => {
 
             //removing all data for a fresh start
@@ -295,7 +296,8 @@ class Route extends Component {
         super(props);
 
         this.state = {
-            ...structuredClone(props.data)
+            ...structuredClone(props.data),
+            nameValid: true
         };
 
         this.inputRef = React.createRef();
@@ -307,6 +309,15 @@ class Route extends Component {
     }
 
     handleInput(){
+
+        if(this.state.name === this.inputRef.current.value){
+            this.setState(prevState => ({
+                ...prevState,
+                nameValid: true
+            }));
+
+            return;
+        }
 
         //trimming whitespace and replacing dissallowed characters with empty string
         let newName = this.inputRef.current.value.trim().replace(/[^a-zA-Z0-9: ]/g, '');
@@ -323,12 +334,22 @@ class Route extends Component {
             this.inputHandler(this.state, newName);
             this.setState(prevState => ({
                 ...prevState,
-                name: newName
+                name: newName,
+                nameValid: true
             }));
-            this.setSolution({
-                ...this.state,
-                name: newName
-            });
+
+            console.log(this.props.currentSolution)
+            if(this.props.currentSolution.name === this.state.name){
+                this.setSolution({
+                    ...this.state,
+                    name: newName
+                });
+            }
+        } else {
+            this.setState(prevState => ({
+                ...prevState,
+                nameValid: false
+            }));
         }
     }
 
@@ -344,8 +365,8 @@ class Route extends Component {
         return (
         <li key={this.state.name}>
             <div className="prevSol-route">
-                <input className="prevSol-route-name" type="text" ref={this.inputRef} 
-                defaultValue={this.state.name} onBlur={() => this.handleInput()}
+                <input className={`prevSol-route-name${this.state.nameValid ? "" : "-invalid"}`} type="text" ref={this.inputRef} 
+                defaultValue={this.state.name} onBlur={() => this.handleInput()} maxLength={30}
                 onKeyDown={(event) => {
                     if(event.key === "Enter"){
                         this.inputRef.current.blur();

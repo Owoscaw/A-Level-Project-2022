@@ -14,6 +14,12 @@ let usedNames;
 
 function BetterMap(props){
 
+
+    const { isLoaded } = useLoadScript({
+        googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws"
+    });
+
+
     //clears used names when component is removed
     useEffect(() => {
         usedNames = {};
@@ -21,12 +27,7 @@ function BetterMap(props){
         return () => {
             usedNames = undefined;
         }
-    }, []);
-
-    const { isLoaded } = useLoadScript({
-        googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws"
-    });
- 
+    }, []); 
 
     const mapRef = useRef();
     const onMapLoad = useCallback((map) => (mapRef.current = map), []);
@@ -207,7 +208,7 @@ class NodeMenuItem extends Component{
             <li>
                 <div className="betterMap-Menu-node">
                     <div className="betterMap-Menu-Node-renameContainer">
-                        <input type="text" className="betterMap-Menu-Node-rename" defaultValue={this.node.name} 
+                        <input type="text" className="betterMap-Menu-Node-rename" defaultValue={this.node.name} maxLength={30}
                         ref={this.inputRef} onBlur={() => this.inputHandler(this.inputRef.current.value)} onKeyDown={(event) => {
                             if(event.key === "Enter"){
                                 this.inputRef.current.blur();

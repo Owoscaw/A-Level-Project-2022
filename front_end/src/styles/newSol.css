@@ -123,6 +123,7 @@ html, body {
 .newSol-traffic-options-disabled {
   background-color: rgba(125, 125, 125, 0.4);
   pointer-events: none;
+  transition: background-color 0.2s ease;
 }
 
 .newSol-traffic-options-disabled button {

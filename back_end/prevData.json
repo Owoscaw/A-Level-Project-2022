@@ -2,15 +2,127 @@
     "solutions": [
         {
             "path": [
-                "Node 1",
                 "Node 2",
                 "Node 3",
-                "Node 1"
+                "Node 1",
+                "Node 2"
             ],
             "nodes": [
                 {
-                    "lat": 52.39950033871494,
-                    "lng": -0.005299747390381526,
+                    "lat": 52.40149172733947,
+                    "lng": -0.02863043323945602,
+                    "url": "markerIcon3.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 1",
+                    "label": "Node 1",
+                    "timeout": null,
+                    "colour": "23, 107, 239"
+                },
+                {
+                    "lat": 52.25979392246327,
+                    "lng": -2.7307605994486828,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 2",
+                    "label": "Node 2",
+                    "timeout": null,
+                    "colour": "23, 156, 82"
+                },
+                {
+                    "lat": 52.098111279467936,
+                    "lng": -4.049119974448683,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 3",
+                    "label": "Node 3",
+                    "timeout": null,
+                    "colour": "255, 62, 48"
+                }
+            ],
+            "startNode": "Node 2",
+            "weight": 741398,
+            "options": {
+                "travelMode": "driving",
+                "trafficMode": "bestguess"
+            },
+            "name": "Optimal network: 741398m"
+        },
+        {
+            "path": [
+                "Node 2",
+                "Node 1",
+                "Node 3",
+                "Node 2"
+            ],
+            "nodes": [
+                {
+                    "lat": 52.401228507364415,
+                    "lng": -0.00027865211450261995,
+                    "url": "markerIcon3.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 1",
+                    "label": "Node 1",
+                    "timeout": null,
+                    "colour": "255, 62, 48"
+                },
+                {
+                    "lat": 52.55658599015689,
+                    "lng": 1.229077300352377,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 2",
+                    "label": "Node 2",
+                    "timeout": null,
+                    "colour": "23, 107, 239"
+                },
+                {
+                    "lat": 51.9341232253668,
+                    "lng": 8.91265699427961,
+                    "url": "markerIcon3.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 3",
+                    "label": "Node 3",
+                    "timeout": null,
+                    "colour": "23, 107, 239"
+                }
+            ],
+            "startNode": "Node 2",
+            "weight": 1651777,
+            "options": {
+                "travelMode": "driving",
+                "trafficMode": "bestguess"
+            },
+            "name": "Test"
+        },
+        {
+            "path": [
+                "Node 3",
+                "Node 2",
+                "Node 1",
+                "Node 3"
+            ],
+            "nodes": [
+                {
+                    "lat": 52.402851876862435,
+                    "lng": 0.00624448020971613,
                     "url": "markerIcon1.jpg",
                     "scaledSize": {
                         "width": 50,
@@ -22,9 +134,22 @@
                     "colour": "255, 62, 48"
                 },
                 {
-                    "lat": 52.39740549808913,
-                    "lng": -0.008561313552490901,
-                    "url": "markerIcon3.jpg",
+                    "lat": 52.396253293354,
+                    "lng": 0.015685855942138005,
+                    "url": "markerIcon2.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 3",
+                    "label": "Node 3",
+                    "timeout": null,
+                    "colour": "255, 62, 48"
+                },
+                {
+                    "lat": 52.39821726063358,
+                    "lng": 0.02036362846411066,
+                    "url": "markerIcon1.jpg",
                     "scaledSize": {
                         "width": 50,
                         "height": 50
@@ -33,11 +158,54 @@
                     "label": "Node 2",
                     "timeout": null,
                     "colour": "23, 156, 82"
+                }
+            ],
+            "startNode": "Node 3",
+            "weight": 3732,
+            "options": {
+                "travelMode": "driving",
+                "trafficMode": "bestguess"
+            },
+            "name": "Optimal network: 3732m"
+        },
+        {
+            "path": [
+                "Node 2",
+                "Node 1",
+                "Node 3",
+                "Node 2"
+            ],
+            "nodes": [
+                {
+                    "lat": 52.40075719535459,
+                    "lng": -0.0020810965725104325,
+                    "url": "markerIcon1.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 1",
+                    "label": "Node 1",
+                    "timeout": null,
+                    "colour": "23, 107, 239"
                 },
                 {
-                    "lat": 52.39716982229529,
-                    "lng": 0.01448422630346613,
+                    "lat": 52.399814556231235,
+                    "lng": 0.010664760666259099,
                     "url": "markerIcon2.jpg",
+                    "scaledSize": {
+                        "width": 50,
+                        "height": 50
+                    },
+                    "name": "Node 2",
+                    "label": "Node 2",
+                    "timeout": null,
+                    "colour": "255, 62, 48"
+                },
+                {
+                    "lat": 52.39586048940901,
+                    "lng": -0.008690059585205745,
+                    "url": "markerIcon1.jpg",
                     "scaledSize": {
                         "width": 50,
                         "height": 50
@@ -48,13 +216,13 @@
                     "colour": "23, 156, 82"
                 }
             ],
-            "startNode": "Node 1",
-            "weight": 6602,
+            "startNode": "Node 2",
+            "weight": 3820,
             "options": {
                 "travelMode": "driving",
                 "trafficMode": "bestguess"
             },
-            "name": "Optimal network: 66"
+            "name": "Optimal network"
         }
     ]
 }

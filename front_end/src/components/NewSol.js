@@ -65,6 +65,10 @@ function NewSol(props){
 
     }, (reject) => {
       console.log(reject);
+      updateResponse({
+        message: "what",
+        data: null
+      })
     });
   };
 
@@ -122,7 +126,6 @@ function NewSol(props){
       }}).then(response => response.json());
   }
 
-
   return (
     <div id="newSol-container">
       <div id="newSol-upper-container">
@@ -159,7 +162,7 @@ function NewSol(props){
                 <OptionButton name="walking" type="travel" options={solOptions} setOptions={setOptions}/>
               </ul>
             </div>
-            <div className={`newSol-options-grid-item newSol-traffic-options${solOptions.travelMode === "driving" ? "" : " trafficDiv-disabled"}`}>
+            <div className={`newSol-options-grid-item newSol-traffic-options${solOptions.travelMode === "driving" ? "" : "-disabled"}`}>
               Traffic Mode:
               <ul>
                 <OptionButton name="bestguess" type="traffic" options={solOptions} setOptions={setOptions}/>
@@ -215,10 +218,14 @@ function getMatrix(toBeArced, nodeArray, network, options){
           travelMode: travelMode,
           drivingOptions: drivingOptions
         }, function(response, status){
-
+          console.log(response);
           if(status === "OK"){
             for(let sink = 0; sink < response.rows[0].elements.length; sink++){
-              network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
+              try{
+                network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
+              } catch {
+                reject("matrix failed to load");
+              }
             }
 
             resolve("matrix fully loaded");

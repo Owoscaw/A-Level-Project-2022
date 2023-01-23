@@ -41,6 +41,15 @@
     background-color: rgba(241, 241, 241, 1);
 }
   
+#ntwrk-canvas-container.error {
+    flex-direction: column;
+}
+
+#ntwrk-canvas-container.error img {
+    height: 300px;
+    width: 300px;
+}
+
 @keyframes menuOnAnimation {
     0% {
         translate: 0px calc(100% + 200px);
@@ -186,8 +195,9 @@
 #ntwrk-api-status {
     width: 100%;
     height: fit-content;
-    padding-bottom: 8px;
     text-align: center;
+    padding-bottom: 8px;
+    border-radius: 7.5px;
     font-size: 44px;
     font-family: "Google sans";
 }

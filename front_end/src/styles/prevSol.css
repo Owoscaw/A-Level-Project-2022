@@ -132,6 +132,33 @@ html, body {
   background-color: inherit;
   grid-column: 1 / -1;
   grid-row: 1;
+  transition: background-color 0.2s ease;
+}
+
+.prevSol-route-name:hover {
+  cursor: pointer;
+  background-color: rgba(210, 210, 210, 1);
+  border-radius: 5px;
+}
+
+.prevSol-route-name-invalid {
+  font-size: 24px;
+  display: flex;
+  border: none;
+  outline: none;
+  text-align: center;
+  padding-left: 10px;
+  background-color: inherit;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  border-radius: 5px;
+  background-color: #FF9997;
+  transition: background-color 0.2s ease;
+}
+
+.prevSol-route-name-invalid:hover {
+  background-color: #FFC5C5;
+  transition: background-color 0.2s ease;
 }
 
 .prevSol-route-edit {
