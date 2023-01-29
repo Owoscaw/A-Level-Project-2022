@@ -172,10 +172,6 @@ function NewSol(props){
             </div>
           </div>
         </div>
-
-        <div id="newSol-info">
-          Information
-        </div>
       </div>
 
       {

@@ -431,6 +431,8 @@ int main(){
 
     //an upper bound is always a viable solution
     Graph solvedGraph = solGraph.getUpperBound();
+    solvedGraph.calculateFloyds();
+    solvedGraph.showGraph();
     Path solPath = solvedGraph.findHamiltonianCycle(startNode);
 
     if(solPath.pathWeight != -1){

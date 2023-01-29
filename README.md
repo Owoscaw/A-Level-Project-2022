@@ -10,3 +10,4 @@ install is used to install all dependencies, as well as recompile the TSP solver
 Requirements:
 npm
 g++
+luck

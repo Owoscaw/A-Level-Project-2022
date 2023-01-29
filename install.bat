@@ -4,5 +4,6 @@ call npm install
 cd ..
 cd front_end
 call npm install
+call npm run build
 cd ..
 call start.bat

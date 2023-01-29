@@ -66,7 +66,7 @@ app.post("/calculate", (request, response) => {
         });
     });
 
-    return;
+    console.log("calculation successful");
 });
 
 
@@ -94,6 +94,7 @@ app.post("/save", (request, response) => {
             });
         }
     });
+    console.log("save sucessful");
 });
 
 
@@ -119,6 +120,7 @@ app.post("/delete-route", (request, response) => {
             });
         });
     });
+    console.log("deletion successful");
 });
 
 
@@ -151,7 +153,8 @@ app.post("/rename-route", (request, response) => {
                 message: "Rename OK"
             });
         });
-    })
+    });
+    console.log("rename sucessful");
 });
 
 
@@ -164,6 +167,7 @@ app.get("/clear", (request, response) => {
         });
         return;
     });
+    console.log("cleared solutions");
 });
 
 
@@ -186,6 +190,7 @@ app.get("/load", (request, response) => {
             return;
         }
     });
+    console.log("loaded solutions");
 });
 
 
