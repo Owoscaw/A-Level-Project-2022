@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useRef, useState, Component, Fragment, useEffect} from "react";
-import { GoogleMap, useLoadScript, OverlayView, Marker, MarkerClusterer } from "@react-google-maps/api";
+import React, { useCallback, useState, useMemo, useRef, Component, Fragment, useEffect} from "react";
+import { GoogleMap, Autocomplete, useLoadScript, OverlayView, Marker, MarkerClusterer } from "@react-google-maps/api";
 
 import "../styles/betterMap.css";
 import { ReactComponent as EditIcon } from "../styles/icons8-edit.svg";
@@ -16,9 +16,12 @@ function BetterMap(props){
 
 
     const { isLoaded } = useLoadScript({
-        googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws"
+        googleMapsApiKey: "AIzaSyA4JxaRwAQ18Zvjyxy1CAkuSxKjGpGLzws",
+        libraries: ["places"]
     });
 
+    const autocompleteRef = useRef();
+    const autoInputRef = useRef();
 
     //clears used names when component is removed
     useEffect(() => {
@@ -33,7 +36,8 @@ function BetterMap(props){
     const onMapLoad = useCallback((map) => (mapRef.current = map), []);
 
     //does not have to be redefined when reflows happen
-    const mapCenter = useMemo(() => ({lat: 52.4, lng: 0}), []);
+    const [ mapCenter, setCenter ] = useState({ lat: 53.7, lng: -3.5});
+    const [ mapZoom, setZoom ] = useState(5);
     const mapOptions = useMemo(() => ({
         disableDefaultUI: true,
         clickableIcons: false,
@@ -60,7 +64,7 @@ function BetterMap(props){
     
     
     //adds a new node with a marker wherever the map was clicked
-    const addNodeHandler = (event) => {
+    const addNodeHandler = (event, autocompleted) => {
         
         if(Object.keys(usedNames).length > 10){
             return;
@@ -73,11 +77,23 @@ function BetterMap(props){
         }
         
         let newNodeColour = googleColours[Math.floor(Math.random()*googleColours.length)];
-        
+        let location;
+
+        if(autocompleted){
+            location = {
+                lat: event.lat,
+                lng: event.lng
+            }
+        } else {
+            location = {
+                lat: event.latLng.lat(),
+                lng: event.latLng.lng()
+            }
+        }
+
         //creating new node
         let newNode = {
-            lat: event.latLng.lat(),
-            lng: event.latLng.lng(),
+            ...location,
             url: possibleIcons[Math.floor(Math.random()*3)],
             scaledSize: new window.google.maps.Size(50, 50),
             name: "Node " + nodeIndex.toString(),
@@ -117,6 +133,14 @@ function BetterMap(props){
         props.setNodes(prevState => (prevState.filter(prevNode => prevNode.name !== node.name)));
     }
 
+    const handlePlaceChange = () => {
+        if(autocompleteRef.current !== null){
+            console.log(autocompleteRef.current.getPlace());
+            setCenter({ lat: autocompleteRef.current.getPlace().geometry.location.lat(), lng: autocompleteRef.current.getPlace().geometry.location.lng() });
+            addNodeHandler({lat: autocompleteRef.current.getPlace().geometry.location.lat(), lng: autocompleteRef.current.getPlace().geometry.location.lng()}, true);
+            setZoom(15);
+        }
+    }
 
     //loading screen
     if(!isLoaded){
@@ -131,9 +155,13 @@ function BetterMap(props){
                 Map
             </div>
             <GoogleMap 
-            id="betterMap" zoom={15} 
+            id="betterMap" zoom={mapZoom} 
             center={mapCenter} options={mapOptions} 
-            onLoad={onMapLoad} onClick={addNodeHandler}>
+            onLoad={onMapLoad} onClick={(event) => addNodeHandler(event, false)}>
+                <Autocomplete onLoad={(Autocomplete) => {autocompleteRef.current = Autocomplete}}
+                onPlaceChanged={() => handlePlaceChange()}>
+                    <input type="text" placeholder="Enter Location..." id="betterMap-Autocomplete-input" onBlur={() => {autoInputRef.current.value = ""}} ref={autoInputRef}/>
+                </Autocomplete>
                 <MarkerClusterer options={clusterOptions}> 
                     {
                         (clusterer) => props.nodes.map(node => {

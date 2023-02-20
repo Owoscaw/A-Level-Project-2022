@@ -63,6 +63,41 @@
     }
 }
 
+#betterMap-Autocomplete-input {
+    all: unset;
+    background-color: white;
+    font-family: "Google Sans";
+    box-sizing: border-box;
+    border-radius: 7.5px;
+    width: 270px;
+    height: 50px;
+    font-size: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 5px 0 0 5px;
+    transition: background-color 0.2s ease;
+}
+
+#betterMap-Autocomplete-input:hover {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#betterMap-Autocomplete-input:hover::placeholder {
+    color:rgba(125, 125, 125, 0.5);
+    transition: color 0.2s ease;
+}
+
+#betterMap-Autocomplete-input:focus {
+    background-color: white;
+}
+
+#betterMap-Autocomplete-input:focus::placeholder {
+    color: rgba(125, 125, 125, 0.2);
+    transition: color 0.2s ease;
+}
+
 #betterMap-Menu-header {
     grid-row: 1;
     grid-column: 2;
