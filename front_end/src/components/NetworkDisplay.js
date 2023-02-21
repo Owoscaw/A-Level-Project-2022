@@ -96,7 +96,7 @@ function NetworkDisplay(props){
 
         if(props.apiStatus.message === "Path found"){
             setFound(true);
-            setTitle(props.title + ": " + props.apiStatus.data.weight + "m");;
+            setTitle(props.title + ": " + parseFloat((props.apiStatus.data.weight / 1000).toPrecision(3)) + "km");;
         } else {
             setTitle(props.title);
         }

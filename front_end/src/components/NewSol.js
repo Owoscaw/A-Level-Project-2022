@@ -51,6 +51,7 @@ function NewSol(props){
 
     matrixPromise.then((resolve) => {
       let solJSON = solNetwork.toJSON(startNode.name);
+      console.log(solJSON);
       props.api("calculate", {
         method: "POST",
         cache: "no-cache",
@@ -88,6 +89,7 @@ function NewSol(props){
         nodes: activeSol.allNodes,
         startNode: apiResponse.data.path[0],
         weight: apiResponse.data.weight,
+        duration: apiResponse.data.duration,
         options: {
           travelMode: solOptions.travelMode,
           trafficMode: solOptions.trafficMode
@@ -101,6 +103,7 @@ function NewSol(props){
           nodes: activeSol.allNodes,
           startNode: apiResponse.data.path[0],
           weight: apiResponse.data.weight,
+          duration: apiResponse.data.duration,
           options: {
             travelMode: solOptions.travelMode,
             trafficMode: solOptions.trafficMode
@@ -214,11 +217,11 @@ function getMatrix(toBeArced, nodeArray, network, options){
           travelMode: travelMode,
           drivingOptions: drivingOptions
         }, function(response, status){
-          console.log(response);
+          console.log(response, status);
           if(status === "OK"){
             for(let sink = 0; sink < response.rows[0].elements.length; sink++){
               try{
-                network.addArc(response.rows[0].elements[sink].distance.value, fromNode, toNodes[sink]);
+                network.addArc(response.rows[0].elements[sink].distance.value, response.rows[0].elements[sink].duration_in_traffic.value, fromNode, toNodes[sink]);
               } catch {
                 reject("matrix failed to load");
               }
@@ -300,11 +303,14 @@ class Network {
   constructor(){
     this.allNodes = [];
     this.allArcs = [];
+    this.durationArcs = [];
     this.table = {};
+    this.durationTable = {};
   }
 
   addNode(node){
     this.table[node.name] = {};
+    this.durationTable[node.name] = {};
     this.allNodes.push(node);
 
     this.populateTable();
@@ -314,17 +320,18 @@ class Network {
     return this.table[node1.name][node2.name] === weight;
   }
 
-  addArc(weight, node1, node2){
+  addArc(weight, duration, node1, node2){
 
     if((node1.name === node2.name) || (weight === 0) || this.hasArc(weight, node1, node2)){
       return;
     }
 
-
-
     this.table[node1.name][node2.name] = weight;
     this.table[node2.name][node1.name] = weight;
+    this.durationTable[node1.name][node2.name] = duration;
+    this.durationTable[node2.name][node1.name] = duration;
     this.allArcs.push({node1: node1, node2: node2, weight: weight});
+    this.durationArcs.push({node1: node1, node2: node2, duration: duration});
   }
 
   populateTable(){
@@ -357,6 +364,7 @@ class Network {
       nodes: shortenedNodes,
       arcs: shortenedArcs,
       startNode: nodeName,
+      durationTable: this.durationTable,
       path: []
     };
   }

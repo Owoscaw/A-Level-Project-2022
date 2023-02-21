@@ -40,7 +40,7 @@
     font-family: "Google Sans";
 }
 
-#mapLoading {
+#mapLoading::after {
     content: "";
     animation: ellipsisAnimation 1.5s infinite;
 }

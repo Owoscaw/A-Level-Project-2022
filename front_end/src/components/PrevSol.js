@@ -173,7 +173,7 @@ function PrevSol({data, ...props}){
             });
         });
     }
-
+    console.log(directionsRoute);
     return (
         <div id="prevSol-container">
             <div id="prevSol-left">
@@ -222,11 +222,7 @@ function PrevSol({data, ...props}){
                                                     borderWidth: node.name === solution.startNode ? "3px" : "1px"
                                                     }}>
                                                     {
-                                                        node.name === solution.startNode ? "Start/End:" : `Waypoint ${solution.path.indexOf(node.name)}:`
-                                                    }
-                                                    <br/>
-                                                    {
-                                                        node.name
+                                                        (solution.path.indexOf(node.name) + 1) + ": " + node.name
                                                     }
                                                 </div>
                                             </OverlayView>
@@ -235,6 +231,7 @@ function PrevSol({data, ...props}){
                                 }
                                 <DirectionsRenderer directions={directionsRoute} options={{ 
                                     suppressMarkers: true,
+                                    suppressInfoWindows: false,
                                     polylineOptions: {
                                         icons: [
                                             {
@@ -362,6 +359,10 @@ class Route extends Component {
             }   
         }
 
+        let hvalue = Math.floor(this.state.duration / 3600);
+        let mvalue = Math.floor(this.state.duration % 3600 / 60);
+        let durationText = `${hvalue > 0 ? hvalue + "h " : ""}${mvalue + "m"}`; 
+
         return (
         <li key={this.state.name}>
             <div className="prevSol-route">
@@ -376,10 +377,10 @@ class Route extends Component {
                     <EditIcon/>
                 </button>
                 <div className="prevSol-route-weight">
-                    {`Weight:   ${this.state.weight}`}
+                    {`Length: ${parseFloat((this.state.weight / 1000).toPrecision(4))}km`}
                 </div>
                 <div className="prevSol-route-startNode">
-                    {`Start:    ${this.state.startNode}`}
+                    {`Duration: ${durationText}`}
                 </div>
                 <button className="prevSol-route-delete" onClick={() => this.handleDelete(this.state.name)}>
                     <TrashIcon/>

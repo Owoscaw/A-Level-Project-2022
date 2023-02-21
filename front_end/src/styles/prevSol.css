@@ -113,7 +113,7 @@ html, body {
   height: 100%;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: 35% 35% auto auto auto;
+  grid-template-columns: 40% 40% auto auto auto;
   grid-template-rows: 60% auto;
   border: 1px solid black;
   border-radius: 5px;
@@ -197,7 +197,6 @@ html, body {
   grid-row: 2;
   font-size: 18px;
   text-align: center;
-  text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   padding-top: 3px;
@@ -313,13 +312,12 @@ html, body {
 .prevSol-map-node {
   min-width: 50px;
   width: fit-content;
-  min-height: 30px;
   height: fit-content;
   border: 1px solid black;
   border-radius: 10px;  
   text-align: center;
   background-color: red;
-  translate: -50% -200%;
+  translate: -50% -85px;
   font-size: 18px;
   padding: 5px;
   z-index: 999;

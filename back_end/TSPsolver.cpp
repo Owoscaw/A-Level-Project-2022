@@ -398,6 +398,7 @@ int main(){
 
 	Json::Value solNodes = solJson["nodes"];
 	Json::Value solArcs = solJson["arcs"];
+    Json::Value durationTable = solJson["durationTable"];
 	std::string startNode = solJson["startNode"].asString();
 
     //adding nodes from data.json 
@@ -440,12 +441,20 @@ int main(){
         std::cout<<"solution found"<<std::endl;
         Json::Value path;
         int pathIndex = 0;
+        int durationInSeconds = 0;
+
         for(std::string pathIterator: solPath.nodeSequence){
             path[pathIndex] = pathIterator;
             pathIndex ++;
         }
+
+        for(int i = 0; i < pathIndex - 1; i++){
+            durationInSeconds += durationTable[path[i].asString()][path[i + 1].asString()].asInt();
+        }
+
         solJson["path"] = path;
         solJson["weight"] = solPath.pathWeight;
+        solJson["duration"] = durationInSeconds;
     } else {
         solJson["path"] = "not found";
     }
