@@ -4,133 +4,95 @@
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 2",
-			"weight" : 383043
+			"weight" : 874148
 		},
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 3",
-			"weight" : 595716
+			"weight" : 364286
 		},
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 4",
-			"weight" : 697101
+			"weight" : 170069
 		},
 		{
 			"node1" : "Node 1",
 			"node2" : "Node 5",
-			"weight" : 519689
-		},
-		{
-			"node1" : "Node 1",
-			"node2" : "Node 6",
-			"weight" : 643940
+			"weight" : 339498
 		},
 		{
 			"node1" : "Node 2",
 			"node2" : "Node 3",
-			"weight" : 292524
+			"weight" : 594323
 		},
 		{
 			"node1" : "Node 2",
 			"node2" : "Node 4",
-			"weight" : 725843
+			"weight" : 987986
 		},
 		{
 			"node1" : "Node 2",
 			"node2" : "Node 5",
-			"weight" : 198633
-		},
-		{
-			"node1" : "Node 2",
-			"node2" : "Node 6",
-			"weight" : 322884
+			"weight" : 901249
 		},
 		{
 			"node1" : "Node 3",
 			"node2" : "Node 4",
-			"weight" : 649495
+			"weight" : 430496
 		},
 		{
 			"node1" : "Node 3",
 			"node2" : "Node 5",
-			"weight" : 338479
-		},
-		{
-			"node1" : "Node 3",
-			"node2" : "Node 6",
-			"weight" : 510083
+			"weight" : 364290
 		},
 		{
 			"node1" : "Node 4",
 			"node2" : "Node 5",
-			"weight" : 844787
-		},
-		{
-			"node1" : "Node 4",
-			"node2" : "Node 6",
-			"weight" : 997027
-		},
-		{
-			"node1" : "Node 5",
-			"node2" : "Node 6",
-			"weight" : 225841
+			"weight" : 291837
 		}
 	],
-	"duration" : 127343,
+	"duration" : 93432,
 	"durationTable" : 
 	{
 		"Node 1" : 
 		{
-			"Node 2" : 27939,
-			"Node 3" : 28808,
-			"Node 4" : 34307,
-			"Node 5" : 32318,
-			"Node 6" : 36044
+			"Node 2" : 34987,
+			"Node 3" : 13829,
+			"Node 4" : 6887,
+			"Node 5" : 13106
 		},
 		"Node 2" : 
 		{
-			"Node 1" : 27939,
-			"Node 3" : 14424,
-			"Node 4" : 30678,
-			"Node 5" : 9966,
-			"Node 6" : 13331
+			"Node 1" : 34987,
+			"Node 3" : 25481,
+			"Node 4" : 39435,
+			"Node 5" : 38007
 		},
 		"Node 3" : 
 		{
-			"Node 1" : 28808,
-			"Node 2" : 14424,
-			"Node 4" : 25969,
-			"Node 5" : 14007,
-			"Node 6" : 19663
+			"Node 1" : 13829,
+			"Node 2" : 25481,
+			"Node 4" : 17053,
+			"Node 5" : 14066
 		},
 		"Node 4" : 
 		{
-			"Node 1" : 34307,
-			"Node 2" : 30678,
-			"Node 3" : 25969,
-			"Node 5" : 33238,
-			"Node 6" : 37584
+			"Node 1" : 6887,
+			"Node 2" : 39435,
+			"Node 3" : 17053,
+			"Node 5" : 12011
 		},
 		"Node 5" : 
 		{
-			"Node 1" : 32318,
-			"Node 2" : 9966,
-			"Node 3" : 14007,
-			"Node 4" : 33238,
-			"Node 6" : 9499
-		},
-		"Node 6" : 
-		{
-			"Node 1" : 36044,
-			"Node 2" : 13331,
-			"Node 3" : 19663,
-			"Node 4" : 37584,
-			"Node 5" : 9499
+			"Node 1" : 13106,
+			"Node 2" : 38007,
+			"Node 3" : 14066,
+			"Node 4" : 12011
 		}
 	},
-	"nodes" : [ "Node 1", "Node 2", "Node 3", "Node 4", "Node 5", "Node 6" ],
-	"path" : [ "Node 2", "Node 5", "Node 6", "Node 3", "Node 4", "Node 1", "Node 2" ],
-	"startNode" : "Node 2",
-	"weight" : 2664196
+	"nodes" : [ "Node 1", "Node 2", "Node 3", "Node 4", "Node 5" ],
+	"path" : [ "Node 1", "Node 4", "Node 5", "Node 3", "Node 2", "Node 1" ],
+	"startNode" : "Node 1",
+	"weight" : 2294667
 }

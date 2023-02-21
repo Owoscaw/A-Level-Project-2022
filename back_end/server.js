@@ -176,6 +176,7 @@ app.get("/load", (request, response) => {
     response.setHeader("Content-Type", "application/json");
 
     readPrev((error, data) => {
+        console.log(typeof data);
         if(error){
             response.send({
                 message: "Error reading solutions",
@@ -183,10 +184,18 @@ app.get("/load", (request, response) => {
             });
             return;
         } else {
-            response.send({
-                message: "Solution read successful",
-                data: JSON.parse(data).solutions
-            });
+
+            try{
+                response.send({
+                    message: "Solution read successful",
+                    data: JSON.parse(data).solutions
+                });
+            } catch {
+                response.send({
+                    message: "Error reading solutions",
+                    data: []
+                });
+            }
             return;
         }
     });

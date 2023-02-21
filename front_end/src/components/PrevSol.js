@@ -173,7 +173,7 @@ function PrevSol({data, ...props}){
             });
         });
     }
-    console.log(directionsRoute);
+    console.log(prevData);
     return (
         <div id="prevSol-container">
             <div id="prevSol-left">
