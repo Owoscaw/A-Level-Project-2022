@@ -173,7 +173,6 @@ Path Graph::pathBetweenNodes(std::string node1, std::string node2){
     Path AB = pathBetweenNodes(node1, nextNode);
     Path BC = pathBetweenNodes(nextNode, node2);
 
-
     //splicing these two "sub-paths" together
     for(int i = 1; i < AB.nodeSequence.size() - 1; i++){
         newPath.nodeSequence[i] = AB.nodeSequence[i + 1];
